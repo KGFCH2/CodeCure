@@ -95,7 +95,7 @@ No backend configuration is needed for this feature! It uses `html2pdf.js` secur
 
 To give answers to project-related questions through an AI chatbot, you can integrate the **Google Gemini API**.
 
-### Prerequisites
+### AI Chatbot Prerequisites
 
 1. **Get API Key**: Visit [Google AI Studio](https://aistudio.google.com/) and yield a free API key.
 2. **Install Library**:

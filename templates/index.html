@@ -20,7 +20,7 @@
         <div class="navbar-inner">
             <a href="#" class="navbar-brand" onclick="switchTab('home')">
                 <div class="navbar-logo">
-                    <i data-lucide="activity" style="color: white; width: 20px; height: 20px;"></i>
+                    <i data-lucide="activity"></i>
                 </div>
                 <div>
                     <div class="navbar-title">CodeCure</div>
@@ -45,7 +45,7 @@
         <div class="tab-content active" id="tab-home">
             <!-- Hero -->
             <section class="hero-section">
-                <div class="hero-badge" style="color: #000000; font-weight: 700;">
+                <div class="hero-badge">
                     <span class="pulse-dot"></span>
                     AI-Powered Health Intelligence
                 </div>
@@ -58,7 +58,7 @@
                     generate explainable insights, and deliver personalized health recommendations —
                     all in real time.
                 </p>
-                <div class="btn-group" style="justify-content: center;">
+                <div class="btn-group">
                     <button class="btn btn-primary" onclick="switchTab('predict')">
                         <i data-lucide="sparkles"></i> Start AI Analysis
                     </button>
@@ -153,9 +153,8 @@
                 <div class="card">
                     <form id="prediction-form" onsubmit="handlePrediction(event)">
                         <!-- Personal Info -->
-                        <p
-                            style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted); margin-bottom: var(--space-md); text-transform: uppercase; letter-spacing: 0.08em; display: flex; align-items: center; gap: 8px;">
-                            <i data-lucide="user-round" style="width: 16px; height: 16px;"></i> Patient Information
+                        <p class="form-section-header">
+                            <i data-lucide="user-round"></i> Patient Information
                         </p>
                         <div class="form-grid">
                             <div class="form-group">
@@ -169,7 +168,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="form-label"><i data-lucide="users" class="label-icon"></i> Gender</label>
-                                <select class="form-input" id="input-gender">
+                                <select class="form-input" id="input-gender" title="Select patient gender">
                                     <option value="">Select Gender</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
@@ -179,9 +178,8 @@
                         </div>
 
                         <!-- Clinical Metrics -->
-                        <p
-                            style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted); margin: var(--space-xl) 0 var(--space-md); text-transform: uppercase; letter-spacing: 0.08em; display: flex; align-items: center; gap: 8px;">
-                            <i data-lucide="stethoscope" style="width: 16px; height: 16px;"></i> Clinical Metrics
+                        <p class="clinical-metrics-header">
+                            <i data-lucide="stethoscope"></i> Clinical Metrics
                         </p>
                         <div class="form-grid">
                             <div class="form-group">
@@ -242,9 +240,8 @@
                         </div>
 
                         <!-- Lifestyle -->
-                        <p
-                            style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted); margin: var(--space-xl) 0 var(--space-md); text-transform: uppercase; letter-spacing: 0.08em; display: flex; align-items: center; gap: 8px;">
-                            <i data-lucide="person-standing" style="width: 16px; height: 16px;"></i> Lifestyle Factors
+                        <p class="lifestyle-header">
+                            <i data-lucide="person-standing"></i> Lifestyle Factors
                         </p>
                         <div class="form-grid">
                             <div class="form-group">
@@ -295,9 +292,8 @@
                     </div>
 
                     <div class="card" id="results-card">
-                        <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
-                            <button class="btn btn-secondary" onclick="downloadPDF()"
-                                style="padding: 8px 16px; font-size: 0.8rem;">
+                        <div class="results-download">
+                            <button class="btn btn-secondary" onclick="downloadPDF()">
                                 <i data-lucide="download"></i> Download Report (PDF)
                             </button>
                         </div>
@@ -316,24 +312,20 @@
 
                             <div class="score-details">
                                 <div class="risk-badge" id="risk-badge">
-                                    <span id="risk-icon"><i data-lucide="alert-circle"
-                                            style="width: 14px; height: 14px;"></i></span>
+                                    <span id="risk-icon"><i data-lucide="alert-circle"></i></span>
                                     <span id="risk-text">—</span>
                                 </div>
                                 <p class="result-summary" id="result-summary">Run an AI analysis to see your results.
                                 </p>
 
                                 <div>
-                                    <div
-                                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                        <span style="font-size: 0.82rem; color: var(--text-muted);">Diabetes Risk
+                                    <div class="probability-row">
+                                        <span class="probability-label">Diabetes Risk
                                             Probability</span>
-                                        <span
-                                            style="font-size: 0.9rem; font-weight: 700; font-family: 'JetBrains Mono', monospace;"
-                                            id="probability-value">0%</span>
+                                        <span class="probability-value" id="probability-value">0%</span>
                                     </div>
                                     <div class="probability-bar">
-                                        <div class="probability-fill" id="probability-fill" style="width: 0%;"></div>
+                                        <div class="probability-fill" id="probability-fill"></div>
                                     </div>
                                     <div class="probability-text">
                                         <span>Low Risk</span>
@@ -443,8 +435,8 @@
 
         <!-- ═══════════════ ABOUT TAB ═══════════════ -->
         <div class="tab-content" id="tab-about">
-            <section class="hero-section" style="padding-bottom: 0;">
-                <h1 class="hero-title" style="font-size: 2.5rem;">
+            <section class="hero-section about-hero">
+                <h1 class="hero-title">
                     About <span class="gradient-text">CodeCure</span>
                 </h1>
                 <p class="hero-subtitle">
@@ -453,8 +445,8 @@
                 </p>
             </section>
 
-            <section class="section">
-                <div class="features-grid" style="margin-top: var(--space-xl);">
+            <section class="section about-section">
+                <div class="features-grid">
                     <div class="feature-card">
                         <div class="feature-icon blue"><i data-lucide="layers"></i></div>
                         <h3 class="feature-title">Architecture</h3>
@@ -512,25 +504,17 @@
             </section>
 
             <section class="section">
-                <div class="card" style="text-align: center; padding: var(--space-2xl);">
-                    <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: var(--space-sm);">Tech Stack</h3>
-                    <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 2;">
-                        <span
-                            style="background: rgba(59, 91, 255, 0.15); padding: 4px 12px; border-radius: 6px; margin: 4px;">Python</span>
-                        <span
-                            style="background: rgba(6, 182, 212, 0.15); padding: 4px 12px; border-radius: 6px; margin: 4px;">FastAPI</span>
-                        <span
-                            style="background: rgba(16, 185, 129, 0.15); padding: 4px 12px; border-radius: 6px; margin: 4px;">Scikit-learn</span>
-                        <span
-                            style="background: rgba(245, 158, 11, 0.15); padding: 4px 12px; border-radius: 6px; margin: 4px;">SQLAlchemy</span>
-                        <span
-                            style="background: rgba(244, 63, 94, 0.15); padding: 4px 12px; border-radius: 6px; margin: 4px;">SQLite</span>
-                        <span
-                            style="background: rgba(139, 92, 246, 0.15); padding: 4px 12px; border-radius: 6px; margin: 4px;">Jinja2</span>
-                        <span
-                            style="background: rgba(59, 91, 255, 0.15); padding: 4px 12px; border-radius: 6px; margin: 4px;">NumPy</span>
-                        <span
-                            style="background: rgba(6, 182, 212, 0.15); padding: 4px 12px; border-radius: 6px; margin: 4px;">Pandas</span>
+                <div class="card tech-stack-card">
+                    <h3 class="tech-stack-title">Tech Stack</h3>
+                    <p class="tech-stack-desc">
+                        <span class="tech-badge python">Python</span>
+                        <span class="tech-badge fastapi">FastAPI</span>
+                        <span class="tech-badge scikit">Scikit-learn</span>
+                        <span class="tech-badge sqlalchemy">SQLAlchemy</span>
+                        <span class="tech-badge sqlite">SQLite</span>
+                        <span class="tech-badge jinja">Jinja2</span>
+                        <span class="tech-badge numpy">NumPy</span>
+                        <span class="tech-badge pandas">Pandas</span>
                     </p>
                 </div>
             </section>
@@ -746,12 +730,12 @@
             toast.className = `toast ${type}`;
 
             const icons = {
-                success: '<i data-lucide="check-circle" style="width: 20px; height: 20px;"></i>',
-                error: '<i data-lucide="x-circle" style="width: 20px; height: 20px;"></i>',
-                info: '<i data-lucide="info" style="width: 20px; height: 20px;"></i>'
+                success: '<i data-lucide="check-circle"></i>',
+                error: '<i data-lucide="x-circle"></i>',
+                info: '<i data-lucide="info"></i>'
             };
 
-            toast.innerHTML = `<span style="font-size: 1.2rem; display: flex;">${icons[type] || icons.info}</span><span>${message}</span>`;
+            toast.innerHTML = `<span>${icons[type] || icons.info}</span><span>${message}</span>`;
 
             container.appendChild(toast);
             lucide.createIcons();

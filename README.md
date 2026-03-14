@@ -24,7 +24,7 @@ CodeCure is an intelligent health-tech platform that:
 ## ⚡ Features
 
 | Feature | Description |
-|---------|-------------|
+| ------- | ----------- |
 | 🔮 **Diabetes Risk Prediction** | ML models predict diabetes risk from clinical metrics |
 | 💯 **AI Health Score** | Single 0-100 index (like CIBIL for health) |
 | 🔍 **Explainable AI (XAI)** | Every prediction shows exactly which factors contributed |
@@ -37,7 +37,7 @@ CodeCure is an intelligent health-tech platform that:
 
 ## 🏗️ Architecture
 
-```
+```text
 CodeCure/
 ├── main.py            # FastAPI application (routes + API)
 ├── train_model.py     # AI model training script
@@ -57,7 +57,7 @@ CodeCure/
 ### Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
+| ----- | ---------- |
 | **Backend** | FastAPI, Uvicorn |
 | **AI/ML** | Scikit-learn (Logistic Regression, Random Forest, Gradient Boosting) |
 | **Database** | SQLite + SQLAlchemy ORM |
@@ -106,7 +106,7 @@ python -m uvicorn main:app --reload
 ## 📡 API Endpoints
 
 | Method | Endpoint | Description |
-|--------|----------|-------------|
+| ------ | -------- | ----------- |
 | `GET` | `/` | Main web application |
 | `POST` | `/api/predict` | AI diabetes prediction |
 | `GET` | `/api/dashboard` | Dashboard statistics |
@@ -166,7 +166,7 @@ POST /api/predict
 Three models are trained and the best performer is automatically selected:
 
 | Model | Type | Purpose |
-|-------|------|---------|
+| ----- | ---- | ------- |
 | Logistic Regression | Classification | Baseline, interpretable |
 | Random Forest | Ensemble | Feature importance |
 | Gradient Boosting | Ensemble | High accuracy |
@@ -221,6 +221,4 @@ The **AI Health Score** (0-100) considers:
 
 ---
 
-<p align="center">
-  AI Health-Tech Platform v1.0.0 · Powered by Machine Learning 🧠
-</p>
+AI Health-Tech Platform v1.0.0 · Powered by Machine Learning 🧠

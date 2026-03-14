@@ -1528,14 +1528,37 @@ body::after {
     margin: 4px;
 }
 
-.tech-badge.python { background: rgba(59, 91, 255, 0.15); }
-.tech-badge.fastapi { background: rgba(6, 182, 212, 0.15); }
-.tech-badge.scikit { background: rgba(16, 185, 129, 0.15); }
-.tech-badge.sqlalchemy { background: rgba(245, 158, 11, 0.15); }
-.tech-badge.sqlite { background: rgba(244, 63, 94, 0.15); }
-.tech-badge.jinja { background: rgba(139, 92, 246, 0.15); }
-.tech-badge.numpy { background: rgba(59, 91, 255, 0.15); }
-.tech-badge.pandas { background: rgba(6, 182, 212, 0.15); }
+.tech-badge.python {
+    background: rgba(59, 91, 255, 0.15);
+}
+
+.tech-badge.fastapi {
+    background: rgba(6, 182, 212, 0.15);
+}
+
+.tech-badge.scikit {
+    background: rgba(16, 185, 129, 0.15);
+}
+
+.tech-badge.sqlalchemy {
+    background: rgba(245, 158, 11, 0.15);
+}
+
+.tech-badge.sqlite {
+    background: rgba(244, 63, 94, 0.15);
+}
+
+.tech-badge.jinja {
+    background: rgba(139, 92, 246, 0.15);
+}
+
+.tech-badge.numpy {
+    background: rgba(59, 91, 255, 0.15);
+}
+
+.tech-badge.pandas {
+    background: rgba(6, 182, 212, 0.15);
+}
 
 .toast i {
     width: 20px;
