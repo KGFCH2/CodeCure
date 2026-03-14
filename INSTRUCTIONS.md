@@ -157,3 +157,24 @@ Understanding how the health parameters used in CodeCure are calculated or measu
 | **Diabetes Pedigree** | Genetic risk factor. | Calculated based on **Family History** (parents/grandparents with diabetes). |
 | **Age** | Patient's chronological age. | Number of years since birth. |
 | **Pregnancies** | Clinical history. | Total number of times a female patient has been pregnant. |
+
+---
+
+## ✅ Quick Setup Checklist
+
+- [ ] Python 3.10+ installed
+- [ ] Virtual environment activated
+- [ ] Dependencies installed (`pip install -r requirements.txt`)
+- [ ] Model trained (`python train_model.py`)
+- [ ] App running (`python -m uvicorn main:app --reload`)
+
+---
+
+## 🛠️ Maintenance & Updates
+
+- **Database**: The `codecure.db` file stores all patient data. Back it up regularly.
+- **Model Retraining**: If you update `diabetes.csv` with new data, re-run `train_model.py` to improve accuracy.
+
+---
+
+**Happy Coding!** 🚀
