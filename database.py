@@ -24,6 +24,7 @@ class Patient(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String(100), nullable=True)
     email = Column(String(100), nullable=True)
+    device_id = Column(String(128), nullable=True)
     age = Column(Integer, nullable=False)
     gender = Column(String(10), nullable=True)
     
@@ -77,6 +78,7 @@ class PredictionLog(Base):
     probability = Column(Float)
     health_score = Column(Float)
     risk_level = Column(String(20))
+    device_id = Column(String(128), nullable=True)
     
     created_at = Column(DateTime, default=datetime.utcnow)
 

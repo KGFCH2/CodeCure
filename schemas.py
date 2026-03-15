@@ -22,6 +22,7 @@ class PredictionRequest(BaseModel):
     # Optional personal info
     name: Optional[str] = None
     email: Optional[str] = None
+    device_id: Optional[str] = None
     gender: Optional[str] = None
     
     # Optional lifestyle
