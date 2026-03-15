@@ -1,0 +1,82 @@
+[
+  {
+    "keywords": ["what", "is", "codecure", "define", "about", "platform"],
+    "question": "What is CodeCure?",
+    "answer": "CodeCure is an AI-driven health-tech platform designed for diabetes risk prediction, health scoring, and personalized medical insights using machine learning."
+  },
+  {
+    "keywords": ["diabetes", "prediction", "work", "how", "model", "predict"],
+    "question": "How does the diabetes prediction work?",
+    "answer": "CodeCure uses machine learning models (Random Forest, Gradient Boosting, etc.) trained on clinical datasets to analyze metrics like glucose levels, BMI, and age to estimate diabetes risk."
+  },
+  {
+    "keywords": ["health", "score", "index", "ai", "rating", "cibil"],
+    "question": "What is the AI Health Score?",
+    "answer": "The AI Health Score is a metric from 0-100 (higher is better) that represents your overall health status based on vitals, lifestyle factors, and AI-predicted risk."
+  },
+  {
+    "keywords": ["security", "privacy", "data", "safe", "encrypted", "protection"],
+    "question": "Is my data secure on CodeCure?",
+    "answer": "Yes, CodeCure is designed with a privacy-first approach, using local-first data storage and encrypted databases to ensure patient confidentiality."
+  },
+  {
+    "keywords": ["tech", "stack", "language", "python", "fastapi", "built", "with"],
+    "question": "Which technologies are used in CodeCure?",
+    "answer": "CodeCure is built using FastAPI for the backend, Scikit-learn for AI models, SQLAlchemy with SQLite for the database, and a modern HTML/CSS/JS frontend."
+  },
+  {
+    "keywords": ["dashboard", "features", "analytics", "stats", "overview"],
+    "question": "What features are available in the Dashboard?",
+    "answer": "The Dashboard provides real-time analytics, including total patient count, risk distributions, average health scores, and a history of recent predictions."
+  },
+  {
+    "keywords": ["download", "report", "pdf", "save", "print", "summary"],
+    "question": "Can I download my health report?",
+    "answer": "Yes, after running an AI analysis, you can download a comprehensive medical report in PDF format containing your health score, risk factors, and recommendations."
+  },
+  {
+    "keywords": ["developer", "who", "created", "built", "author", "made"],
+    "question": "Who developed CodeCure?",
+    "answer": "CodeCure was developed as an advanced AI health-tech solution to tackle chronic diseases like diabetes through intelligent healthcare delivery."
+  },
+  {
+    "keywords": ["clinical", "features", "metrics", "parameters", "inputs", "analysis"],
+    "question": "What clinical features are analyzed?",
+    "answer": "The platform analyzes 8 clinical features: Pregnancies, Glucose, Blood Pressure, Skin Thickness, Insulin, BMI, Diabetes Pedigree Function, and Age."
+  },
+  {
+    "keywords": ["lifestyle", "factors", "exercise", "sleep", "smoking", "habits"],
+    "question": "What are the lifestyle factors considered?",
+    "answer": "CodeCure considers exercise hours per week, sleep hours per night, and smoking status to provide a more holistic health analysis."
+  },
+  {
+    "keywords": ["bmi", "calculate", "weight", "height", "formula", "obesity"],
+    "question": "How to calculate BMI?",
+    "answer": "BMI (Body Mass Index) is calculated by dividing your weight in kilograms by the square of your height in meters (kg/m²). A range of 18.5–24.9 is generally considered healthy."
+  },
+  {
+    "keywords": ["glucose", "level", "blood", "sugar", "normal", "ranges"],
+    "question": "How to understand glucose levels?",
+    "answer": "Normal fasting glucose is typically between 70-99 mg/dL. Values between 100-125 mg/dL reflect prediabetes, and 126 mg/dL or higher on two separate tests indicates diabetes."
+  },
+  {
+    "keywords": ["blood", "pressure", "calculate", "systolic", "diastolic", "hypertension"],
+    "question": "What is a healthy blood pressure?",
+    "answer": "Normal blood pressure is generally less than 120/80 mmHg. Hypertension is typically diagnosed if consistent readings are 130/80 mmHg or higher."
+  },
+  {
+    "keywords": ["skin", "thickness", "triceps", "fat", "calculate"],
+    "question": "Why is skin thickness measured?",
+    "answer": "Triceps skinfold thickness is used to estimate body fat percentage. In diabetes studies, it serves as an indicator of subcutaneous fat, which correlates with insulin resistance."
+  },
+  {
+    "keywords": ["insulin", "test", "requirement", "hormone"],
+    "question": "How is insulin connected to diabetes?",
+    "answer": "Insulin is a hormone that regulates blood sugar. Type 1 diabetes occurs when the body produces little to no insulin, while Type 2 involves the body becoming resistant to insulin's effects."
+  },
+  {
+    "keywords": ["diet", "prevention", "lifestyle", "control", "sugar"],
+    "question": "How to control blood sugar through lifestyle?",
+    "answer": "Monitoring carbohydrate intake, regular exercise, maintaining a healthy weight, and staying hydrated are key ways to manage and stabilize glucose levels naturally."
+  }
+]

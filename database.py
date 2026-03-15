@@ -9,7 +9,13 @@ from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 import os
 
-DATABASE_URL = "sqlite:///./codecure.db"
+# Handle Vercel's read-only filesystem
+if os.environ.get('VERCEL'):
+    DATABASE_URL = "sqlite:////tmp/codecure.db"
+    # Create the DB in /tmp if it doesn't exist
+    # Note: This will be wiped on every cold start/deployment
+else:
+    DATABASE_URL = "sqlite:///./codecure.db"
 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

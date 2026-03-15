@@ -54,8 +54,8 @@ try:
     scaler = joblib.load(os.path.join(MODEL_DIR, "scaler.pkl"))
     feature_names = joblib.load(os.path.join(MODEL_DIR, "feature_names.pkl"))
     print("[OK] AI Model loaded successfully!")
-except FileNotFoundError:
-    print("[WARNING] Model not found! Please run 'python train_model.py' first.")
+except Exception as e:
+    print(f"[ERROR] AI Model failed to load from {os.path.abspath(MODEL_DIR)}: {e}")
     model = None
     scaler = None
     feature_names = None
@@ -506,5 +506,4 @@ async def startup_event():
             if col not in cols:
                 conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {col} {col_type}"))
 
-    print("[START] CodeCure AI Health-Tech Platform is running!")
-    print("[URL] Open http://127.0.0.1:8000 in your browser")
+    print("[START] CodeCure AI Platform Ready (Vercel Mode: {})".format(bool(os.environ.get('VERCEL'))))

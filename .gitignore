@@ -9,12 +9,15 @@ venv/
 .venv/
 env/
 
-# Database and Data
+# Database and Data (Generated locally)
 *.db
 diabetes.csv
 
-# Model files
-model/*.pkl
+# Model files (Must be tracked for deployment)
+!model/*.pkl
+
+# Assets (Must be tracked for deployment)
+!static/codecure_kb.json
 
 # IDE and OS
 .vscode/
@@ -24,6 +27,3 @@ Thumbs.db
 
 # Environment variables
 .env
-
-# Root redundant files
-static/codecure_kb.json
