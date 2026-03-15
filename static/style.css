@@ -283,6 +283,17 @@ body::after {
     transform: scale(1.1);
 }
 
+.slide-1 { background-image: url('/static/images/slide1.png'); }
+.slide-2 { background-image: url('/static/images/slide2.png'); }
+.slide-3 { background-image: url('/static/images/slide3.png'); }
+.slide-4 { background-image: url('/static/images/slide4.png'); }
+.slide-5 { background-image: url('/static/images/slide5.png'); }
+.slide-6 { background-image: url('/static/images/slide6.png'); }
+.slide-7 { background-image: url('/static/images/slide7.png'); }
+.slide-8 { background-image: url('/static/images/slide8.png'); }
+.slide-9 { background-image: url('/static/images/slide9.png'); }
+.slide-10 { background-image: url('/static/images/slide10.png'); }
+
 .hero-slideshow .slide.active {
     opacity: 1;
     transform: scale(1);
@@ -315,7 +326,7 @@ body::after {
     gap: var(--space-sm);
     padding: var(--space-xs) var(--space-md);
     background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: var(--radius-full);
     font-size: 0.8rem;
     color: #ffffff;
@@ -391,7 +402,8 @@ body::after {
 
 .hero-stat-label {
     font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: white;
+    opacity: 0.9;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-weight: 600;
