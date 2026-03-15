@@ -8,13 +8,38 @@ document.addEventListener('DOMContentLoaded', () => {
     // Page Loader logic
     const hideLoader = () => {
         const loader = document.getElementById('page-loader');
+        const statusEl = loader ? loader.querySelector('.loader-status') : null;
+        
         if (loader) {
+            // Cycle status messages for a more "AI" feel during the 2.5s wait
+            if (statusEl) {
+                const messages = [
+                    "Initializing AI Diagnostics...",
+                    "Connecting to Neural Core...",
+                    "Analyzing Clinical Patterns...",
+                    "Optimizing Secure Data Stream..."
+                ];
+                let i = 0;
+                const msgInterval = setInterval(() => {
+                    if (i < messages.length - 1) {
+                        i++;
+                        statusEl.style.opacity = '0';
+                        setTimeout(() => {
+                            statusEl.textContent = messages[i];
+                            statusEl.style.opacity = '1';
+                        }, 200);
+                    } else {
+                        clearInterval(msgInterval);
+                    }
+                }, 600);
+            }
+
             setTimeout(() => {
                 loader.classList.add('fade-out');
                 setTimeout(() => {
                     loader.style.display = 'none';
                 }, 600);
-            }, 2500); // Increased delay for better visibility
+            }, 2500);
         }
     };
 
