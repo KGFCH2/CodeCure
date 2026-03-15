@@ -9,15 +9,22 @@ from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 import os
 
-# Handle Vercel's read-only filesystem
-if os.environ.get('VERCEL'):
+# Handle Database URL (Vercel vs Local)
+# Production: Prioritize environment variables from Vercel Postgres/Supabase/Neon
+DATABASE_URL = os.environ.get('POSTGRES_URL') or os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
+    # SQL Alchemy requires 'postgresql://' instead of 'postgres://'
+    if DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+elif os.environ.get('VERCEL'):
+    # Ephemeral fallback if no production DB is connected
     DATABASE_URL = "sqlite:////tmp/codecure.db"
-    # Create the DB in /tmp if it doesn't exist
-    # Note: This will be wiped on every cold start/deployment
 else:
+    # Standard local SQLite
     DATABASE_URL = "sqlite:///./codecure.db"
 
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False}) if "sqlite" in DATABASE_URL else create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

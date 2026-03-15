@@ -793,6 +793,33 @@
             return id;
         }
 
+        // Local Persistence for Serverless Fallback
+        function savePredictionLocally(input, result) {
+            try {
+                const storageKey = 'codecure_history';
+                let history = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                
+                const record = {
+                    id: Math.floor(Math.random() * 9000) + 1000,
+                    name: input.name || 'Anonymous',
+                    age: input.age,
+                    glucose: input.glucose,
+                    bmi: input.bmi,
+                    health_score: result.health_score,
+                    risk_level: result.risk_level,
+                    created_at: new Date().toISOString()
+                };
+                
+                history.unshift(record);
+                localStorage.setItem(storageKey, JSON.stringify(history.slice(0, 50)));
+            } catch (e) { console.error("Local save failed:", e); }
+        }
+
+        function getLocalHistory() {
+            try { return JSON.parse(localStorage.getItem('codecure_history') || '[]'); }
+            catch (e) { return []; }
+        }
+
         // ────────────────────────────────────────
         // Tab Navigation
         // ────────────────────────────────────────
@@ -890,6 +917,10 @@
                 }
 
                 const result = await response.json();
+                
+                // Persistence Fallback for Serverless (Save locally)
+                savePredictionLocally(data, result);
+                
                 displayResults(result);
                 showToast('AI Analysis completed successfully!', 'success');
                 updateHomeStats();
@@ -1043,10 +1074,18 @@
                 document.getElementById('dash-avg-glucose').textContent = data.avg_glucose || '—';
                 document.getElementById('dash-avg-bmi').textContent = data.avg_bmi || '—';
 
-                dashboardDataStore = data.recent_predictions;
+                // Merge with Local History for Serverless Persistence
+                const localHistory = getLocalHistory();
+                const serverRecordIds = new Set(data.recent_predictions.map(p => p.id));
+                const uniqueLocal = localHistory.filter(p => !serverRecordIds.has(p.id));
+                
+                dashboardDataStore = [...data.recent_predictions, ...uniqueLocal].sort((a, b) => 
+                    new Date(b.created_at) - new Date(a.created_at)
+                );
+
                 const container = document.getElementById('patients-table-container');
 
-                if (data.recent_predictions.length === 0) {
+                if (dashboardDataStore.length === 0) {
                     container.innerHTML = `
                 <div class="empty-state">
                     <div class="empty-state-icon"><i data-lucide="database-backup"></i></div>
@@ -1077,7 +1116,7 @@
                     <tbody>
         `;
 
-                data.recent_predictions.forEach(p => {
+                dashboardDataStore.forEach(p => {
                     const riskClass = (p.risk_level || 'low').toLowerCase();
                     const date = new Date(p.created_at).toLocaleDateString('en-IN', {
                         day: '2-digit', month: 'short', year: 'numeric'
