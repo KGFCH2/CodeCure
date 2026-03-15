@@ -310,11 +310,40 @@ function resetForm() {
 // ────────────────────────────────────────
 // Dashboard Logic
 // ────────────────────────────────────────
+function updateDashboardStats() {
+    const total = dashboardDataStore.length;
+    const highRisk = dashboardDataStore.filter(p => ['High', 'Critical'].includes(p.risk_level)).length;
+    const lowRisk = total - highRisk;
+    
+    // Use Number() to ensure calculations are valid
+    const avgScore = total > 0 ? (dashboardDataStore.reduce((acc, p) => acc + Number(p.health_score || 0), 0) / total).toFixed(1) : '—';
+    const avgGlucose = total > 0 ? (dashboardDataStore.reduce((acc, p) => acc + Number(p.glucose || 0), 0) / total).toFixed(1) : '—';
+    const avgBmi = total > 0 ? (dashboardDataStore.reduce((acc, p) => acc + Number(p.bmi || 0), 0) / total).toFixed(1) : '—';
+
+    const els = {
+        total: document.getElementById('dash-total'),
+        high: document.getElementById('dash-high-risk'),
+        low: document.getElementById('dash-low-risk'),
+        avgScore: document.getElementById('dash-avg-score'),
+        avgGlucose: document.getElementById('dash-avg-glucose'),
+        avgBmi: document.getElementById('dash-avg-bmi')
+    };
+
+    if (els.total) animateCounter(els.total, total);
+    if (els.high) animateCounter(els.high, highRisk);
+    if (els.low) animateCounter(els.low, lowRisk);
+    
+    if (els.avgScore) els.avgScore.textContent = avgScore;
+    if (els.avgGlucose) els.avgGlucose.textContent = avgGlucose;
+    if (els.avgBmi) els.avgBmi.textContent = avgBmi;
+}
+
 async function loadDashboard() {
     try {
         const response = await fetch(`/api/dashboard?device_id=${encodeURIComponent(getDeviceId())}`);
         const data = await response.json();
 
+        // Merge with Local History for Serverless Persistence
         const localHistory = getLocalHistory();
         const serverRecordIds = new Set((data.recent_predictions || []).map(p => p.id));
         const uniqueLocal = localHistory.filter(p => !serverRecordIds.has(p.id));
@@ -323,29 +352,7 @@ async function loadDashboard() {
             new Date(b.created_at) - new Date(a.created_at)
         );
 
-        const total = dashboardDataStore.length;
-        const highRisk = dashboardDataStore.filter(p => ['High', 'Critical'].includes(p.risk_level)).length;
-        const lowRisk = total - highRisk;
-        
-        const avgScore = total > 0 ? (dashboardDataStore.reduce((acc, p) => acc + (p.health_score || 0), 0) / total).toFixed(1) : '—';
-        const avgGlucose = total > 0 ? (dashboardDataStore.reduce((acc, p) => acc + (p.glucose || 0), 0) / total).toFixed(1) : '—';
-        const avgBmi = total > 0 ? (dashboardDataStore.reduce((acc, p) => acc + (p.bmi || 0), 0) / total).toFixed(1) : '—';
-
-        const els = {
-            total: document.getElementById('dash-total'),
-            high: document.getElementById('dash-high-risk'),
-            low: document.getElementById('dash-low-risk'),
-            avgScore: document.getElementById('dash-avg-score'),
-            avgGlucose: document.getElementById('dash-avg-glucose'),
-            avgBmi: document.getElementById('dash-avg-bmi')
-        };
-
-        if (els.total) animateCounter(els.total, total);
-        if (els.high) animateCounter(els.high, highRisk);
-        if (els.low) animateCounter(els.low, lowRisk);
-        if (els.avgScore) els.avgScore.textContent = avgScore;
-        if (els.avgGlucose) els.avgGlucose.textContent = avgGlucose;
-        if (els.avgBmi) els.avgBmi.textContent = avgBmi;
+        updateDashboardStats();
 
         const container = document.getElementById('patients-table-container');
         if (container) renderDashboardTable(container);
@@ -354,6 +361,9 @@ async function loadDashboard() {
         console.error('Dashboard error:', error);
         const localHistory = getLocalHistory();
         dashboardDataStore = localHistory.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+        
+        updateDashboardStats();
+        
         const container = document.getElementById('patients-table-container');
         if (container) renderDashboardTable(container);
     }
@@ -378,7 +388,7 @@ function renderDashboardTable(container) {
                 <thead>
                     <tr>
                         <th>ID</th><th>Name</th><th>Age</th><th>Glucose</th><th>BMI</th>
-                        <th>Health Score</th><th>Risk Level</th><th>Date</th><th>Action</th>
+                        <th>Health Score</th><th>Risk Level</th><th>Date & Time</th><th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -386,8 +396,14 @@ function renderDashboardTable(container) {
 
     dashboardDataStore.forEach(p => {
         const riskClass = (p.risk_level || 'low').toLowerCase();
-        const date = new Date(p.created_at).toLocaleDateString('en-IN', {
+        
+        // Detailed Date & Time format as requested
+        const dateObj = new Date(p.created_at);
+        const dateStr = dateObj.toLocaleDateString('en-IN', {
             day: '2-digit', month: 'short', year: 'numeric'
+        });
+        const timeStr = dateObj.toLocaleTimeString('en-IN', {
+            hour: '2-digit', minute: '2-digit', hour12: true
         });
 
         tableHTML += `
@@ -399,7 +415,10 @@ function renderDashboardTable(container) {
                 <td style="font-family: 'JetBrains Mono', monospace;">${p.bmi}</td>
                 <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${p.health_score || '—'}</td>
                 <td><span class="table-badge ${riskClass}">${p.risk_level || '—'}</span></td>
-                <td style="color: var(--text-muted);">${date}</td>
+                <td>
+                    <div style="font-size: 0.9rem; color: var(--text-primary);">${dateStr}</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">${timeStr}</div>
+                </td>
                 <td>
                     <div style="display: flex; gap: 8px;">
                         <button class="action-btn" onclick="showPatientSummary(${p.id})" title="View Details" style="background: var(--bg-secondary); color: var(--primary-600);">
@@ -427,9 +446,14 @@ function showPatientSummary(patientId) {
     if (!patient) return;
 
     document.getElementById('modal-name').textContent = patient.name || 'Anonymous Patient';
-    document.getElementById('modal-date').textContent = 'Analyzed on ' + new Date(patient.created_at).toLocaleDateString('en-IN', {
+    const dateObj = new Date(patient.created_at);
+    const dateStr = dateObj.toLocaleDateString('en-IN', {
         day: '2-digit', month: 'long', year: 'numeric'
     });
+    const timeStr = dateObj.toLocaleTimeString('en-IN', {
+        hour: '2-digit', minute: '2-digit', hour12: true
+    });
+    document.getElementById('modal-date').textContent = `Analyzed on ${dateStr} at ${timeStr}`;
 
     document.getElementById('modal-glucose').textContent = patient.glucose + ' mg/dL';
     document.getElementById('modal-bmi').textContent = patient.bmi + ' kg/m²';
@@ -457,12 +481,20 @@ function closeModal() {
 async function updateHomeStats() {
     try {
         const response = await fetch(`/api/dashboard?device_id=${encodeURIComponent(getDeviceId())}`);
-        const data = await response.json();
+        let serverTotal = 0;
+        let serverPredictions = [];
+        
+        if (response.ok) {
+            const data = await response.json();
+            serverTotal = data.total_patients || 0;
+            serverPredictions = data.recent_predictions || [];
+        }
         
         const localHistory = getLocalHistory();
-        const serverRecordIds = new Set((data.recent_predictions || []).map(p => p.id));
-        const uniqueLocal = localHistory.filter(p => !serverRecordIds.has(p.id));
-        const total = (data.total_patients || 0) + uniqueLocal.length;
+        const serverRecordIds = new Set(serverPredictions.map(p => p.id));
+        const uniqueLocalCount = localHistory.filter(p => !serverRecordIds.has(p.id)).length;
+        
+        const total = Math.max(serverTotal, serverPredictions.length) + uniqueLocalCount;
         
         const statEl = document.getElementById('stat-total');
         if (statEl) statEl.textContent = total;
