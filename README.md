@@ -98,4 +98,5 @@ CodeCure/
 
 ## 📜 License & Support
 MIT License. Created for the future of intelligent healthcare delivery.
+
 *Built with ❤️ by the CodeCure Team.*

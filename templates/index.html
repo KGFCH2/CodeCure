@@ -597,7 +597,7 @@
         <div class="tab-content" id="tab-terms">
             <section class="section">
                 <div class="section-header">
-                    <div class="section-icon blue"><i data-lucide="file-text"></i></div>
+                    <div class="section-icon blue"><i data-lucide="file-text" style="color: var(--primary-500);"></i></div>
                     <div>
                         <h2 class="section-title">Terms of Service</h2>
                         <p class="section-description">Legal framework for using the CodeCure platform</p>
@@ -605,16 +605,16 @@
                 </div>
                 <div class="card">
                     <div class="content-text">
-                        <h3>1. Acceptance of Terms</h3>
+                        <h3><i data-lucide="check-circle" class="icon-inline blue"></i> 1. Acceptance of Terms</h3>
                         <p>By accessing and using CodeCure, you agree to be bound by these Terms of Service and all applicable laws and regulations.</p>
                         
-                        <h3>2. Medical Disclaimer</h3>
+                        <h3><i data-lucide="alert-triangle" class="icon-inline amber"></i> 2. Medical Disclaimer</h3>
                         <p><strong>IMPORTANT:</strong> CodeCure is an AI-driven informational tool. It is NOT a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.</p>
                         
-                        <h3>3. Use License</h3>
+                        <h3><i data-lucide="file-key" class="icon-inline blue"></i> 3. Use License</h3>
                         <p>Permission is granted to use CodeCure for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title.</p>
                         
-                        <h3>4. Limitations</h3>
+                        <h3><i data-lucide="shield-alert" class="icon-inline rose"></i> 4. Limitations</h3>
                         <p>In no event shall CodeCure or its developers be liable for any damages (including, without limitation, damages for loss of data or profit) arising out of the use or inability to use the platform.</p>
                     </div>
                 </div>
@@ -625,7 +625,7 @@
         <div class="tab-content" id="tab-privacy">
             <section class="section">
                 <div class="section-header">
-                    <div class="section-icon emerald"><i data-lucide="shield-check"></i></div>
+                    <div class="section-icon emerald"><i data-lucide="shield-check" style="color: var(--emerald-500);"></i></div>
                     <div>
                         <h2 class="section-title">Privacy Policy</h2>
                         <p class="section-description">How we handle and protect your data</p>
@@ -633,16 +633,16 @@
                 </div>
                 <div class="card">
                     <div class="content-text">
-                        <h3>1. Data Collection</h3>
+                        <h3><i data-lucide="database" class="icon-inline blue"></i> 1. Data Collection</h3>
                         <p>We collect information you provide directly through the AI diagnostic forms, including age, glucose levels, and other health metrics. We also use a device-specific identifier to track your prediction history.</p>
                         
-                        <h3>2. Data Usage</h3>
+                        <h3><i data-lucide="activity" class="icon-inline emerald"></i> 2. Data Usage</h3>
                         <p>The collected data is used specifically to provide AI-driven health risk predictions and to improve our machine learning models. We do not sell your personal data to third parties.</p>
                         
-                        <h3>3. Data Storage</h3>
+                        <h3><i data-lucide="server" class="icon-inline cyan"></i> 3. Data Storage</h3>
                         <p>Some data is stored locally on your device for quick access, while clinical metrics may be processed on our secure servers to generate analysis results.</p>
                         
-                        <h3>4. Security</h3>
+                        <h3><i data-lucide="lock" class="icon-inline blue"></i> 4. Security</h3>
                         <p>We implement industry-standard security measures to protect your information from unauthorized access or disclosure.</p>
                     </div>
                 </div>
@@ -653,7 +653,7 @@
         <div class="tab-content" id="tab-faq">
             <section class="section">
                 <div class="section-header">
-                    <div class="section-icon amber"><i data-lucide="help-circle"></i></div>
+                    <div class="section-icon amber"><i data-lucide="help-circle" style="color: var(--risk-medium);"></i></div>
                     <div>
                         <h2 class="section-title">Frequently Asked Questions</h2>
                         <p class="section-description">Common queries about CodeCure</p>
@@ -661,20 +661,32 @@
                 </div>
                 <div class="dashboard-grid" style="grid-template-columns: 1fr;">
                     <div class="card">
-                        <h3>What is CodeCure?</h3>
+                        <h3><i data-lucide="help-circle" class="icon-inline blue"></i> What is CodeCure?</h3>
                         <p>CodeCure is an advanced AI health-tech platform that uses Machine Learning to provide predictive insights into chronic conditions like diabetes.</p>
                     </div>
                     <div class="card">
-                        <h3>How accurate are the predictions?</h3>
+                        <h3><i data-lucide="target" class="icon-inline emerald"></i> How accurate are the predictions?</h3>
                         <p>Our models achieve high accuracy on clinical datasets. However, AI predictions are probabilistic and should only be used as a preliminary screening tool, not a final diagnosis.</p>
                     </div>
                     <div class="card">
-                        <h3>Is my health data secure?</h3>
+                        <h3><i data-lucide="lock" class="icon-inline cyan"></i> Is my health data secure?</h3>
                         <p>Yes, we use secure transmission and storage protocols. Most of your browsing history stays locally on your device.</p>
                     </div>
                     <div class="card">
-                        <h3>Can I use this for clinical decisions?</h3>
+                        <h3><i data-lucide="user-minus" class="icon-inline rose"></i> Can I use this for clinical decisions?</h3>
                         <p>No. You must consult a certified medical professional for any clinical decisions or treatments.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i data-lucide="download" class="icon-inline blue"></i> How can I get my report?</h3>
+                        <p>After running an AI analysis, a "Download Report" button will appear. You can download a high-quality PDF containing your scores and recommendations.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i data-lucide="refresh-cw" class="icon-inline emerald"></i> Why does my score change?</h3>
+                        <p>Your Health Score is dynamic. It reflects the latest data you provide. Changes in glucose levels, BMI, or blood pressure will directly influence your calculated index.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i data-lucide="message-square" class="icon-inline blue"></i> How do I talk to the AI?</h3>
+                        <p>Use the chat bubble icon in the bottom right corner to open the CodeCure AI Assistant for instant help with platform queries.</p>
                     </div>
                 </div>
             </section>
@@ -684,7 +696,7 @@
         <div class="tab-content" id="tab-docs">
             <section class="section">
                 <div class="section-header">
-                    <div class="section-icon blue"><i data-lucide="book-open"></i></div>
+                    <div class="section-icon blue"><i data-lucide="book-open" style="color: var(--primary-400);"></i></div>
                     <div>
                         <h2 class="section-title">Documentation</h2>
                         <p class="section-description">Technical details and usage guide</p>
@@ -692,10 +704,10 @@
                 </div>
                 <div class="card">
                     <div class="content-text">
-                        <h3>Platform Overview</h3>
+                        <h3><i data-lucide="map" class="icon-inline blue"></i> Platform Overview</h3>
                         <p>CodeCure is built using a modern stack (Python, FastAPI, Scikit-learn) to bridge the gap between AI research and clinical utility.</p>
                         
-                        <h3>How it Works</h3>
+                        <h3><i data-lucide="cog" class="icon-inline emerald"></i> How it Works</h3>
                         <ol>
                             <li><strong>Data Input:</strong> Users provide vitals and medical metrics.</li>
                             <li><strong>AI Analysis:</strong> Our Random Forest and Neural models process the data.</li>
@@ -703,7 +715,7 @@
                             <li><strong>Reporting:</strong> Users can download a detailed PDF report of their scores.</li>
                         </ol>
 
-                        <h3>Technical Architecture</h3>
+                        <h3><i data-lucide="layers" class="icon-inline cyan"></i> Technical Architecture</h3>
                         <ul>
                             <li><strong>Backend:</strong> FastAPI for high-performance async processing.</li>
                             <li><strong>Frontend:</strong> Vanilla JS with a custom CSS design system.</li>
@@ -717,10 +729,10 @@
         <!-- Footer -->
         <footer class="footer">
             <div class="footer-links">
-                <a href="#" class="footer-link" onclick="switchTab('terms')">Terms</a>
-                <a href="#" class="footer-link" onclick="switchTab('privacy')">Privacy</a>
-                <a href="#" class="footer-link" onclick="switchTab('faq')">FAQs</a>
-                <a href="#" class="footer-link" onclick="switchTab('docs')">Documentation</a>
+                <a href="#" class="footer-link" onclick="switchTab('terms')"><i data-lucide="file-text"></i> Terms</a>
+                <a href="#" class="footer-link" onclick="switchTab('privacy')"><i data-lucide="shield-check"></i> Privacy</a>
+                <a href="#" class="footer-link" onclick="switchTab('faq')"><i data-lucide="help-circle"></i> FAQs</a>
+                <a href="#" class="footer-link" onclick="switchTab('docs')"><i data-lucide="book-open"></i> Documentation</a>
             </div>
             <p class="footer-text">
                 AI Health-Tech Platform v1.0.0 ·
