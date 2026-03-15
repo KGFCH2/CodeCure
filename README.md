@@ -49,6 +49,7 @@ CodeCure is optimized for Vercel deployment using serverless functions.
 3. **Configuration**: Uses `vercel.json` for seamless FastAPI routing.
 
 ### Persistent Storage (Cloud)
+
 To enable shared database storage across all users, connect a **Vercel Postgres** or **Neon DB** through the Vercel dashboard. The system will automatically detect the connection.
 
 ---
@@ -97,6 +98,7 @@ CodeCure/
 ---
 
 ## 📜 License & Support
+
 MIT License. Created for the future of intelligent healthcare delivery.
 
 *Built with ❤️ by the CodeCure Team.*
