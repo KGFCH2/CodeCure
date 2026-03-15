@@ -184,6 +184,20 @@ body::after {
     justify-content: center;
     font-size: 1.25rem;
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+    transition: var(--transition-base);
+}
+
+.navbar-brand:hover .navbar-logo {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+.navbar-logo svg {
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.navbar-brand:hover .navbar-logo svg {
+    transform: rotate(15deg) scale(1.1);
 }
 
 .navbar-title {
@@ -227,6 +241,16 @@ body::after {
 .navbar-nav a.active {
     color: var(--text-primary);
     background: rgba(16, 185, 129, 0.08);
+}
+
+/* Animate Icons on Nav Link Hover */
+.navbar-nav a svg {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s ease;
+}
+
+.navbar-nav a:hover svg {
+    transform: translateY(-3px) scale(1.1);
+    color: var(--primary-500);
 }
 
 .navbar-nav a.active {
@@ -680,6 +704,14 @@ body::after {
     overflow: hidden;
 }
 
+.btn svg {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn:hover svg {
+    transform: scale(1.1) rotate(5deg);
+}
+
 .btn-primary {
     background: var(--gradient-primary);
     color: white;
@@ -779,6 +811,11 @@ body::after {
     width: 200px;
     height: 200px;
     flex-shrink: 0;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.score-ring-wrapper:hover {
+    transform: scale(1.05);
 }
 
 .score-ring {
@@ -1029,6 +1066,14 @@ body::after {
     transform: translateX(4px);
 }
 
+.recommendation-item svg {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.recommendation-item:hover svg {
+    transform: scale(1.2) rotate(10deg);
+}
+
 .recommendation-icon {
     font-size: 1.3rem;
     flex-shrink: 0;
@@ -1059,6 +1104,16 @@ body::after {
 .stat-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Animate Icons on Dash Card Hover */
+.stat-card-icon svg {
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s ease;
+}
+
+.stat-card:hover .stat-card-icon svg {
+    transform: scale(1.25) rotate(-5deg);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
 }
 
 .stat-card-icon {
@@ -1233,6 +1288,15 @@ body::after {
     border-color: var(--border-medium);
     transform: translateY(-4px);
     box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+}
+
+/* Animate Icons on Feature Card Hover */
+.feature-icon svg {
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.feature-card:hover .feature-icon svg {
+    transform: scale(1.2) rotate(10deg);
 }
 
 .feature-icon {
