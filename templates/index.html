@@ -103,7 +103,7 @@
         </section>
 
         <!-- Features -->
-        <section class="section">
+        <section class="section mt-3xl">
             <div class="section-header">
                 <div class="section-icon blue"><i data-lucide="zap"></i></div>
                 <div>
@@ -537,14 +537,38 @@
                 <div class="card tech-stack-card">
                     <h3 class="tech-stack-title">Tech Stack</h3>
                     <p class="tech-stack-desc">
-                        <span class="tech-badge python">Python</span>
-                        <span class="tech-badge fastapi">FastAPI</span>
-                        <span class="tech-badge scikit">Scikit-learn</span>
-                        <span class="tech-badge sqlalchemy">SQLAlchemy</span>
-                        <span class="tech-badge sqlite">SQLite</span>
-                        <span class="tech-badge jinja">Jinja2</span>
-                        <span class="tech-badge numpy">NumPy</span>
-                        <span class="tech-badge pandas">Pandas</span>
+                        <span class="tech-badge python">
+                            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/python.svg" alt="Python">
+                            Python
+                        </span>
+                        <span class="tech-badge fastapi">
+                            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/fastapi.svg" alt="FastAPI">
+                            FastAPI
+                        </span>
+                        <span class="tech-badge scikit">
+                            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/scikitlearn.svg" alt="Scikit-learn">
+                            Scikit-learn
+                        </span>
+                        <span class="tech-badge sqlalchemy">
+                            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/sqlalchemy.svg" alt="SQLAlchemy">
+                            SQLAlchemy
+                        </span>
+                        <span class="tech-badge sqlite">
+                            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/sqlite.svg" alt="SQLite">
+                            SQLite
+                        </span>
+                        <span class="tech-badge jinja">
+                            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/jinja.svg" alt="Jinja2">
+                            Jinja2
+                        </span>
+                        <span class="tech-badge numpy">
+                            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/numpy.svg" alt="NumPy">
+                            NumPy
+                        </span>
+                        <span class="tech-badge pandas">
+                            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/pandas.svg" alt="Pandas">
+                            Pandas
+                        </span>
                     </p>
                 </div>
             </section>
@@ -995,13 +1019,16 @@
                 const response = await fetch('/api/dashboard');
                 const data = await response.json();
 
-                document.getElementById('dash-total').textContent = data.total_patients;
-                document.getElementById('dash-high-risk').textContent = data.high_risk_count;
-                document.getElementById('dash-low-risk').textContent = data.low_risk_count;
+                animateCounter(document.getElementById('dash-total'), data.total_patients);
+                animateCounter(document.getElementById('dash-high-risk'), data.high_risk_count);
+                animateCounter(document.getElementById('dash-low-risk'), data.low_risk_count);
+                
+                // For floats/vitals, we use textContent or simple formatting
                 document.getElementById('dash-avg-score').textContent = data.avg_health_score || '—';
                 document.getElementById('dash-avg-glucose').textContent = data.avg_glucose || '—';
                 document.getElementById('dash-avg-bmi').textContent = data.avg_bmi || '—';
 
+                dashboardDataStore = data.recent_predictions;
                 const container = document.getElementById('patients-table-container');
 
                 if (data.recent_predictions.length === 0) {
@@ -1029,6 +1056,7 @@
                             <th>Health Score</th>
                             <th>Risk Level</th>
                             <th>Date</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1050,12 +1078,18 @@
                     <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${p.health_score || '—'}</td>
                     <td><span class="table-badge ${riskClass}">${p.risk_level || '—'}</span></td>
                     <td style="color: var(--text-muted);">${date}</td>
+                    <td>
+                        <button class="action-btn download" onclick="downloadDashboardPDF(${p.id})" title="Download Report">
+                            <i data-lucide="download"></i>
+                        </button>
+                    </td>
                 </tr>
             `;
                 });
 
                 tableHTML += '</tbody></table></div>';
                 container.innerHTML = tableHTML;
+                lucide.createIcons();
 
             } catch (error) {
                 console.error('Dashboard error:', error);
@@ -1095,6 +1129,25 @@
         // ────────────────────────────────────────
         // Download Report (Single-Page HD Clinical Engine)
         // ────────────────────────────────────────
+        let dashboardDataStore = [];
+
+        async function downloadDashboardPDF(id) {
+            const result = dashboardDataStore.find(p => p.id === id);
+            if (!result) return;
+            
+            // Create temporary elements for the PDF generator
+            const data = {
+                name: result.name || 'Anonymous',
+                email: 'Patient Record #' + result.id,
+                score: result.health_score || 0,
+                risk: result.risk_level || 'Low',
+                summary: `Prediction: ${result.prediction === 1 ? 'High Risk' : 'Low Risk'}. Glucose: ${result.glucose}, BMI: ${result.bmi}, Age: ${result.age}.`,
+                probability: (result.prediction_proba * 100).toFixed(1) + '%'
+            };
+            
+            generatePDFReport(data);
+        }
+
         function downloadPDF() {
             const scoreEl = document.getElementById('score-number');
             if (!scoreEl || scoreEl.innerText === '—') {
@@ -1102,13 +1155,26 @@
                 return;
             }
 
-            const patientName = document.getElementById('input-name').value || 'Patient';
-            const patientEmail = document.getElementById('input-email').value || 'Not provided';
-            const score = scoreEl.innerText;
-            const riskText = document.getElementById('risk-text').innerText;
-            const summary = document.getElementById('result-summary').innerText;
-            const probability = document.getElementById('probability-value').innerText;
-            const scoreColor = getScoreColor(score);
+            const data = {
+                name: document.getElementById('input-name').value || 'Patient',
+                email: document.getElementById('input-email').value || 'Not provided',
+                score: scoreEl.innerText,
+                risk: document.getElementById('risk-text').innerText,
+                summary: document.getElementById('result-summary').innerText,
+                probability: document.getElementById('probability-value').innerText,
+                factors: Array.from(document.querySelectorAll('.risk-factor-card')).map(card => ({
+                    name: card.querySelector('.risk-factor-name').innerText,
+                    value: card.querySelector('.risk-factor-value').innerText,
+                    status: card.querySelector('.risk-factor-status').innerText
+                })),
+                recommendations: Array.from(document.querySelectorAll('.recommendation-item span:last-child')).map(rec => rec.innerText)
+            };
+
+            generatePDFReport(data);
+        }
+
+        function generatePDFReport(data) {
+            const scoreColor = getScoreColor(data.score);
 
             const overlay = document.createElement('div');
             overlay.style.position = 'fixed';
@@ -1128,7 +1194,6 @@
                 <div id="pdf-generating-msg" style="margin-bottom: 20px; font-weight: bold; color: #10b981; font-size: 18px;">
                     <span style="font-size: 24px;">📄</span> Finalizing Single-Page Report...
                 </div>
-                <!-- Standard A4 Aspect Ratio Container (800x1131px approx) -->
                 <div id="pdf-report-content" style="width: 800px; height: 1100px; background: white; padding: 40px; border: 1px solid #e2e8f0; color: #111827; box-sizing: border-box; position: relative;">
                     <div style="border-bottom: 4px solid #10b981; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
                         <div>
@@ -1146,8 +1211,8 @@
                             <tr>
                                 <td>
                                     <div style="font-size: 9px; color: #94a3b8; text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">Patient Identity</div>
-                                    <div style="font-size: 20px; font-weight: 800; color: #0f172a;">${patientName}</div>
-                                    <div style="font-size: 13px; color: #475569;">${patientEmail}</div>
+                                    <div style="font-size: 20px; font-weight: 800; color: #0f172a;">${data.name}</div>
+                                    <div style="font-size: 13px; color: #475569;">${data.email}</div>
                                 </td>
                                 <td style="text-align: right;">
                                     <div style="font-size: 9px; color: #94a3b8; text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">Analysis Date</div>
@@ -1160,42 +1225,42 @@
  
                     <div style="display: flex; align-items: center; margin-bottom: 30px; gap: 25px;">
                         <div style="background: ${scoreColor}; color: white; min-width: 90px; height: 90px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 8px 16px rgba(0,0,0,0.15);">
-                            <span style="font-size: 36px; font-weight: 900;">${score}</span>
+                            <span style="font-size: 36px; font-weight: 900;">${data.score}</span>
                             <span style="font-size: 10px; font-weight: 800; text-transform: uppercase;">Score</span>
                         </div>
                         <div>
-                            <h2 style="font-size: 28px; font-weight: 800; margin: 0; color: #0f172a; line-height: 1.1;">${riskText}</h2>
-                            <p style="margin: 6px 0 0; color: #64748b; font-size: 16px;">Disease Risk Probability: <strong style="color: #0f172a;">${probability}</strong></p>
+                            <h2 style="font-size: 28px; font-weight: 800; margin: 0; color: #0f172a; line-height: 1.1;">${data.risk}</h2>
+                            <p style="margin: 6px 0 0; color: #64748b; font-size: 16px;">Disease Risk Probability: <strong style="color: #0f172a;">${data.probability}</strong></p>
                         </div>
                     </div>
  
                     <div style="background: white; border: 1px solid #e2e8f0; border-left: 6px solid ${scoreColor}; padding: 25px; border-radius: 4px 10px 10px 4px; margin-bottom: 30px; line-height: 1.6;">
                         <h4 style="margin: 0 0 8px; font-size: 13px; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800;">Diagnostic Insight</h4>
-                        <p style="margin: 0; color: #334155; font-size: 15px;">${summary}</p>
+                        <p style="margin: 0; color: #334155; font-size: 15px;">${data.summary}</p>
                     </div>
  
                     <div style="margin-bottom: 15px;">
                         <h3 style="color: #10b981; border-bottom: 2px solid #f1f5f9; padding-bottom: 6px; margin-bottom: 10px; font-size: 14px; font-weight: 800;">Biometric Metric Analysis</h3>
                         <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                            ${Array.from(document.querySelectorAll('.risk-factor-card')).map(card => `
+                            ${data.factors ? data.factors.map(f => `
                                 <div style="border: 1px solid #f1f5f9; padding: 8px 10px; border-radius: 6px; background: #fff; width: calc(50% - 3px); box-sizing: border-box;">
-                                    <div style="font-size: 9px; color: #94a3b8; font-weight: bold; margin-bottom: 2px; text-transform: uppercase;">${card.querySelector('.risk-factor-name').innerText}</div>
-                                    <div style="font-size: 16px; font-weight: 900; color: #0f172a;">${card.querySelector('.risk-factor-value').innerText}</div>
-                                    <div style="font-size: 8px; color: #10b981; font-weight: 800; margin-top: 1px;">[ ${card.querySelector('.risk-factor-status').innerText} ]</div>
+                                    <div style="font-size: 9px; color: #94a3b8; font-weight: bold; margin-bottom: 2px; text-transform: uppercase;">${f.name}</div>
+                                    <div style="font-size: 16px; font-weight: 900; color: #0f172a;">${f.value}</div>
+                                    <div style="font-size: 8px; color: #10b981; font-weight: 800; margin-top: 1px;">[ ${f.status} ]</div>
                                 </div>
-                            `).join('')}
+                            `).join('') : '<p style="font-size: 12px; color: var(--text-muted);">Historical data summary - detailed metrics available in patient record.</p>'}
                         </div>
                     </div>
  
-                    <!-- Lifestyle Recommendations Optimized for Page Space -->
+                    <!-- Lifestyle Recommendations -->
                     <div style="margin-bottom:30px;">
                          <h3 style="color: #10b981; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 15px; font-size: 16px; font-weight: 800;">Lifestyle Recommendations</h3>
                          <div style="background: #f0fdf4; border: 1px solid #dcfce7; padding: 20px; border-radius: 10px;">
-                            ${Array.from(document.querySelectorAll('.recommendation-item span:last-child')).map(rec => `
+                            ${data.recommendations ? data.recommendations.map(rec => `
                                 <div style="margin-bottom: 8px; display: flex; align-items: start; gap: 8px; font-size: 13px; color: #065f46;">
-                                    <span>•</span> <span>${rec.innerText}</span>
+                                    <span>•</span> <span>${rec}</span>
                                 </div>
-                            `).join('')}
+                            `).join('') : '<div style="font-size: 13px; color: #065f46;">Consult your healthcare provider for personalized recommendations.</div>'}
                          </div>
                     </div>
  
@@ -1211,7 +1276,7 @@
 
             const opt = {
                 margin: 0,
-                filename: `CodeCure_Report_${patientName.replace(/\s+/g, '_')}.pdf`,
+                filename: `CodeCure_Report_${data.name.replace(/\s+/g, '_')}.pdf`,
                 image: { type: 'jpeg', quality: 1.0 },
                 html2canvas: {
                     scale: 2,
