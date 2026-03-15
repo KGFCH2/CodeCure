@@ -87,9 +87,10 @@ CodeCure/
 ├── vercel.json        # Deployment configuration
 ├── static/
 │   ├── style.css      # Premium Glassmorphism UI
+│   ├── script.js      # Core Vanilla JS (Predictions, Dashboard, AI Logic)
 │   └── codecure_kb.json # Chatbot Knowledge Base
 ├── templates/
-│   └── index.html     # Single Page Application
+│   └── index.html     # Single Page Application Shell
 └── model/             # Trained AI Models
 ```
 
