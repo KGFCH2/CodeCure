@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     loader.style.display = 'none';
                 }, 600);
-            }, 800); // Small delay for premium feel
+            }, 2500); // Increased delay for better visibility
         }
     };
 
