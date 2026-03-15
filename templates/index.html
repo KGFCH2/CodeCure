@@ -619,6 +619,42 @@
     <div class="toast-container" id="toast-container"></div>
 
     <!-- ═══════════════ JAVASCRIPT ═══════════════ -->
+    <!-- ── Patient Summary Modal ── -->
+    <div class="modal-overlay" id="patient-modal">
+        <div class="modal-container">
+            <button class="modal-close" onclick="closeModal()">
+                <i data-lucide="x"></i>
+            </button>
+            <h2 class="modal-title" id="modal-name">Patient Details</h2>
+            <p class="modal-subtitle" id="modal-date">AI Prediction Analysis</p>
+
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span class="summary-label">Glucose Level</span>
+                    <span class="summary-value" id="modal-glucose">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Measured BMI</span>
+                    <span class="summary-value" id="modal-bmi">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Health Score</span>
+                    <span class="summary-value" id="modal-score">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Risk Category</span>
+                    <span class="table-badge" id="modal-risk">Normal</span>
+                </div>
+            </div>
+
+            <div class="summary-factors">
+                <p class="summary-factor-title"><i data-lucide="info"
+                        style="width:14px; display:inline; margin-right:4px;"></i>AI Summary:</p>
+                <p class="summary-factor-text" id="modal-summary">Loading intelligent analysis...</p>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Initialize Lucide Icons
         window.addEventListener('DOMContentLoaded', () => {
@@ -1164,9 +1200,14 @@
                     <td><span class="table-badge ${riskClass}">${p.risk_level || '—'}</span></td>
                     <td style="color: var(--text-muted);">${date}</td>
                     <td>
-                        <button class="action-btn download" onclick="downloadDashboardPDF(${p.id})" title="Download Report">
-                            <i data-lucide="download"></i>
-                        </button>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="action-btn" onclick="showPatientSummary(${p.id})" title="View Details" style="background: var(--bg-secondary); color: var(--primary-600);">
+                                <i data-lucide="eye"></i>
+                            </button>
+                            <button class="action-btn download" onclick="downloadDashboardPDF(${p.id})" title="Download Report">
+                                <i data-lucide="download"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             `;
@@ -1175,6 +1216,38 @@
                 tableHTML += '</tbody></table></div>';
                 container.innerHTML = tableHTML;
                 lucide.createIcons();
+        }
+
+        // ── Modal Handlers ──
+        function showPatientSummary(patientId) {
+            const patient = dashboardDataStore.find(p => p.id === patientId);
+            if (!patient) return;
+
+            document.getElementById('modal-name').textContent = patient.name || 'Anonymous Patient';
+            document.getElementById('modal-date').textContent = 'Analyzed on ' + new Date(patient.created_at).toLocaleDateString('en-IN', {
+                day: '2-digit', month: 'long', year: 'numeric'
+            });
+
+            document.getElementById('modal-glucose').textContent = patient.glucose + ' mg/dL';
+            document.getElementById('modal-bmi').textContent = patient.bmi + ' kg/m²';
+            document.getElementById('modal-score').textContent = patient.health_score + '/100';
+
+            const riskEl = document.getElementById('modal-risk');
+            riskEl.textContent = patient.risk_level || 'Unknown';
+            riskEl.className = 'table-badge ' + (patient.risk_level || 'low').toLowerCase();
+
+            // AI Summary Fallback if summary is missing in object
+            const summary = patient.summary || `Based on a glucose level of ${patient.glucose} and a BMI of ${patient.bmi}, the AI has categorized this patient as ${patient.risk_level}. Further medical consultation is advised.`;
+            document.getElementById('modal-summary').textContent = summary;
+
+            document.getElementById('patient-modal').classList.add('active');
+            
+            // Re-render lucide icons in modal
+            lucide.createIcons();
+        }
+
+        function closeModal() {
+            document.getElementById('patient-modal').classList.remove('active');
         }
 
         // ────────────────────────────────────────
@@ -1533,19 +1606,27 @@
             if (bestMatch && maxScore > 1) return bestMatch;
 
             // 3. Broad Relation Guard
-            const globalKeywords = ['codecure', 'health', 'score', 'diabetes', 'predict', 'report', 'dashboard', 'ai', 'data', 'privacy', 'clinical', 'bmi', 'glucose', 'bp', 'help', 'json', 'file'];
+            const globalKeywords = [
+                'codecure', 'health', 'score', 'diabetes', 'predict', 'report', 'dashboard', 'ai', 
+                'data', 'privacy', 'clinical', 'bmi', 'glucose', 'bp', 'help', 'json', 'file',
+                'calculate', 'understood', 'vercel', 'save', 'accuracy', 'reliable', 'blood', 'sugar'
+            ];
             const isRelated = globalKeywords.some(k => q.includes(k));
 
             if (!isRelated) {
-                return "I do not have the knowledge for this question or statement. I am capable only for CodeCure related questions.";
+                return "I am your dedicated CodeCure assistant. I can help with platform features, diabetes insights, and technical details. Please ask something related to CodeCure!";
             }
 
             // Fallback for specific missing intents
             if (q.includes('json') || q.includes('file')) {
                 return "The JSON file acts as my 'Knowledge Base'. It allows CodeCure to store a list of FAQs and technical details that I can access instantly to answer your questions accurately.";
             }
+            
+            if (q.includes('calculate')) {
+                return "I can explain how to calculate metrics like BMI and Glucose. Just ask 'How to calculate BMI' or 'How to understand glucose levels'.";
+            }
 
-            return "I am capable only for CodeCure related questions. Could you please rephrase your question for better clarity?";
+            return "I'm specialized in CodeCure-related queries. Could you please rephrase or be more specific about what you'd like to know?";
         }
     </script>
 </body>
