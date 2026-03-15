@@ -45,24 +45,38 @@
         <div class="tab-content active" id="tab-home">
             <!-- Hero -->
             <section class="hero-section">
-                <div class="hero-badge">
-                    <span class="pulse-dot"></span>
-                    AI-Powered Health Intelligence
+                <div class="hero-slideshow">
+                    <div class="slide active" style="background-image: url('/static/images/slide1.png')"></div>
+                    <div class="slide" style="background-image: url('/static/images/slide2.png')"></div>
+                    <div class="slide" style="background-image: url('/static/images/slide3.png')"></div>
+                    <div class="slide" style="background-image: url('/static/images/slide4.png')"></div>
+                    <div class="slide" style="background-image: url('/static/images/slide5.png')"></div>
+                    <div class="slide" style="background-image: url('/static/images/slide6.png')"></div>
+                    <div class="slide" style="background-image: url('/static/images/slide7.png')"></div>
+                    <div class="slide" style="background-image: url('/static/images/slide8.png')"></div>
+                    <div class="slide" style="background-image: url('/static/images/slide9.png')"></div>
+                    <div class="slide" style="background-image: url('/static/images/slide10.png')"></div>
+                    <div class="hero-overlay"></div>
                 </div>
-                <h1 class="hero-title">
-                    Predict. Protect.<br>
-                    <span class="gradient-text">Personalize Healthcare.</span>
-                </h1>
-                <p class="hero-subtitle">
-                    CodeCure uses advanced machine learning to predict chronic disease risk,
-                    generate explainable insights, and deliver personalized health recommendations —
-                    all in real time.
-                </p>
-                <div class="btn-group">
-                    <button class="btn btn-primary" onclick="switchTab('predict')">
-                        <i data-lucide="sparkles"></i> Start AI Analysis
-                    </button>
-                    <button class="btn btn-secondary" onclick="switchTab('dashboard')">
+                <div class="hero-content">
+                    <div class="hero-badge" style="color: white; border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1);">
+                        <span class="pulse-dot"></span>
+                        AI-Powered Health Intelligence
+                    </div>
+                    <h1 class="hero-title">
+                        Predict. Protect.<br>
+                        <span class="gradient-text">Personalize Healthcare.</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        CodeCure uses advanced machine learning to predict chronic disease risk,
+                        generate explainable insights, and deliver personalized health recommendations —
+                        all in real time.
+                    </p>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="switchTab('predict')">
+                            <i data-lucide="sparkles"></i> Start AI Analysis
+                        </button>
+                        <button class="btn btn-secondary" onclick="switchTab('dashboard')">
                         <i data-lucide="bar-chart-3"></i> View Dashboard
                     </button>
                 </div>
@@ -70,72 +84,73 @@
                 <div class="hero-stats">
                     <div class="hero-stat">
                         <div class="hero-stat-value" id="stat-total">0</div>
-                        <div class="hero-stat-label">Predictions Made</div>
+                        <div class="hero-stat-label" style="color: white; opacity: 0.9;">Predictions Made</div>
                     </div>
                     <div class="hero-stat">
                         <div class="hero-stat-value">3</div>
-                        <div class="hero-stat-label">AI Models Trained</div>
+                        <div class="hero-stat-label" style="color: white; opacity: 0.9;">AI Models Trained</div>
                     </div>
                     <div class="hero-stat">
                         <div class="hero-stat-value">8</div>
-                        <div class="hero-stat-label">Health Metrics</div>
+                        <div class="hero-stat-label" style="color: white; opacity: 0.9;">Health Metrics</div>
                     </div>
                     <div class="hero-stat">
                         <div class="hero-stat-value">100</div>
-                        <div class="hero-stat-label">Health Score Scale</div>
+                        <div class="hero-stat-label" style="color: white; opacity: 0.9;">Health Score Scale</div>
                     </div>
                 </div>
-            </section>
+        </div>
+        </section>
 
-            <!-- Features -->
-            <section class="section">
-                <div class="section-header">
-                    <div class="section-icon blue"><i data-lucide="zap"></i></div>
-                    <div>
-                        <h2 class="section-title">Platform Capabilities</h2>
-                        <p class="section-description">AI-driven modules for comprehensive healthcare intelligence</p>
-                    </div>
+        <!-- Features -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-icon blue"><i data-lucide="zap"></i></div>
+                <div>
+                    <h2 class="section-title">Platform Capabilities</h2>
+                    <p class="section-description">AI-driven modules for comprehensive healthcare intelligence</p>
                 </div>
+            </div>
 
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon blue"><i data-lucide="microscope"></i></div>
-                        <h3 class="feature-title">Chronic Disease Prediction</h3>
-                        <p class="feature-desc">ML models trained on clinical datasets predict diabetes, heart disease,
-                            and hypertension risk with high accuracy.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon cyan"><i data-lucide="award"></i></div>
-                        <h3 class="feature-title">AI Health Score</h3>
-                        <p class="feature-desc">Like a CIBIL score but for health — a single 0-100 index calculated from
-                            your vitals, lifestyle, and AI risk analysis.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon emerald"><i data-lucide="search"></i></div>
-                        <h3 class="feature-title">Explainable AI (XAI)</h3>
-                        <p class="feature-desc">No black boxes. Every prediction comes with clear reasons — which
-                            factors contributed and how much they impact your risk.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon amber"><i data-lucide="clipboard-list"></i></div>
-                        <h3 class="feature-title">Personalized Recommendations</h3>
-                        <p class="feature-desc">AI-generated health recommendations tailored to your specific risk
-                            factors, lifestyle, and medical profile.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon rose"><i data-lucide="trending-up"></i></div>
-                        <h3 class="feature-title">Real-Time Analytics</h3>
-                        <p class="feature-desc">Hospital-grade analytics dashboard showing patient insights, risk
-                            distributions, and population health trends.</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon violet"><i data-lucide="shield-check"></i></div>
-                        <h3 class="feature-title">Privacy-First Design</h3>
-                        <p class="feature-desc">Built with healthcare compliance in mind — encrypted data, role-based
-                            access, and comprehensive audit logging.</p>
-                    </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon blue"><i data-lucide="microscope"></i></div>
+                    <h3 class="feature-title">Chronic Disease Prediction</h3>
+                    <p class="feature-desc">ML models trained on clinical datasets predict diabetes, heart disease,
+                        and hypertension risk with high accuracy.</p>
                 </div>
-            </section>
+                <div class="feature-card">
+                    <div class="feature-icon cyan"><i data-lucide="award"></i></div>
+                    <h3 class="feature-title">AI Health Score</h3>
+                    <p class="feature-desc">Like a CIBIL score but for health — a single 0-100 index calculated from
+                        your vitals, lifestyle, and AI risk analysis.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon emerald"><i data-lucide="search"></i></div>
+                    <h3 class="feature-title">Explainable AI (XAI)</h3>
+                    <p class="feature-desc">No black boxes. Every prediction comes with clear reasons — which
+                        factors contributed and how much they impact your risk.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon amber"><i data-lucide="clipboard-list"></i></div>
+                    <h3 class="feature-title">Personalized Recommendations</h3>
+                    <p class="feature-desc">AI-generated health recommendations tailored to your specific risk
+                        factors, lifestyle, and medical profile.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon rose"><i data-lucide="trending-up"></i></div>
+                    <h3 class="feature-title">Real-Time Analytics</h3>
+                    <p class="feature-desc">Hospital-grade analytics dashboard showing patient insights, risk
+                        distributions, and population health trends.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon violet"><i data-lucide="shield-check"></i></div>
+                    <h3 class="feature-title">Privacy-First Design</h3>
+                    <p class="feature-desc">Built with healthcare compliance in mind — encrypted data, role-based
+                        access, and comprehensive audit logging.</p>
+                </div>
+            </div>
+        </section>
         </div>
 
         <!-- ═══════════════ PREDICT TAB ═══════════════ -->
@@ -436,13 +451,28 @@
         <!-- ═══════════════ ABOUT TAB ═══════════════ -->
         <div class="tab-content" id="tab-about">
             <section class="hero-section about-hero">
-                <h1 class="hero-title">
-                    About <span class="gradient-text">CodeCure</span>
-                </h1>
-                <p class="hero-subtitle">
-                    An AI-driven health-tech platform designed to enhance healthcare delivery,
-                    patient engagement, and health literacy through intelligent machine learning systems.
-                </p>
+                <div class="hero-slideshow">
+                    <div class="slide active" style="background-image: url('/static/images/slide1.png')"></div>
+                    <div class="slide" style="background-image: url('/static/images/slide2.png')"></div>
+                    <div class="slide" style="background-image: url('/static/images/slide3.png')"></div>
+                    <div class="slide" style="background-image: url('/static/images/slide4.png')"></div>
+                    <div class="slide" style="background-image: url('/static/images/slide5.png')"></div>
+                    <div class="slide" style="background-image: url('/static/images/slide6.png')"></div>
+                    <div class="slide" style="background-image: url('/static/images/slide7.png')"></div>
+                    <div class="slide" style="background-image: url('/static/images/slide8.png')"></div>
+                    <div class="slide" style="background-image: url('/static/images/slide9.png')"></div>
+                    <div class="slide" style="background-image: url('/static/images/slide10.png')"></div>
+                    <div class="hero-overlay"></div>
+                </div>
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        About <span class="gradient-text">CodeCure</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        An AI-driven health-tech platform designed to enhance healthcare delivery,
+                        patient engagement, and health literacy through intelligent machine learning systems.
+                    </p>
+                </div>
             </section>
 
             <section class="section about-section">
@@ -529,6 +559,35 @@
         </footer>
 
     </main>
+
+    <!-- AI Chatbot UI -->
+    <div class="chatbot-container" id="chatbot-container">
+        <div class="chatbot-header">
+            <div class="chatbot-title">
+                <i data-lucide="bot-message-square"></i>
+                <span>CodeCure AI Assistant</span>
+            </div>
+            <button class="chatbot-minimize" onclick="toggleChat()" title="Minimize chat">
+                <i data-lucide="minus"></i>
+            </button>
+        </div>
+        <div class="chatbot-messages" id="chat-messages">
+            <div class="message bot-message">
+                Hello! I am your CodeCure AI assistant. How can I help you regarding our platform today?
+            </div>
+        </div>
+        <div class="chatbot-input-area">
+            <input type="text" id="chat-input" placeholder="Ask about CodeCure..." onkeypress="handleChatKey(event)">
+            <button class="chat-send-btn" onclick="sendChatMessage()" title="Send message">
+                <i data-lucide="send"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Chat Toggle Button -->
+    <button class="chat-fab" onclick="toggleChat()" title="Open chatbot">
+        <i data-lucide="message-circle"></i>
+    </button>
 
     <!-- Toast Container -->
     <div class="toast-container" id="toast-container"></div>
@@ -1019,6 +1078,7 @@
         // ── Init ──
         document.addEventListener('DOMContentLoaded', () => {
             updateHomeStats();
+            initSlideshows();
 
             // Navbar scroll effect
             window.addEventListener('scroll', () => {
@@ -1184,6 +1244,153 @@
             if (s >= 70) return '#10b981';
             if (s >= 50) return '#f59e0b';
             return '#ef4444';
+        }
+
+        // ────────────────────────────────────────
+        // Hero Slideshow Logic (Multi-instance)
+        // ────────────────────────────────────────
+        function initSlideshows() {
+            const containers = document.querySelectorAll('.hero-slideshow');
+            containers.forEach(container => {
+                const slides = container.querySelectorAll('.slide');
+                if (slides.length <= 1) return;
+
+                let currentIndex = 0;
+                setInterval(() => {
+                    slides[currentIndex].classList.remove('active');
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    slides[currentIndex].classList.add('active');
+                }, 5000);
+            });
+        }
+
+        // ────────────────────────────────────────
+        // CodeCure AI Assistant (Enhanced NLP)
+        // ────────────────────────────────────────
+        let knowledgeBase = [];
+
+        async function loadKnowledgeBase() {
+            try {
+                const response = await fetch('/static/codecure_kb.json');
+                if (response.ok) {
+                    knowledgeBase = await response.json();
+                } else {
+                    knowledgeBase = [
+                        { "question": "What is CodeCure?", "answer": "CodeCure is an AI-driven health-tech platform for diabetes risk prediction." },
+                        { "question": "How to predict?", "answer": "Go to the 'AI Predict' tab and enter patient metrics." }
+                    ];
+                }
+            } catch (e) { console.error("KB Load Error:", e); }
+        }
+
+        loadKnowledgeBase();
+
+        function toggleChat() {
+            const container = document.getElementById('chatbot-container');
+            container.classList.toggle('active');
+            if (container.classList.contains('active')) document.getElementById('chat-input').focus();
+        }
+
+        function handleChatKey(event) {
+            if (event.key === 'Enter') sendChatMessage();
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const messages = document.getElementById('chat-messages');
+            const query = input.value.trim();
+            if (!query) return;
+
+            addMessage(query, 'user');
+            input.value = '';
+
+            const typing = document.createElement('div');
+            typing.className = 'message bot-message typing';
+            typing.innerText = 'Analyzing...';
+            messages.appendChild(typing);
+            messages.scrollTop = messages.scrollHeight;
+
+            setTimeout(() => {
+                messages.removeChild(typing);
+                addMessage(findBestAnswer(query), 'bot');
+            }, 600);
+        }
+
+        function addMessage(text, type) {
+            const messages = document.getElementById('chat-messages');
+            const div = document.createElement('div');
+            div.className = `message ${type}-message`;
+            div.innerText = text;
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function findBestAnswer(query) {
+            const q = query.toLowerCase().trim();
+            const words = q.split(/\s+/);
+            
+            // 1. Core Identity & Greetings (Always works)
+            const greetings = ['hello', 'hi', 'hey', 'hola', 'hula', 'hii', 'hy'];
+            const isGreeting = greetings.some(g => q.includes(g)) || q.length < 3;
+            const isIdentity = q.includes('who are you') || q.includes('your name') || q.includes('identity');
+
+            if (isGreeting || isIdentity) {
+                return "Hello! I am your CodeCure AI assistant. How can I help you regarding our platform today? You can ask about our 'diabetes prediction', 'health score', or 'data privacy'.";
+            }
+
+            if (q === 'how' || q === 'how?' || q.includes('how to use')) {
+                return "You can use CodeCure by navigating to the 'AI Predict' tab, enter patient data, and click 'Run AI Analysis'.";
+            }
+
+            // 2. Intent matching using explicit keywords from KB
+            let bestMatch = null;
+            let maxScore = 0;
+            
+            knowledgeBase.forEach(item => {
+                let currentScore = 0;
+                
+                // Match against explicit keywords (Whole Word Matching)
+                if (item.keywords) {
+                    item.keywords.forEach(keyword => {
+                        const kw = keyword.toLowerCase();
+                        // Check for whole word to avoid partial matches (e.g., 'is' matching 'this')
+                        const regex = new RegExp(`\\b${kw}\\b`, 'i');
+                        if (regex.test(q)) {
+                            currentScore += 3; // Boosted weight for explicit keywords
+                        }
+                    });
+                }
+                
+                // Match against question text
+                const questionWords = item.question.toLowerCase().replace(/[?]/g, '').split(' ');
+                questionWords.forEach(word => {
+                    if (word.length > 3 && q.includes(word)) {
+                        currentScore += 1;
+                    }
+                });
+                
+                if (currentScore > maxScore) {
+                    maxScore = currentScore;
+                    bestMatch = item.answer;
+                }
+            });
+            
+            if (bestMatch && maxScore > 1) return bestMatch;
+            
+            // 3. Broad Relation Guard
+            const globalKeywords = ['codecure', 'health', 'score', 'diabetes', 'predict', 'report', 'dashboard', 'ai', 'data', 'privacy', 'clinical', 'bmi', 'glucose', 'bp', 'help', 'json', 'file'];
+            const isRelated = globalKeywords.some(k => q.includes(k));
+            
+            if (!isRelated) {
+                return "I do not have the knowledge for this question or statement. I am capable only for CodeCure related questions.";
+            }
+
+            // Fallback for specific missing intents
+            if (q.includes('json') || q.includes('file')) {
+                return "The JSON file acts as my 'Knowledge Base'. It allows CodeCure to store a list of FAQs and technical details that I can access instantly to answer your questions accurately.";
+            }
+
+            return "I am capable only for CodeCure related questions. Could you please rephrase your question for better clarity?";
         }
     </script>
 </body>
