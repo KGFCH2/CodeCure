@@ -13,6 +13,7 @@ This document details the setup, training, and deployment processes for the **Co
 - **Patient Details Modal**: **[NEW]** Click a patient in the dashboard to see a summarized AI breakdown in a modal window.
 - **AI Assistant**: **[NEW]** Local knowledge-based chatbot for answering CodeCure and health-related questions.
 - **Hospital-Grade Reports**: One-page clinical PDF generation for easy sharing/printing.
+- **Optimized Performance**: Core logic separated into `script.js` for faster loading and cleaner code.
 - **Hybrid Persistence**: Optimized for serverless; data survives resets via `LocalStorage`.
 
 ---
