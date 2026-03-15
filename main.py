@@ -21,7 +21,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, text
 
 from database import get_db, Patient, PredictionLog, Base, engine
 from schemas import (
@@ -387,6 +387,7 @@ async def predict_diabetes(data: PredictionRequest, db: Session = Depends(get_db
     patient = Patient(
         name=data.name,
         email=data.email,
+        device_id=data.device_id,
         age=data.age,
         gender=data.gender,
         pregnancies=data.pregnancies,
@@ -420,7 +421,8 @@ async def predict_diabetes(data: PredictionRequest, db: Session = Depends(get_db
         prediction=int(prediction),
         probability=round(probability, 4),
         health_score=health_score,
-        risk_level=risk_level
+        risk_level=risk_level,
+        device_id=data.device_id
     )
     db.add(log)
     db.commit()
@@ -437,9 +439,16 @@ async def predict_diabetes(data: PredictionRequest, db: Session = Depends(get_db
 
 
 @app.get("/api/dashboard", response_model=DashboardStats)
-async def get_dashboard(db: Session = Depends(get_db)):
+async def get_dashboard(
+    device_id: str | None = None,
+    db: Session = Depends(get_db)
+):
     """Get dashboard statistics."""
-    total = db.query(Patient).count()
+    query = db.query(Patient)
+    if device_id:
+        query = query.filter(Patient.device_id == device_id)
+
+    total = query.count()
     
     if total == 0:
         return DashboardStats(
@@ -452,14 +461,14 @@ async def get_dashboard(db: Session = Depends(get_db)):
             recent_predictions=[]
         )
 
-    high_risk = db.query(Patient).filter(Patient.risk_level.in_(["High", "Critical"])).count()
+    high_risk = query.filter(Patient.risk_level.in_("High", "Critical")).count()
     low_risk = total - high_risk
     
-    avg_health = db.query(func.avg(Patient.health_score)).scalar() or 0
-    avg_glucose = db.query(func.avg(Patient.glucose)).scalar() or 0
-    avg_bmi = db.query(func.avg(Patient.bmi)).scalar() or 0
+    avg_health = query.with_entities(func.avg(Patient.health_score)).scalar() or 0
+    avg_glucose = query.with_entities(func.avg(Patient.glucose)).scalar() or 0
+    avg_bmi = query.with_entities(func.avg(Patient.bmi)).scalar() or 0
 
-    recent = db.query(Patient).order_by(Patient.created_at.desc()).limit(10).all()
+    recent = query.order_by(Patient.created_at.desc()).limit(10).all()
 
     return DashboardStats(
         total_patients=total,
@@ -486,5 +495,16 @@ async def get_patients(db: Session = Depends(get_db)):
 async def startup_event():
     """Initialize database tables on startup."""
     Base.metadata.create_all(bind=engine)
+
+    # Ensure the database schema includes new columns (for upgrades)
+    with engine.connect() as conn:
+        for table, col, col_type in [
+            ("patients", "device_id", "TEXT"),
+            ("prediction_logs", "device_id", "TEXT"),
+        ]:
+            cols = [row[1] for row in conn.execute(text(f"PRAGMA table_info({table})")).fetchall()]
+            if col not in cols:
+                conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {col} {col_type}"))
+
     print("[START] CodeCure AI Health-Tech Platform is running!")
     print("[URL] Open http://127.0.0.1:8000 in your browser")
