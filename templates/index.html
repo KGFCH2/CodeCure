@@ -9,11 +9,24 @@
     <title>CodeCure — AI Health-Tech Platform</title>
     <link rel="stylesheet" href="/static/style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="icon" href="/static/cure.png" type="image/png">
+    <link rel="icon" href="/static/favicon.png" type="image/png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 
 <body>
+    <!-- ═══════════════ PAGE LOADER ═══════════════ -->
+    <div class="page-loader" id="page-loader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <i data-lucide="activity"></i>
+            </div>
+            <div class="loader-text">CodeCure</div>
+            <div class="loader-bar">
+                <div class="loader-progress"></div>
+            </div>
+            <div class="loader-status">Initializing AI Diagnostics...</div>
+        </div>
+    </div>
 
     <!-- ═══════════════ NAVIGATION ═══════════════ -->
     <nav class="navbar" id="navbar">
@@ -27,7 +40,7 @@
                     <div class="navbar-subtitle">AI Health-Tech Platform</div>
                 </div>
             </a>
-            <ul class="navbar-nav">
+            <ul class="navbar-nav" id="navbar-nav">
                 <li><a href="#" class="active" data-tab="home" onclick="switchTab('home')"><i data-lucide="home"></i>
                         Home</a></li>
                 <li><a href="#" data-tab="predict" onclick="switchTab('predict')"><i data-lucide="brain"></i> AI
@@ -36,6 +49,10 @@
                             data-lucide="layout-dashboard"></i> Dashboard</a></li>
                 <li><a href="#" data-tab="about" onclick="switchTab('about')"><i data-lucide="info"></i> About</a></li>
             </ul>
+
+            <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle Navigation">
+                <i data-lucide="menu"></i>
+            </button>
         </div>
     </nav>
 
@@ -576,11 +593,178 @@
             </section>
         </div>
 
+        <!-- ═══════════════ TERMS TAB ═══════════════ -->
+        <div class="tab-content" id="tab-terms">
+            <section class="section">
+                <div class="section-header">
+                    <div class="section-icon blue"><i data-lucide="file-text" class="icon-blue"></i></div>
+                    <div>
+                        <h2 class="section-title">Terms of Service</h2>
+                        <p class="section-description">Legal framework for using the CodeCure platform</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="content-text">
+                        <h3><i data-lucide="check-circle" class="icon-inline blue"></i> 1. Acceptance of Terms</h3>
+                        <p>By accessing and using CodeCure, you agree to be bound by these Terms of Service and all
+                            applicable laws and regulations.</p>
+
+                        <h3><i data-lucide="alert-triangle" class="icon-inline amber"></i> 2. Medical Disclaimer</h3>
+                        <p><strong>IMPORTANT:</strong> CodeCure is an AI-driven informational tool. It is NOT a
+                            substitute for professional medical advice, diagnosis, or treatment. Always seek the advice
+                            of your physician or other qualified health provider with any questions you may have
+                            regarding a medical condition.</p>
+
+                        <h3><i data-lucide="file-key" class="icon-inline blue"></i> 3. Use License</h3>
+                        <p>Permission is granted to use CodeCure for personal, non-commercial transitory viewing only.
+                            This is the grant of a license, not a transfer of title.</p>
+
+                        <h3><i data-lucide="shield-alert" class="icon-inline rose"></i> 4. Limitations</h3>
+                        <p>In no event shall CodeCure or its developers be liable for any damages (including, without
+                            limitation, damages for loss of data or profit) arising out of the use or inability to use
+                            the platform.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ═══════════════ PRIVACY TAB ═══════════════ -->
+        <div class="tab-content" id="tab-privacy">
+            <section class="section">
+                <div class="section-header">
+                    <div class="section-icon emerald"><i data-lucide="shield-check" class="icon-emerald"></i></div>
+                    <div>
+                        <h2 class="section-title">Privacy Policy</h2>
+                        <p class="section-description">How we handle and protect your data</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="content-text">
+                        <h3><i data-lucide="database" class="icon-inline blue"></i> 1. Data Collection</h3>
+                        <p>We collect information you provide directly through the AI diagnostic forms, including age,
+                            glucose levels, and other health metrics. We also use a device-specific identifier to track
+                            your prediction history.</p>
+
+                        <h3><i data-lucide="activity" class="icon-inline emerald"></i> 2. Data Usage</h3>
+                        <p>The collected data is used specifically to provide AI-driven health risk predictions and to
+                            improve our machine learning models. We do not sell your personal data to third parties.</p>
+
+                        <h3><i data-lucide="server" class="icon-inline cyan"></i> 3. Data Storage</h3>
+                        <p>Some data is stored locally on your device for quick access, while clinical metrics may be
+                            processed on our secure servers to generate analysis results.</p>
+
+                        <h3><i data-lucide="lock" class="icon-inline blue"></i> 4. Security</h3>
+                        <p>We implement industry-standard security measures to protect your information from
+                            unauthorized access or disclosure.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ═══════════════ FAQ TAB ═══════════════ -->
+        <div class="tab-content" id="tab-faq">
+            <section class="section">
+                <div class="section-header">
+                    <div class="section-icon amber"><i data-lucide="help-circle" class="icon-amber"></i></div>
+                    <div>
+                        <h2 class="section-title">Frequently Asked Questions</h2>
+                        <p class="section-description">Common queries about CodeCure</p>
+                    </div>
+                </div>
+                <div class="dashboard-grid grid-single">
+                    <div class="card">
+                        <h3><i data-lucide="help-circle" class="icon-inline blue"></i> What is CodeCure?</h3>
+                        <p>CodeCure is an advanced AI health-tech platform that uses Machine Learning to provide
+                            predictive insights into chronic conditions like diabetes.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i data-lucide="target" class="icon-inline emerald"></i> How accurate are the predictions?
+                        </h3>
+                        <p>Our models achieve high accuracy on clinical datasets. However, AI predictions are
+                            probabilistic and should only be used as a preliminary screening tool, not a final
+                            diagnosis.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i data-lucide="lock" class="icon-inline cyan"></i> Is my health data secure?</h3>
+                        <p>Yes, we use secure transmission and storage protocols. Most of your browsing history stays
+                            locally on your device.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i data-lucide="user-minus" class="icon-inline rose"></i> Can I use this for clinical
+                            decisions?</h3>
+                        <p>No. You must consult a certified medical professional for any clinical decisions or
+                            treatments.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i data-lucide="download" class="icon-inline blue"></i> How can I get my report?</h3>
+                        <p>After running an AI analysis, a "Download Report" button will appear. You can download a
+                            high-quality PDF containing your scores and recommendations.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i data-lucide="refresh-cw" class="icon-inline emerald"></i> Why does my score change?</h3>
+                        <p>Your Health Score is dynamic. It reflects the latest data you provide. Changes in glucose
+                            levels, BMI, or blood pressure will directly influence your calculated index.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i data-lucide="message-square" class="icon-inline blue"></i> How do I talk to the AI?</h3>
+                        <p>Use the chat bubble icon in the bottom right corner to open the CodeCure AI Assistant for
+                            instant help with platform queries.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ═══════════════ DOCUMENTATION TAB ═══════════════ -->
+        <div class="tab-content" id="tab-docs">
+            <section class="section">
+                <div class="section-header">
+                    <div class="section-icon blue"><i data-lucide="book-open" class="icon-primary"></i></div>
+                    <div>
+                        <h2 class="section-title">Documentation</h2>
+                        <p class="section-description">Technical details and usage guide</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="content-text">
+                        <h3><i data-lucide="map" class="icon-inline blue"></i> Platform Overview</h3>
+                        <p>CodeCure is built using a modern stack (Python, FastAPI, Scikit-learn) to bridge the gap
+                            between AI research and clinical utility.</p>
+
+                        <h3><i data-lucide="cog" class="icon-inline emerald"></i> How it Works</h3>
+                        <ol>
+                            <li><strong>Data Input:</strong> Users provide vitals and medical metrics.</li>
+                            <li><strong>AI Analysis:</strong> Our Random Forest and Neural models process the data.</li>
+                            <li><strong>Explainable AI:</strong> The system explains which factors (like BMI or Glucose)
+                                impacted the score.</li>
+                            <li><strong>Reporting:</strong> Users can download a detailed PDF report of their scores.
+                            </li>
+                        </ol>
+
+                        <h3><i data-lucide="layers" class="icon-inline cyan"></i> Technical Architecture</h3>
+                        <ul>
+                            <li><strong>Backend:</strong> FastAPI for high-performance async processing.</li>
+                            <li><strong>Frontend:</strong> Vanilla JS with a custom CSS design system.</li>
+                            <li><strong>Database:</strong> SQLite for local persistence, Vercel Postgres for production.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+
         <!-- Footer -->
         <footer class="footer">
+            <div class="footer-links">
+                <a href="#" class="footer-link" onclick="switchTab('terms')"><i data-lucide="file-text"></i> Terms</a>
+                <a href="#" class="footer-link" onclick="switchTab('privacy')"><i data-lucide="shield-check"></i>
+                    Privacy</a>
+                <a href="#" class="footer-link" onclick="switchTab('faq')"><i data-lucide="help-circle"></i> FAQs</a>
+                <a href="#" class="footer-link" onclick="switchTab('docs')"><i data-lucide="book-open"></i>
+                    Documentation</a>
+            </div>
             <p class="footer-text">
                 AI Health-Tech Platform v1.0.0 ·
-                Powered by Machine Learning
+                Powered by Machine Learning © 2026 CodeCure
             </p>
         </footer>
 
@@ -619,916 +803,42 @@
     <div class="toast-container" id="toast-container"></div>
 
     <!-- ═══════════════ JAVASCRIPT ═══════════════ -->
-    <script>
-        // Initialize Lucide Icons
-        window.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
+    <!-- ── Patient Summary Modal ── -->
+    <div class="modal-overlay" id="patient-modal">
+        <div class="modal-container">
+            <button class="modal-close" onclick="closeModal()" title="Close details">
+                <i data-lucide="x"></i>
+            </button>
+            <h2 class="modal-title" id="modal-name">Patient Details</h2>
+            <p class="modal-subtitle" id="modal-date">AI Prediction Analysis</p>
 
-            // Navbar scroll effect
-            window.addEventListener('scroll', () => {
-                const nav = document.getElementById('navbar');
-                if (window.scrollY > 20) {
-                    nav.classList.add('scrolled');
-                } else {
-                    nav.classList.remove('scrolled');
-                }
-            });
-        });
-
-        // ────────────────────────────────────────
-        // Download Report (Ultra-Robust Iframe Engine)
-        // ────────────────────────────────────────
-        function downloadPDF() {
-            const scoreEl = document.getElementById('score-number');
-            if (!scoreEl || scoreEl.innerText === '—') {
-                showToast('Please run an AI analysis first.', 'error');
-                return;
-            }
-
-            const patientName = document.getElementById('input-name').value || 'Patient';
-            const patientEmail = document.getElementById('input-email').value || 'Not provided';
-            const reportDate = new Date().toLocaleDateString();
-            const score = scoreEl.innerText;
-            const riskText = document.getElementById('risk-text').innerText;
-            const summary = document.getElementById('result-summary').innerText;
-            const probability = document.getElementById('probability-value').innerText;
-            const scoreColor = getScoreColor(score);
-
-            // 1. Create a temporary rendering iframe
-            const iframe = document.createElement('iframe');
-            iframe.style.position = 'fixed';
-            iframe.style.left = '-9999px';
-            iframe.style.width = '800px';
-            iframe.style.height = '1200px';
-            document.body.appendChild(iframe);
-
-            const doc = iframe.contentWindow.document;
-            doc.open();
-            doc.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <style>
-                        body { font-family: 'Segoe UI', Arial, sans-serif; padding: 40px; color: #1e293b; background: white; }
-                        .header { border-bottom: 3px solid #10b981; padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
-                        .title { color: #10b981; font-size: 28px; font-weight: 800; margin: 0; }
-                        .id { font-size: 14px; color: #64748b; margin-top: 5px; }
-                        .patient-card { background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 30px; }
-                        .score-row { display: flex; align-items: center; margin-bottom: 30px; }
-                        .score-badge { 
-                            background: ${scoreColor}; color: white; width: 80px; height: 80px; 
-                            border-radius: 20px; display: flex; flex-direction: column; 
-                            justify-content: center; align-items: center; margin-right: 25px;
-                            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-                        }
-                        .summary { background: #fff; border: 1px solid #e2e8f0; border-left: 6px solid ${scoreColor}; padding: 25px; border-radius: 12px; line-height: 1.6; }
-                        .factors { display: block; margin-top: 40px; }
-                        .factor-card { display: inline-block; width: 44%; border: 1px solid #f1f5f9; padding: 15px; border-radius: 10px; margin-right: 15px; margin-bottom: 15px; vertical-align: top; }
-                        .footer { margin-top: 60px; text-align: center; font-size: 10px; color: #94a3b8; border-top: 1px solid #f1f5f9; padding-top: 20px; }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <div>
-                            <h1 class="title">CodeCure AI Report</h1>
-                            <div class="id">Report Reference: #CC-${Date.now().toString().slice(-6)}</div>
-                        </div>
-                        <div style="text-align: right;">
-                            <div style="font-weight: bold;">Medical Diagnostic Summary</div>
-                            <div style="font-size: 12px; color: #64748b;">${reportDate}</div>
-                        </div>
-                    </div>
- 
-                    <div class="patient-card">
-                        <table style="width: 100%;">
-                            <tr>
-                                <td>
-                                    <div style="font-size: 10px; text-transform: uppercase; color: #64748b; margin-bottom: 5px;">Patient Identity</div>
-                                    <div style="font-size: 18px; font-weight: bold;">${patientName}</div>
-                                    <div style="font-size: 13px; color: #475569;">${patientEmail}</div>
-                                </td>
-                                <td style="text-align: right;">
-                                    <div style="font-size: 10px; text-transform: uppercase; color: #64748b; margin-bottom: 5px;">Verification</div>
-                                    <div style="font-size: 14px; font-weight: bold; color: #10b981;">AI SECURE VERIFIED</div>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
- 
-                    <div class="score-row">
-                        <div class="score-badge">
-                            <span style="font-size: 32px; font-weight: 800;">${score}</span>
-                            <span style="font-size: 10px; font-weight: bold;">SCORE</span>
-                        </div>
-                        <div>
-                            <h2 style="margin: 0; font-size: 26px; color: #0f172a;">${riskText}</h2>
-                            <p style="margin: 6px 0 0; color: #475569; font-size: 16px;">Diagnostic Confidence: <strong>${probability}</strong></p>
-                        </div>
-                    </div>
- 
-                    <div class="summary">
-                        <h4 style="margin: 0 0 10px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">Diagnostic Insight</h4>
-                        <p style="margin: 0;">${summary}</p>
-                    </div>
- 
-                    <div class="factors">
-                        <h3 style="color: #10b981; font-size: 16px; margin-bottom: 20px;">Clinical Metrics Breakdown</h3>
-                        ${Array.from(document.querySelectorAll('.risk-factor-card')).map(card => `
-                            <div class="factor-card">
-                                <div style="font-size: 11px; color: #94a3b8; margin-bottom: 4px;">${card.querySelector('.risk-factor-name').innerText}</div>
-                                <div style="font-size: 20px; font-weight: bold;">${card.querySelector('.risk-factor-value').innerText}</div>
-                                <div style="font-size: 10px; font-weight: bold; color: #10b981; margin-top: 4px;">[${card.querySelector('.risk-factor-status').innerText}]</div>
-                            </div>
-                        `).join('')}
-                    </div>
- 
-                    <div class="footer">
-                        This document is an AI-generated clinical summary. It is intended for informational support only and does not 
-                        replace a professional medical diagnosis. Consult a physician for further clinical action. © 2026 CodeCure AI.
-                    </div>
-                </body>
-                </html>
-            `);
-            doc.close();
-
-            const opt = {
-                margin: 0,
-                filename: `CodeCure_Diagnostic_Report_${patientName.replace(/\s+/g, '_')}.pdf`,
-                image: { type: 'jpeg', quality: 1.0 },
-                html2canvas: { scale: 3, useCORS: true, letterRendering: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            showToast('Generating HD Medical Report...', 'info');
-
-            // Give the browser a moment to render the iframe content
-            setTimeout(() => {
-                html2pdf().set(opt).from(iframe.contentWindow.document.body).save().then(() => {
-                    showToast('Medical Report downloaded!', 'success');
-                    document.body.removeChild(iframe);
-                }).catch(err => {
-                    showToast('PDF rendering error.', 'error');
-                    console.error(err);
-                    document.body.removeChild(iframe);
-                });
-            }, 600);
-        }
-
-        function getScoreColor(score) {
-            const s = parseInt(score);
-            if (isNaN(s)) return '#94a3b8';
-            if (s >= 70) return '#10b981';
-            if (s >= 50) return '#f59e0b';
-            return '#ef4444';
-        }
-
-        // Generate or retrieve a persistent identifier for this device (used to scope dashboard data)
-        function getDeviceId() {
-            const storageKey = 'codecure_device_id';
-            let id = localStorage.getItem(storageKey);
-            if (!id) {
-                id = (crypto?.randomUUID ? crypto.randomUUID() : `dev-${Date.now()}-${Math.random().toString(16).slice(2)}`);
-                localStorage.setItem(storageKey, id);
-            }
-            return id;
-        }
-
-        // Local Persistence for Serverless Fallback
-        function savePredictionLocally(input, result) {
-            try {
-                const storageKey = 'codecure_history';
-                let history = JSON.parse(localStorage.getItem(storageKey) || '[]');
-                
-                const record = {
-                    id: Math.floor(Math.random() * 9000) + 1000,
-                    name: input.name || 'Anonymous',
-                    age: input.age,
-                    glucose: input.glucose,
-                    bmi: input.bmi,
-                    health_score: result.health_score,
-                    risk_level: result.risk_level,
-                    created_at: new Date().toISOString()
-                };
-                
-                history.unshift(record);
-                localStorage.setItem(storageKey, JSON.stringify(history.slice(0, 50)));
-            } catch (e) { console.error("Local save failed:", e); }
-        }
-
-        function getLocalHistory() {
-            try { return JSON.parse(localStorage.getItem('codecure_history') || '[]'); }
-            catch (e) { return []; }
-        }
-
-        // ────────────────────────────────────────
-        // Tab Navigation
-        // ────────────────────────────────────────
-        function switchTab(tabName) {
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.navbar-nav a').forEach(el => el.classList.remove('active'));
-
-            // Show selected tab
-            const tab = document.getElementById('tab-' + tabName);
-            if (tab) tab.classList.add('active');
-
-            // Update nav
-            const navLink = document.querySelector(`.navbar-nav a[data-tab="${tabName}"]`);
-            if (navLink) navLink.classList.add('active');
-
-            // Load dashboard data if switching to dashboard
-            if (tabName === 'dashboard') {
-                loadDashboard();
-            }
-
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // ────────────────────────────────────────
-        // Toast Notifications
-        // ────────────────────────────────────────
-        function showToast(message, type = 'info', duration = 4000) {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-
-            const icons = {
-                success: '<i data-lucide="check-circle"></i>',
-                error: '<i data-lucide="x-circle"></i>',
-                info: '<i data-lucide="info"></i>'
-            };
-
-            toast.innerHTML = `<span>${icons[type] || icons.info}</span><span>${message}</span>`;
-
-            container.appendChild(toast);
-            lucide.createIcons();
-
-            setTimeout(() => {
-                toast.style.animation = 'slideOut 0.3s ease-out forwards';
-                setTimeout(() => toast.remove(), 300);
-            }, duration);
-        }
-
-        // ────────────────────────────────────────
-        // Prediction Form Handler
-        // ────────────────────────────────────────
-        async function handlePrediction(event) {
-            event.preventDefault();
-
-            const btn = document.getElementById('predict-btn');
-            btn.classList.add('loading');
-
-            const data = {
-                device_id: getDeviceId(),
-                name: document.getElementById('input-name').value || null,
-                email: document.getElementById('input-email').value || null,
-                gender: document.getElementById('input-gender').value || null,
-                age: parseInt(document.getElementById('input-age').value),
-                glucose: parseFloat(document.getElementById('input-glucose').value),
-                bmi: parseFloat(document.getElementById('input-bmi').value),
-                blood_pressure: parseFloat(document.getElementById('input-bp').value) || 72,
-                pregnancies: parseInt(document.getElementById('input-pregnancies').value) || 0,
-                skin_thickness: parseFloat(document.getElementById('input-skin').value) || 20,
-                insulin: parseFloat(document.getElementById('input-insulin').value) || 80,
-                diabetes_pedigree: parseFloat(document.getElementById('input-dpf').value) || 0.47,
-                exercise_hours: parseFloat(document.getElementById('input-exercise').value) || 0,
-                sleep_hours: parseFloat(document.getElementById('input-sleep').value) || 7,
-                smoking: document.getElementById('input-smoking').checked
-            };
-
-            // Validate required fields
-            if (!data.age || !data.glucose || !data.bmi) {
-                showToast('Please fill in Age, Glucose, and BMI fields.', 'error');
-                btn.classList.remove('loading');
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/predict', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.detail || 'Prediction failed');
-                }
-
-                const result = await response.json();
-                
-                // Persistence Fallback for Serverless (Save locally)
-                savePredictionLocally(data, result);
-                
-                displayResults(result);
-                showToast('AI Analysis completed successfully!', 'success');
-                updateHomeStats();
-
-            } catch (error) {
-                showToast(`Error: ${error.message}`, 'error');
-                console.error('Prediction error:', error);
-            } finally {
-                btn.classList.remove('loading');
-            }
-        }
-
-        // ────────────────────────────────────────
-        // Display Results
-        // ────────────────────────────────────────
-        function displayResults(result) {
-            const section = document.getElementById('results-section');
-            section.classList.add('visible');
-
-            // Scroll to results
-            setTimeout(() => {
-                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
-
-            // ── Health Score Ring ──
-            const scoreNumber = document.getElementById('score-number');
-            const ringFill = document.getElementById('score-ring-fill');
-            const circumference = 2 * Math.PI * 52;
-            const offset = circumference - (result.health_score / 100) * circumference;
-
-            // Determine color based on score
-            let scoreColor;
-            if (result.health_score >= 70) scoreColor = '#10b981';
-            else if (result.health_score >= 50) scoreColor = '#f59e0b';
-            else if (result.health_score >= 30) scoreColor = '#ef4444';
-            else scoreColor = '#dc2626';
-
-            ringFill.style.stroke = scoreColor;
-            ringFill.style.strokeDashoffset = offset;
-            animateCounter(scoreNumber, result.health_score);
-
-            // ── Risk Badge ──
-            const riskBadge = document.getElementById('risk-badge');
-            const riskText = document.getElementById('risk-text');
-            const riskLevel = result.risk_level.toLowerCase();
-            riskBadge.className = `risk-badge ${riskLevel}`;
-            riskText.textContent = `${result.risk_level} Risk`;
-
-            // ── Summary ──
-            document.getElementById('result-summary').textContent = result.summary;
-
-            // ── Probability Bar ──
-            const probPercent = (result.risk_probability * 100).toFixed(1);
-            document.getElementById('probability-value').textContent = probPercent + '%';
-            const probFill = document.getElementById('probability-fill');
-
-            let probColor;
-            if (result.risk_probability < 0.3) probColor = 'var(--gradient-success)';
-            else if (result.risk_probability < 0.5) probColor = 'var(--gradient-warning)';
-            else probColor = 'var(--gradient-danger)';
-
-            probFill.style.background = probColor;
-            setTimeout(() => { probFill.style.width = probPercent + '%'; }, 100);
-
-            // ── Risk Factors ──
-            const factorsGrid = document.getElementById('risk-factors-grid');
-            factorsGrid.innerHTML = '';
-
-            result.risk_factors.forEach(factor => {
-                const card = document.createElement('div');
-                card.className = 'risk-factor-card';
-                card.innerHTML = `
-            <div class="risk-factor-header">
-                <span class="risk-factor-name">${factor.factor}</span>
-                <span class="risk-factor-status ${factor.status}">${factor.status}</span>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span class="summary-label">Glucose Level</span>
+                    <span class="summary-value" id="modal-glucose">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Measured BMI</span>
+                    <span class="summary-value" id="modal-bmi">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Health Score</span>
+                    <span class="summary-value" id="modal-score">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Risk Category</span>
+                    <span class="table-badge" id="modal-risk">Normal</span>
+                </div>
             </div>
-            <div class="risk-factor-value" style="color: ${getStatusColor(factor.status)}">${factor.value}</div>
-            <p class="risk-factor-message">${factor.message}</p>
-        `;
-                factorsGrid.appendChild(card);
-            });
 
-            // ── Recommendations ──
-            const recsList = document.getElementById('recommendations-list');
-            recsList.innerHTML = '';
+            <div class="summary-factors">
+                <p class="summary-factor-title"><i data-lucide="info" class="icon-info"></i>AI Summary:</p>
+                <p class="summary-factor-text" id="modal-summary">Loading intelligent analysis...</p>
+            </div>
+        </div>
+    </div>
 
-            result.recommendations.forEach(rec => {
-                const text = rec.replace(/^[^\w\s]+\s*/, '');
-                const li = document.createElement('li');
-                li.className = 'recommendation-item';
-                li.style.cssText = 'display: flex; align-items: flex-start; gap: 12px; padding: 12px; margin-bottom: 8px; border-radius: 8px; transition: background 0.2s;';
-                li.onmouseover = () => li.style.background = 'rgba(16, 185, 129, 0.05)';
-                li.onmouseout = () => li.style.background = 'transparent';
-
-                li.innerHTML = `
-                    <span class="recommendation-icon" style="color: var(--primary-500); margin-top: 2px;">
-                        <i data-lucide="lightbulb" style="width: 20px; height: 20px;"></i>
-                    </span>
-                    <span style="font-size: 0.95rem; color: var(--text-primary); line-height: 1.5; font-weight: 500;">${text}</span>
-                `;
-                recsList.appendChild(li);
-            });
-            lucide.createIcons();
-        }
-
-        function getStatusColor(status) {
-            const colors = {
-                normal: '#10b981',
-                warning: '#fbbf24',
-                danger: '#f87171'
-            };
-            return colors[status] || '#94a3b8';
-        }
-
-        function animateCounter(element, target) {
-            let current = 0;
-            const increment = target / 40;
-            const timer = setInterval(() => {
-                current += increment;
-                if (current >= target) {
-                    current = target;
-                    clearInterval(timer);
-                }
-                element.textContent = Math.round(current);
-            }, 30);
-        }
-
-        // ────────────────────────────────────────
-        // Reset Form
-        // ────────────────────────────────────────
-        function resetForm() {
-            document.getElementById('prediction-form').reset();
-            document.getElementById('results-section').classList.remove('visible');
-            showToast('Form reset successfully', 'info');
-        }
-
-        // ────────────────────────────────────────
-        // Dashboard
-        // ────────────────────────────────────────
-        async function loadDashboard() {
-            try {
-                const response = await fetch(`/api/dashboard?device_id=${encodeURIComponent(getDeviceId())}`);
-                const data = await response.json();
-
-                // Merge with Local History for Serverless Persistence
-                const localHistory = getLocalHistory();
-                const serverRecordIds = new Set((data.recent_predictions || []).map(p => p.id));
-                const uniqueLocal = localHistory.filter(p => !serverRecordIds.has(p.id));
-                
-                dashboardDataStore = [...(data.recent_predictions || []), ...uniqueLocal].sort((a, b) => 
-                    new Date(b.created_at) - new Date(a.created_at)
-                );
-
-                // Recalculate Stats based on MERGED data (Crucial for Vercel/Serverless)
-                const total = dashboardDataStore.length;
-                const highRisk = dashboardDataStore.filter(p => ['High', 'Critical'].includes(p.risk_level)).length;
-                const lowRisk = total - highRisk;
-                
-                const avgScore = total > 0 ? (dashboardDataStore.reduce((acc, p) => acc + (p.health_score || 0), 0) / total).toFixed(1) : '—';
-                const avgGlucose = total > 0 ? (dashboardDataStore.reduce((acc, p) => acc + (p.glucose || 0), 0) / total).toFixed(1) : '—';
-                const avgBmi = total > 0 ? (dashboardDataStore.reduce((acc, p) => acc + (p.bmi || 0), 0) / total).toFixed(1) : '—';
-
-                animateCounter(document.getElementById('dash-total'), total);
-                animateCounter(document.getElementById('dash-high-risk'), highRisk);
-                animateCounter(document.getElementById('dash-low-risk'), lowRisk);
-                
-                document.getElementById('dash-avg-score').textContent = avgScore;
-                document.getElementById('dash-avg-glucose').textContent = avgGlucose;
-                document.getElementById('dash-avg-bmi').textContent = avgBmi;
-
-
-                const container = document.getElementById('patients-table-container');
-
-                if (dashboardDataStore.length === 0) {
-                    container.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-state-icon"><i data-lucide="database-backup"></i></div>
-                    <p class="empty-state-text">No predictions yet</p>
-                    <p class="empty-state-hint">Run an AI analysis to see patient data here</p>
-                </div>
-            `;
-                    lucide.createIcons();
-                    return;
-                }
-
-                let tableHTML = `
-            <div class="patients-table-wrapper">
-                <table class="patients-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Age</th>
-                            <th>Glucose</th>
-                            <th>BMI</th>
-                            <th>Health Score</th>
-                            <th>Risk Level</th>
-                            <th>Date</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-        `;
-
-                dashboardDataStore.forEach(p => {
-                    const riskClass = (p.risk_level || 'low').toLowerCase();
-                    const date = new Date(p.created_at).toLocaleDateString('en-IN', {
-                        day: '2-digit', month: 'short', year: 'numeric'
-                    });
-
-                    tableHTML += `
-                <tr>
-                    <td style="font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">#${p.id}</td>
-                    <td style="font-weight: 500; color: var(--text-primary);">${p.name || 'Anonymous'}</td>
-                    <td>${p.age}</td>
-                    <td style="font-family: 'JetBrains Mono', monospace;">${p.glucose}</td>
-                    <td style="font-family: 'JetBrains Mono', monospace;">${p.bmi}</td>
-                    <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${p.health_score || '—'}</td>
-                    <td><span class="table-badge ${riskClass}">${p.risk_level || '—'}</span></td>
-                    <td style="color: var(--text-muted);">${date}</td>
-                    <td>
-                        <button class="action-btn download" onclick="downloadDashboardPDF(${p.id})" title="Download Report">
-                            <i data-lucide="download"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
-                });
-
-                tableHTML += '</tbody></table></div>';
-                container.innerHTML = tableHTML;
-                lucide.createIcons();
-
-            } catch (error) {
-                console.error('Dashboard error:', error);
-            }
-        }
-
-        // ────────────────────────────────────────
-        // Home Stats
-        // ────────────────────────────────────────
-        async function updateHomeStats() {
-            try {
-                const response = await fetch(`/api/dashboard?device_id=${encodeURIComponent(getDeviceId())}`);
-                const data = await response.json();
-                
-                const localHistory = getLocalHistory();
-                const serverRecordIds = new Set(data.recent_predictions.map(p => p.id));
-                const uniqueLocal = localHistory.filter(p => !serverRecordIds.has(p.id));
-                const total = data.total_patients + uniqueLocal.length;
-                
-                document.getElementById('stat-total').textContent = total;
-            } catch (e) {
-                // Fallback to local only if server fails
-                const localHistory = getLocalHistory();
-                document.getElementById('stat-total').textContent = localHistory.length;
-            }
-        }
-
-        // ── Init ──
-        document.addEventListener('DOMContentLoaded', () => {
-            updateHomeStats();
-            initSlideshows();
-
-            // Navbar scroll effect
-            window.addEventListener('scroll', () => {
-                const navbar = document.getElementById('navbar');
-                if (window.scrollY > 20) {
-                    navbar.style.borderBottomColor = 'rgba(255, 255, 255, 0.1)';
-                    navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
-                } else {
-                    navbar.style.boxShadow = 'none';
-                }
-            });
-        });
-
-        // ────────────────────────────────────────
-        // Download Report (Single-Page HD Clinical Engine)
-        // ────────────────────────────────────────
-        let dashboardDataStore = [];
-
-        async function downloadDashboardPDF(id) {
-            const result = dashboardDataStore.find(p => p.id === id);
-            if (!result) return;
-
-            // Create temporary elements for the PDF generator
-            const data = {
-                name: result.name || 'Anonymous',
-                email: 'Patient Record #' + result.id,
-                score: result.health_score || 0,
-                risk: result.risk_level || 'Low',
-                summary: `Prediction: ${result.prediction === 1 ? 'High Risk' : 'Low Risk'}. Glucose: ${result.glucose}, BMI: ${result.bmi}, Age: ${result.age}.`,
-                probability: (result.prediction_proba * 100).toFixed(1) + '%'
-            };
-
-            generatePDFReport(data);
-        }
-
-        function downloadPDF() {
-            const scoreEl = document.getElementById('score-number');
-            if (!scoreEl || scoreEl.innerText === '—') {
-                showToast('Please run an AI analysis first.', 'error');
-                return;
-            }
-
-            const data = {
-                name: document.getElementById('input-name').value || 'Patient',
-                email: document.getElementById('input-email').value || 'Not provided',
-                score: scoreEl.innerText,
-                risk: document.getElementById('risk-text').innerText,
-                summary: document.getElementById('result-summary').innerText,
-                probability: document.getElementById('probability-value').innerText,
-                factors: Array.from(document.querySelectorAll('.risk-factor-card')).map(card => ({
-                    name: card.querySelector('.risk-factor-name').innerText,
-                    value: card.querySelector('.risk-factor-value').innerText,
-                    status: card.querySelector('.risk-factor-status').innerText
-                })),
-                recommendations: Array.from(document.querySelectorAll('.recommendation-item span:last-child')).map(rec => rec.innerText)
-            };
-
-            generatePDFReport(data);
-        }
-
-        function generatePDFReport(data) {
-            const scoreColor = getScoreColor(data.score);
-
-            const overlay = document.createElement('div');
-            overlay.style.position = 'fixed';
-            overlay.style.top = '0';
-            overlay.style.left = '0';
-            overlay.style.width = '100%';
-            overlay.style.height = '100%';
-            overlay.style.zIndex = '100000';
-            overlay.style.backgroundColor = 'rgba(255,255,255,0.98)';
-            overlay.style.display = 'flex';
-            overlay.style.flexDirection = 'column';
-            overlay.style.alignItems = 'center';
-            overlay.style.justifyContent = 'center';
-            overlay.style.fontFamily = 'Arial, sans-serif';
-
-            overlay.innerHTML = `
-                <div id="pdf-generating-msg" style="margin-bottom: 20px; font-weight: bold; color: #10b981; font-size: 18px;">
-                    <span style="font-size: 24px;">📄</span> Finalizing Single-Page Report...
-                </div>
-                <div id="pdf-report-content" style="width: 800px; height: 1100px; background: white; padding: 40px; border: 1px solid #e2e8f0; color: #111827; box-sizing: border-box; position: relative;">
-                    <div style="border-bottom: 4px solid #10b981; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <h1 style="color: #10b981; font-size: 32px; margin: 0; font-weight: 800; letter-spacing: -1px;">CodeCure AI</h1>
-                            <p style="margin: 3px 0 0; color: #64748b; font-size: 13px; font-weight: 600;">Clinical Health Intelligence Summary</p>
-                        </div>
-                        <div style="text-align: right;">
-                            <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">Report ID</div>
-                            <div style="font-size: 18px; font-weight: bold;">#CC-${Date.now().toString().slice(-6)}</div>
-                        </div>
-                    </div>
- 
-                    <div style="background: #f8fafc; padding: 20px; border-radius: 10px; margin-bottom: 25px; border: 1px solid #e2e8f0;">
-                        <table style="width: 100%;">
-                            <tr>
-                                <td>
-                                    <div style="font-size: 9px; color: #94a3b8; text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">Patient Identity</div>
-                                    <div style="font-size: 20px; font-weight: 800; color: #0f172a;">${data.name}</div>
-                                    <div style="font-size: 13px; color: #475569;">${data.email}</div>
-                                </td>
-                                <td style="text-align: right;">
-                                    <div style="font-size: 9px; color: #94a3b8; text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">Analysis Date</div>
-                                    <div style="font-size: 18px; font-weight: 800; color: #0f172a;">${new Date().toLocaleDateString()}</div>
-                                    <div style="font-size: 11px; color: #10b981; font-weight: 800;">[ SYSTEM VERIFIED ]</div>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
- 
-                    <div style="display: flex; align-items: center; margin-bottom: 30px; gap: 25px;">
-                        <div style="background: ${scoreColor}; color: white; min-width: 90px; height: 90px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 8px 16px rgba(0,0,0,0.15);">
-                            <span style="font-size: 36px; font-weight: 900;">${data.score}</span>
-                            <span style="font-size: 10px; font-weight: 800; text-transform: uppercase;">Score</span>
-                        </div>
-                        <div>
-                            <h2 style="font-size: 28px; font-weight: 800; margin: 0; color: #0f172a; line-height: 1.1;">${data.risk}</h2>
-                            <p style="margin: 6px 0 0; color: #64748b; font-size: 16px;">Disease Risk Probability: <strong style="color: #0f172a;">${data.probability}</strong></p>
-                        </div>
-                    </div>
- 
-                    <div style="background: white; border: 1px solid #e2e8f0; border-left: 6px solid ${scoreColor}; padding: 25px; border-radius: 4px 10px 10px 4px; margin-bottom: 30px; line-height: 1.6;">
-                        <h4 style="margin: 0 0 8px; font-size: 13px; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800;">Diagnostic Insight</h4>
-                        <p style="margin: 0; color: #334155; font-size: 15px;">${data.summary}</p>
-                    </div>
- 
-                    <div style="margin-bottom: 15px;">
-                        <h3 style="color: #10b981; border-bottom: 2px solid #f1f5f9; padding-bottom: 6px; margin-bottom: 10px; font-size: 14px; font-weight: 800;">Biometric Metric Analysis</h3>
-                        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                            ${data.factors ? data.factors.map(f => `
-                                <div style="border: 1px solid #f1f5f9; padding: 8px 10px; border-radius: 6px; background: #fff; width: calc(50% - 3px); box-sizing: border-box;">
-                                    <div style="font-size: 9px; color: #94a3b8; font-weight: bold; margin-bottom: 2px; text-transform: uppercase;">${f.name}</div>
-                                    <div style="font-size: 16px; font-weight: 900; color: #0f172a;">${f.value}</div>
-                                    <div style="font-size: 8px; color: #10b981; font-weight: 800; margin-top: 1px;">[ ${f.status} ]</div>
-                                </div>
-                            `).join('') : '<p style="font-size: 12px; color: var(--text-muted);">Historical data summary - detailed metrics available in patient record.</p>'}
-                        </div>
-                    </div>
- 
-                    <!-- Lifestyle Recommendations -->
-                    <div style="margin-bottom:30px;">
-                         <h3 style="color: #10b981; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 15px; font-size: 16px; font-weight: 800;">Lifestyle Recommendations</h3>
-                         <div style="background: #f0fdf4; border: 1px solid #dcfce7; padding: 20px; border-radius: 10px;">
-                            ${data.recommendations ? data.recommendations.map(rec => `
-                                <div style="margin-bottom: 8px; display: flex; align-items: start; gap: 8px; font-size: 13px; color: #065f46;">
-                                    <span>•</span> <span>${rec}</span>
-                                </div>
-                            `).join('') : '<div style="font-size: 13px; color: #065f46;">Consult your healthcare provider for personalized recommendations.</div>'}
-                         </div>
-                    </div>
- 
-                    <div style="position: absolute; bottom: 40px; left: 40px; right: 40px; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-                        <p style="color: #94a3b8; font-size: 10px; line-height: 1.5; max-width: 90%; margin: 0 auto;">
-                            DISCLAIMER: This document is an automated clinical summary generated using AI. It is intended for informational support only and does not constitute a legal medical diagnosis. Findings should be corroborated by a licensed physician through clinical observation and laboratory testing. © 2026 CodeCure AI.
-                        </p>
-                    </div>
-                </div>
-            `;
-
-            document.body.appendChild(overlay);
-
-            const opt = {
-                margin: 0,
-                filename: `CodeCure_Report_${data.name.replace(/\s+/g, '_')}.pdf`,
-                image: { type: 'jpeg', quality: 1.0 },
-                html2canvas: {
-                    scale: 2,
-                    useCORS: true,
-                    logging: false,
-                    scrollY: 0,
-                    scrollX: 0
-                },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: 'avoid-all' } // Extra safety for single page
-            };
-
-            showToast('Finalizing single-page report...', 'info');
-
-            setTimeout(() => {
-                const content = document.getElementById('pdf-report-content');
-                html2pdf().set(opt).from(content).save().then(() => {
-                    showToast('Single-page report downloaded!', 'success');
-                    document.body.removeChild(overlay);
-                }).catch(err => {
-                    showToast('Failed to generate PDF.', 'error');
-                    document.body.removeChild(overlay);
-                });
-            }, 800);
-        }
-
-        function getScoreColor(score) {
-            const s = parseInt(score);
-            if (isNaN(s)) return '#94a3b8';
-            if (s >= 70) return '#10b981';
-            if (s >= 50) return '#f59e0b';
-            return '#ef4444';
-        }
-
-        // ────────────────────────────────────────
-        // Hero Slideshow Logic (Multi-instance)
-        // ────────────────────────────────────────
-        function initSlideshows() {
-            const containers = document.querySelectorAll('.hero-slideshow');
-            containers.forEach(container => {
-                const slides = container.querySelectorAll('.slide');
-                if (slides.length <= 1) return;
-
-                let currentIndex = 0;
-                setInterval(() => {
-                    slides[currentIndex].classList.remove('active');
-                    currentIndex = (currentIndex + 1) % slides.length;
-                    slides[currentIndex].classList.add('active');
-                }, 5000);
-            });
-        }
-
-        // ────────────────────────────────────────
-        // CodeCure AI Assistant (Enhanced NLP)
-        // ────────────────────────────────────────
-        let knowledgeBase = [];
-
-        async function loadKnowledgeBase() {
-            try {
-                const response = await fetch('/static/codecure_kb.json');
-                if (response.ok) {
-                    knowledgeBase = await response.json();
-                } else {
-                    knowledgeBase = [
-                        { "question": "What is CodeCure?", "answer": "CodeCure is an AI-driven health-tech platform for diabetes risk prediction." },
-                        { "question": "How to predict?", "answer": "Go to the 'AI Predict' tab and enter patient metrics." }
-                    ];
-                }
-            } catch (e) { console.error("KB Load Error:", e); }
-        }
-
-        loadKnowledgeBase();
-
-        function toggleChat() {
-            const container = document.getElementById('chatbot-container');
-            container.classList.toggle('active');
-            if (container.classList.contains('active')) document.getElementById('chat-input').focus();
-        }
-
-        function handleChatKey(event) {
-            if (event.key === 'Enter') sendChatMessage();
-        }
-
-        async function sendChatMessage() {
-            const input = document.getElementById('chat-input');
-            const messages = document.getElementById('chat-messages');
-            const query = input.value.trim();
-            if (!query) return;
-
-            addMessage(query, 'user');
-            input.value = '';
-
-            const typing = document.createElement('div');
-            typing.className = 'message bot-message typing';
-            typing.innerText = 'Analyzing...';
-            messages.appendChild(typing);
-            messages.scrollTop = messages.scrollHeight;
-
-            setTimeout(() => {
-                messages.removeChild(typing);
-                addMessage(findBestAnswer(query), 'bot');
-            }, 600);
-        }
-
-        function addMessage(text, type) {
-            const messages = document.getElementById('chat-messages');
-            const div = document.createElement('div');
-            div.className = `message ${type}-message`;
-            div.innerText = text;
-            messages.appendChild(div);
-            messages.scrollTop = messages.scrollHeight;
-        }
-
-        function findBestAnswer(query) {
-            const q = query.toLowerCase().trim();
-            const words = q.split(/\s+/);
-
-            // 1. Core Identity & Greetings (Always works)
-            const greetings = ['hello', 'hi', 'hey', 'hola', 'hula', 'hii', 'hy'];
-            const isGreeting = greetings.some(g => q.includes(g)) || q.length < 3;
-            const isIdentity = q.includes('who are you') || q.includes('your name') || q.includes('identity');
-
-            if (isGreeting || isIdentity) {
-                return "Hello! I am your CodeCure AI assistant. How can I help you regarding our platform today? You can ask about our 'diabetes prediction', 'health score', or 'data privacy'.";
-            }
-
-            if (q === 'how' || q === 'how?' || q.includes('how to use')) {
-                return "You can use CodeCure by navigating to the 'AI Predict' tab, enter patient data, and click 'Run AI Analysis'.";
-            }
-
-            // 2. Intent matching using explicit keywords from KB
-            let bestMatch = null;
-            let maxScore = 0;
-
-            knowledgeBase.forEach(item => {
-                let currentScore = 0;
-
-                // Match against explicit keywords (Whole Word Matching)
-                if (item.keywords) {
-                    item.keywords.forEach(keyword => {
-                        const kw = keyword.toLowerCase();
-                        // Check for whole word to avoid partial matches (e.g., 'is' matching 'this')
-                        const regex = new RegExp(`\\b${kw}\\b`, 'i');
-                        if (regex.test(q)) {
-                            currentScore += 3; // Boosted weight for explicit keywords
-                        }
-                    });
-                }
-
-                // Match against question text
-                const questionWords = item.question.toLowerCase().replace(/[?]/g, '').split(' ');
-                questionWords.forEach(word => {
-                    if (word.length > 3 && q.includes(word)) {
-                        currentScore += 1;
-                    }
-                });
-
-                if (currentScore > maxScore) {
-                    maxScore = currentScore;
-                    bestMatch = item.answer;
-                }
-            });
-
-            if (bestMatch && maxScore > 1) return bestMatch;
-
-            // 3. Broad Relation Guard
-            const globalKeywords = ['codecure', 'health', 'score', 'diabetes', 'predict', 'report', 'dashboard', 'ai', 'data', 'privacy', 'clinical', 'bmi', 'glucose', 'bp', 'help', 'json', 'file'];
-            const isRelated = globalKeywords.some(k => q.includes(k));
-
-            if (!isRelated) {
-                return "I do not have the knowledge for this question or statement. I am capable only for CodeCure related questions.";
-            }
-
-            // Fallback for specific missing intents
-            if (q.includes('json') || q.includes('file')) {
-                return "The JSON file acts as my 'Knowledge Base'. It allows CodeCure to store a list of FAQs and technical details that I can access instantly to answer your questions accurately.";
-            }
-
-            return "I am capable only for CodeCure related questions. Could you please rephrase your question for better clarity?";
-        }
-    </script>
+    <script src="/static/script.js"></script>
 </body>
 
 </html>

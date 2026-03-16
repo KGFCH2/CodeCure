@@ -52,12 +52,12 @@
   {
     "keywords": ["bmi", "calculate", "weight", "height", "formula", "obesity"],
     "question": "How to calculate BMI?",
-    "answer": "BMI (Body Mass Index) is calculated by dividing your weight in kilograms by the square of your height in meters (kg/m²). A range of 18.5–24.9 is generally considered healthy."
+    "answer": "BMI is calculated by: Weight (kg) / [Height (m) x Height (m)]. For example, if you weigh 70kg and are 1.75m tall, your BMI is 70 / (1.75 * 1.75) = 22.86 (Healthy range)."
   },
   {
-    "keywords": ["glucose", "level", "blood", "sugar", "normal", "ranges"],
-    "question": "How to understand glucose levels?",
-    "answer": "Normal fasting glucose is typically between 70-99 mg/dL. Values between 100-125 mg/dL reflect prediabetes, and 126 mg/dL or higher on two separate tests indicates diabetes."
+    "keywords": ["glucose", "level", "blood", "sugar", "normal", "ranges", "calculate"],
+    "question": "How to understand and calculate glucose levels?",
+    "answer": "Glucose is measured in mg/dL. Normal is 70-99. Prediabetes is 100-125. Diabetes is 126+. You calculate it using a glucometer or lab test, often measured after 8 hours of fasting."
   },
   {
     "keywords": ["blood", "pressure", "calculate", "systolic", "diastolic", "hypertension"],
@@ -78,5 +78,25 @@
     "keywords": ["diet", "prevention", "lifestyle", "control", "sugar"],
     "question": "How to control blood sugar through lifestyle?",
     "answer": "Monitoring carbohydrate intake, regular exercise, maintaining a healthy weight, and staying hydrated are key ways to manage and stabilize glucose levels naturally."
+  },
+  {
+    "keywords": ["vercel", "deployment", "live", "serverless", "hosting"],
+    "question": "Is CodeCure available on Vercel?",
+    "answer": "Yes! CodeCure is optimized for Vercel using serverless functions, with special logic for data persistence and read-only filesystem compatibility."
+  },
+  {
+    "keywords": ["persistent", "persistence", "localstorage", "save", "sessions"],
+    "question": "How does data stay persistent on Vercel?",
+    "answer": "Since Vercel is serverless, CodeCure uses a 'Hybrid Persistence' model: it stores data in a temporary database while keeping a persistent copy in your browser's LocalStorage."
+  },
+  {
+    "keywords": ["high", "risk", "critical", "danger"],
+    "question": "What if my result is High Risk?",
+    "answer": "A 'High Risk' result means the AI detected patterns similar to diabetic patients. You should consult a healthcare professional for a clinical diagnosis. The platform is for screening, not final diagnosis."
+  },
+  {
+    "keywords": ["model", "accuracy", "reliable", "validated"],
+    "question": "How accurate is the AI model?",
+    "answer": "The CodeCure model is trained on the PIMA Indians Diabetes Dataset and achieves high accuracy (typically >80%) in detecting risk patterns. However, it should always be verified by medical tests."
   }
 ]

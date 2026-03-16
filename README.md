@@ -1,11 +1,11 @@
-﻿# 🩺 CodeCure — AI Health-Tech Platform 🧬
+# 🩺 CodeCure — AI Health-Tech Platform 🧬
 
 > AI-driven health-tech solution for diabetes risk prediction, health scoring, and personalized medical insights powered by machine learning.
 
 ![Python](https://img.shields.io/badge/Python-3.14+-blue?style=for-the-badge&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.135+-green?style=for-the-badge&logo=fastapi&logoColor=white)
 ![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.8+-orange?style=for-the-badge&logo=scikit-learn&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-purple?style=for-the-badge)
+![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=for-the-badge&logo=vercel&logoColor=white)
 
 ---
 
@@ -21,106 +21,84 @@ CodeCure is an intelligent health-tech platform designed to provide proactive he
 | --------- | ---------- |
 | **Backend Framework** | [FastAPI](https://fastapi.tiangolo.com/) (High-performance Python API) |
 | **Machine Learning** | [Scikit-Learn](https://scikit-learn.org/), [NumPy](https://numpy.org/), [Pandas](https://pandas.pydata.org/) |
-| **Database & ORM** | [SQLite](https://sqlite.org/) + [SQLAlchemy](https://www.sqlalchemy.org/) |
-| **Frontend Utilities** | HTML5, CSS3 (Glassmorphism design), Vanilla JavaScript |
-| **Templating Engine** | [Jinja2](https://palletsprojects.com/p/jinja/) |
-| **Deployment/Server** | [Uvicorn](https://www.uvicorn.org/) (ASGI server) |
-| **Serialization** | Joblib (for ML model persistence) |
+| **Database & ORM** | [SQLite](https://sqlite.org/) / [PostgreSQL](https://www.postgresql.org/) + [SQLAlchemy](https://www.sqlalchemy.org/) |
+| **Frontend Utilities** | HTML5, CSS3, Vanilla JavaScript, Lucide Icons |
+| **Persistence** | Hybrid: Server-side DB + Client-side `LocalStorage` |
+| **Deployment** | [Vercel](https://vercel.com/) (Serverless) |
 
 ---
 
-## ⚡ Features
+## ⚡ Key Features
 
-| Feature | Description |
-| ------- | ----------- |
-| 🔮 **Diabetes Risk Prediction** | ML models predict diabetes risk from clinical metrics (Glucose, BMI, etc.) |
-| 💯 **AI Health Score** | A unique 0-100 index providing an immediate snapshot of health status |
-| 🔍 **Explainable AI (XAI)** | Transparent analysis showing exactly which factors contributed to the risk |
-| 📋 **Personalized Recommendations** | Dynamic health advice generated based on individual risk profiles |
-| 📊 **Analytics Dashboard** | Real-time tracking of patient statistics and risk distributions |
-| 🗄️ **Patient Database** | Robust SQLite storage via SQLAlchemy for long-term health tracking |
-| 🏥 **Clinical Parameters** | Support for 8+ metrics including Insulin, Blood Pressure, and Age |
+- 🔮 **Diabetes Risk Prediction**: ML models predict risk from 8+ clinical metrics.
+- 💯 **AI Health Score**: A 0-100 snapshot of overall health status.
+- 🔍 **Explainable AI (XAI)**: Detailed breakdown of risk factors (Glucose, BMI, etc.).
+- 📑 **Modal Summary**: View instant patient details in a sleek dashboard modal.
+- 💬 **AI Assistant**: Specialized chatbot for system FAQs and medical definitions.
+- 📥 **PDF Reports**: Export comprehensive medical reports directly to your device.
+- 🌐 **Vercel Optimized**: Fully compatible with serverless environments and ephemeral storage.
 
 ---
 
-## 🏗️ Technical Workflow
+## 🚀 Deployment (Vercel)
 
-1. **Dataset Handling**: The platform uses clinical data (based on the Pima Indians Diabetes statistical profile) for predictive analysis.
-2. **Standardization**: Input parameters are scaled using `StandardScaler` to ensure prediction accuracy across different measurement units.
-3. **AI Engine**: A trained classifier (Logistic Regression/Random Forest) assesses risk probabilities based on user-provided clinical metrics.
-4. **API Layer**: FastAPI handles asynchronous requests, serving the ML predictions and retrieving records from the SQLite backend.
-5. **Dashboard Analytics**: Historical patient data is aggregated into statistical visualizations for tracking health trends.
-6. **Output Generation**: The frontend presents complex AI results through a user-friendly single-page application with modern UI components.
+CodeCure is optimized for Vercel deployment using serverless functions.
+
+1. **Database**: Automatically switches to `/tmp/codecure.db` in serverless mode to bypass read-only filesystems.
+2. **Persistence**: Implements a `LocalStorage` fallback so your dashboard data survives server resets.
+3. **Configuration**: Uses `vercel.json` for seamless FastAPI routing.
+
+### Persistent Storage (Cloud)
+
+To enable shared database storage across all users, connect a **Vercel Postgres** or **Neon DB** through the Vercel dashboard. The system will automatically detect the connection.
 
 ---
 
-## 🚀 Installation & Setup
-
-### Prerequisites
-
-- Python 3.10+
-- Virtual environment tool (`venv`)
-
-### Setup Instructions
+## 🏗️ Local Installation
 
 ```bash
-# 1. Navigate to project directory
+# 1. Clone & Navigate
+git clone https://github.com/KGFCH2/CodeCure.git
 cd CodeCure
 
-# 2. Create and activate a virtual environment
+# 2. Virtual Env
 python -m venv venv
-# Windows:
-venv\Scripts\activate
-# macOS/Linux:
-source venv/bin/activate
+source venv/bin/activate  # Or venv\Scripts\activate on Windows
 
-# 3. Install project dependencies
+# 3. Dependencies
 pip install -r requirements.txt
 
-# 4. Train the AI model
-# This generates the model/ folder and initialization data
+# 4. Initialize AI
 python train_model.py
 
-# 5. Start the application server
+# 5. Run Server
 python -m uvicorn main:app --reload
 ```
 
-Access the platform at `http://127.0.0.1:8000` once the server is running.
+Access at `http://127.0.0.1:8000`.
 
 ---
 
-## 📁 Project Structure
+## 📁 Project structure
 
 ```text
 CodeCure/
-├── main.py            # Main API service using FastAPI
-├── train_model.py     # Training scripts and synthetic data generation
-├── database.py        # Database models and session management
-├── schemas.py         # Data validation and API response models
-├── requirements.txt   # List of Python dependencies
-├── templates/
-│   └── index.html     # Web dashboard (Modern SPA)
+├── main.py            # FastAPI service & Chatbot logic
+├── database.py        # SQLite/Postgres connection manager
+├── vercel.json        # Deployment configuration
 ├── static/
-│   └── style.css      # Custom styling and branding
-└── model/
-    ├── diabetes_model.pkl    # Trained AI binary
-    ├── scaler.pkl            # Trained scaler binary
-    └── feature_names.pkl     # Meta-info for model inputs
+│   ├── style.css      # Premium Glassmorphism UI
+│   ├── script.js      # Core Vanilla JS (Predictions, Dashboard, AI Logic)
+│   └── codecure_kb.json # Chatbot Knowledge Base
+├── templates/
+│   └── index.html     # Single Page Application Shell
+└── model/             # Trained AI Models
 ```
 
 ---
 
-## 📜 License
+## 📜 License & Support
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License. Created for the future of intelligent healthcare delivery.
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-
-## 📧 Contact & Support
-
-For any inquiries or support regarding **CodeCure**, please open an issue in the repository or contact the project maintainers.
-
----
-*Built with ❤️ for a healthier future.*
+*Built with ❤️ by the CodeCure Team.*

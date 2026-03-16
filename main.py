@@ -461,7 +461,7 @@ async def get_dashboard(
             recent_predictions=[]
         )
 
-    high_risk = query.filter(Patient.risk_level.in_("High", "Critical")).count()
+    high_risk = query.filter(Patient.risk_level.in_(["High", "Critical"])).count()
     low_risk = total - high_risk
     
     avg_health = query.with_entities(func.avg(Patient.health_score)).scalar() or 0
