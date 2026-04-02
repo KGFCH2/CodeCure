@@ -1,0 +1,42 @@
+[
+  {
+    "keywords": ["what", "is", "codecure", "define", "about", "platform"],
+    "question": "What is CodeCure?",
+    "answer": "CodeCure is an AI-driven pharmacology platform designed for drug toxicity prediction, molecular safety scoring, and chemical descriptor analysis."
+  },
+  {
+    "keywords": ["toxicity", "prediction", "work", "how", "model", "predict"],
+    "question": "How does the toxicity prediction work?",
+    "answer": "CodeCure uses machine learning models trained on the Tox21 dataset to analyze molecular descriptors like LogP, MW, and TPSA to estimate potential drug toxicity."
+  },
+  {
+    "keywords": ["safety", "score", "index", "ai", "rating", "drug-likeness"],
+    "question": "What is the AI Safety Score?",
+    "answer": "The AI Safety Score is a metric from 0-100 (higher is safer) that represents a compound's probability of being non-toxic and compliant with medicinal chemistry rules like Lipinski's Rule of 5."
+  },
+  {
+    "keywords": ["smiles", "molecular", "structure", "input", "format"],
+    "question": "What is SMILES?",
+    "answer": "SMILES (Simplified Molecular Input Line Entry System) is a notation for representing chemical structures as strings. CodeCure uses it to automatically calculate molecular properties."
+  },
+  {
+    "keywords": ["lipinski", "rule", "druglikeness", "potency", "bioavailability"],
+    "question": "What are Lipinski's Rules?",
+    "answer": "Lipinski's Rule of 5 is a set of rules used to evaluate drug-likeness. It considers Molecular Weight < 500, LogP < 5, H-Bond Donors < 5, and H-Bond Acceptors < 10."
+  },
+  {
+    "keywords": ["tech", "stack", "language", "python", "fastapi", "built", "with"],
+    "question": "Which technologies are used in CodeCure?",
+    "answer": "CodeCure is built using FastAPI, RDKit for cheminformatics, Scikit-learn for AI, and a glassmorphism HTML/JS frontend."
+  },
+  {
+    "keywords": ["dashboard", "features", "repository", "stats", "overview"],
+    "question": "What features are available in the Dashboard?",
+    "answer": "The Dashboard provides real-time analytics for analyzed compounds, including toxicity distribution, average lipophilicity (LogP), and molecular weight trends."
+  },
+  {
+    "keywords": ["descriptors", "features", "metrics", "parameters", "inputs", "analysis"],
+    "question": "What molecular descriptors are analyzed?",
+    "answer": "The platform analyzes features including Molecular Weight (MW), LogP (Lipophilicity), H-Bond Donors/Acceptors, TPSA, and Aromatic Ring count."
+  }
+]
