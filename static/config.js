@@ -14,12 +14,12 @@ function getBackendURL() {
     // Priority 2: Check for production Vercel deployment
     if (typeof window !== 'undefined') {
         const hostname = window.location.hostname;
-        
+
         // Vercel production domain
         if (hostname.includes('vercel.app')) {
             return 'https://codecure-backend-8yt5.onrender.com';
         }
-        
+
         // Local development
         if (hostname.includes('localhost') || hostname === '127.0.0.1') {
             return 'http://localhost:8000';

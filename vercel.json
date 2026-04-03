@@ -3,7 +3,7 @@
   "buildCommand": "echo 'Frontend static files - no build needed'",
   "outputDirectory": ".",
   "env": {
-    "BACKEND_URL": "https://codecure-backend.onrender.com"
+    "BACKEND_URL": "https://codecure-backend-8yt5.onrender.com"
   },
   "routes": [
     {

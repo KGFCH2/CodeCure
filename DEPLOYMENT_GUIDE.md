@@ -1,11 +1,13 @@
 # CodeCure Deployment Guide: Render + Vercel
 
 **Architecture:**
+
 ```
 Frontend (Vercel) ↔ API (Render) ↔ GROQ API
 ```
 
 **Free Tier Benefits:**
+
 - ✅ Vercel: Unlimited deployments, auto-scaling, global CDN
 - ✅ Render: 750 hours/month free, auto-sleep after 15 min inactivity
 - ✅ GROQ: Free API with rate limits (perfect for demo)
@@ -46,7 +48,7 @@ git push origin main
 
 ### **Step 3: Create Render Account**
 
-1. Go to **https://render.com**
+1. Go to **<https://render.com>**
 2. Sign up with GitHub
 3. Authorize Render to access your GitHub repos
 
@@ -67,16 +69,19 @@ git push origin main
 1. In Render dashboard, go to your service
 2. Click **Environment** tab
 3. Add variable:
+
    ```
    GROQ_API_KEY = gsk_your_actual_api_key_here
    ```
+
 4. **Save** and service will auto-redeploy
 
 ### **Step 6: Get Backend URL**
 
 After deployment (2-5 minutes), you'll see:
+
 ```
-Backend URL: https://codecure-backend.onrender.com
+Backend URL: https://codecure-backend-8yt5.onrender.com
 ```
 
 **Copy this URL** - you'll need it for frontend.
@@ -95,7 +100,7 @@ Edit `static/script.js` (find the prediction function):
 // ╚════════════════════════════════════════╝
 
 // Get backend URL from environment or use default
-const BACKEND_URL = window.ENV?.BACKEND_URL || 'https://codecure-backend.onrender.com';
+const BACKEND_URL = window.ENV?.BACKEND_URL || 'https://codecure-backend-8yt5.onrender.com';
 
 // Update handlePrediction function - change fetch endpoint:
 async function handlePrediction(event) {
@@ -157,7 +162,7 @@ git push origin main
 
 ### **Step 5: Create Vercel Account**
 
-1. Go to **https://vercel.com**
+1. Go to **<https://vercel.com>**
 2. Sign up with GitHub
 3. **Import Project** → Select `CodeCure`
 
@@ -170,8 +175,9 @@ git push origin main
    - Install Command: (leave empty)
 
 2. **Environment Variables:**
+
    ```
-   BACKEND_URL = https://codecure-backend.onrender.com
+   BACKEND_URL = https://codecure-backend-8yt5.onrender.com
    GROQ_API_KEY = gsk_your_api_key  (optional, already on Render)
    ```
 
@@ -180,6 +186,7 @@ git push origin main
 ### **Step 7: Get Frontend URL**
 
 After deployment, Vercel shows:
+
 ```
 Frontend URL: https://your-project.vercel.app
 ```
@@ -191,7 +198,7 @@ Frontend URL: https://your-project.vercel.app
 ### **Test Backend**
 
 ```
-GET https://codecure-backend.onrender.com/
+GET https://codecure-backend-8yt5.onrender.com/
 Expected: CodeCure homepage
 ```
 
@@ -209,25 +216,28 @@ Expected: CodeCure homepage with working chatbot + predictions
 3. Click "Run AI Analysis"
 4. Check Results section shows predictions
 5. Open DevTools (F12) → Network tab
-6. Verify requests go to `codecure-backend.onrender.com/api/predict`
+6. Verify requests go to `codecure-backend-8yt5.onrender.com/api/predict`
 
 ---
 
 ## **Part 4: Environment Variables Reference**
 
 ### **Render (Backend)**
+
 | Variable | Value | Required |
 |----------|-------|----------|
 | `GROQ_API_KEY` | `gsk_xxx` | ✅ YES |
 | `DATABASE_URL` | (not set - uses SQLite) | ❌ NO |
 
 ### **Vercel (Frontend)**
+
 | Variable | Value | Required |
 |----------|-------|----------|
-| `BACKEND_URL` | `https://codecure-backend.onrender.com` | ✅ YES |
+| `BACKEND_URL` | `https://codecure-backend-8yt5.onrender.com` | ✅ YES |
 | `GROQ_API_KEY` | (optional - already on Render) | ❌ NO |
 
 ### **Local Development (.env)**
+
 ```env
 GROQ_API_KEY=gsk_your_key
 BACKEND_URL=http://localhost:8000
@@ -238,11 +248,13 @@ BACKEND_URL=http://localhost:8000
 ## **Part 5: Custom Domain (Optional)**
 
 ### **Add Domain to Render**
+
 1. Render Dashboard → Settings → Domains
 2. Add custom domain: `api.yourdomain.com`
 3. Update DNS records (Render provides instructions)
 
 ### **Add Domain to Vercel**
+
 1. Vercel Dashboard → Settings → Domains
 2. Add custom domain: `yourdomain.com`
 3. Update DNS records (Vercel provides instructions)
@@ -254,6 +266,7 @@ BACKEND_URL=http://localhost:8000
 ### **Frontend can't reach backend**
 
 **Problem:** CORS errors in console
+
 ```
 Access to XMLHttpRequest blocked by CORS policy
 ```
@@ -275,13 +288,15 @@ app.add_middleware(
 ### **Backend returns 401 (API Key Error)**
 
 **Problem:** GROQ_API_KEY not set on Render
-**Solution:** 
+**Solution:**
+
 1. Render Dashboard → Environment → Check variable is set
 2. Redeploy service: Click "Manual Deploy"
 
 ### **Render service goes to sleep**
 
 **Info:** Free tier auto-sleeps after 15 min inactivity
+
 - First request takes 10-30 seconds (cold start)
 - Subsequent requests are fast
 - Upgrade to paid tier if needed
@@ -291,22 +306,26 @@ app.add_middleware(
 ## **Part 7: Monitoring & Updates**
 
 ### **View Backend Logs**
+
 ```
 Render Dashboard → codecure-backend → Logs
 ```
 
 ### **View Frontend Logs**
+
 ```
 Vercel Dashboard → CodeCure → Deployments → Logs
 ```
 
 ### **Update Backend**
+
 ```powershell
 git push origin main
 # Render auto-deploys in 1-2 minutes
 ```
 
 ### **Update Frontend**
+
 ```powershell
 git push origin main
 # Vercel auto-deploys in 1-2 minutes
@@ -318,14 +337,14 @@ git push origin main
 
 1. **Render:** Upgrade to paid tier if you exceed 750 hours/month
 2. **Vercel:** Free tier is unlimited - no upgrades needed
-3. **GROQ API:** Monitor your API usage at https://console.groq.com/
+3. **GROQ API:** Monitor your API usage at <https://console.groq.com/>
 
 ---
 
 ## **Summary Checklist**
 
 - [ ] Render backend deployed
-- [ ] Backend URL obtained: `https://codecure-backend.onrender.com`
+- [ ] Backend URL obtained: `https://codecure-backend-8yt5.onrender.com`
 - [ ] GROQ_API_KEY set on Render
 - [ ] Frontend code updated with backend URL
 - [ ] Vercel frontend deployed
@@ -357,7 +376,7 @@ python main.py
 # → http://localhost:8000
 
 # Test backend API
-curl https://codecure-backend.onrender.com/api/health
+curl https://codecure-backend-8yt5.onrender.com/api/health
 # → Should return: {"status": "healthy"}
 ```
 
