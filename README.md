@@ -41,63 +41,89 @@ CodeCure is an intelligent chemical informatics platform designed to predict and
 
 ---
 
-## 🚀 Deployment (Vercel)
+## 🚀 Deployment Options
 
-CodeCure is optimized for Vercel deployment using serverless functions.
+### Option 1: LocalStorage Only (Simplest | No Database)
+Data persists **only in your browser**. Perfect for personal use, testing, or demos.
+- ✅ Zero database setup
+- ✅ Deploy to Vercel in 5 minutes
+- ❌ Data only on this device
+- ❌ Single browser (data won't sync)
 
-1. **Database**: Automatically switches to `/tmp/codecure.db` in serverless mode to bypass read-only filesystems.
-2. **Persistence**: Implements a `LocalStorage` fallback so your dashboard data survives server resets.
-3. **Configuration**: Uses `vercel.json` for seamless FastAPI routing.
+### Option 2: Vercel Only (Simple | Optional Database)
+Deploy on Vercel. Optionally add Vercel Postgres for shared cloud storage.
+- ✅ Easy deployment
+- ✅ Single-click Postgres integration
+- ✅ Automatic scaling
+- 💰 Postgres is paid tier
 
-### Persistent Storage (Cloud)
+### Option 3: Render + Vercel (Production | Recommended)
+Split architecture: Backend on Render, Frontend on Vercel for maximum control.
+- ✅ Full separation of concerns
+- ✅ Production-ready
+- ✅ Dynamic API URL configuration
+- ✅ Optional PostgreSQL database
+- 📖 See [DEPLOYMENT.md](DEPLOYMENT.md) for step-by-step guide
 
-To enable shared database storage across all users, connect a **Vercel Postgres** or **Neon DB** through the Vercel dashboard. The system will automatically detect the connection.
+**👉 Quick Start**: Copy `.env.example` to `.env`, add your `GROQ_API_KEY`, and deploy to Vercel!
 
 ---
 
-## 🏗️ Local Installation
+## 🏗️ Local Installation & Testing ✅ Verified Working
 
 ```bash
-# 1. Clone & Navigate
+# 1. Clone Repository
 git clone https://github.com/KGFCH2/CodeCure.git
 cd CodeCure
 
-# 2. Environment Setup
-cp .env.example .env  # Copy template
-# Edit .env and add your GROQ_API_KEY
-
-# 3. Virtual Env
+# 2. Create Virtual Environment
 python -m venv venv
-source venv/bin/activate  # Or venv\Scripts\activate on Windows
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# 4. Dependencies
+# 3. Install Dependencies
 pip install -r requirements.txt
 
-# 5. Initialize AI
-python train_model.py
+# 4. Set Environment Variables
+cp .env.example .env
+# Edit .env and add your GROQ_API_KEY from https://console.groq.com/keys
 
-# 6. Run Server
-python -m uvicorn main:app --reload
+# 5. Run the Application
+python main.py
+# Server starts at http://localhost:8000
 ```
 
-Access at `http://127.0.0.1:8000`.
+### ✅ Verification Checklist
 
----
+- [ ] Navigate to `http://localhost:8000` — you should see the CodeCure dashboard
+- [ ] Open browser DevTools (F12) → Console — should show no errors
+- [ ] Go to `/api/health` — should return `{"status": "healthy", "model_loaded": true}`
+- [ ] Submit a toxicity prediction — should return risk score and factors
+- [ ] Open DevTools → Application → LocalStorage — should show saved predictions
 
-## 📁 Project structure
+### 📁 Project Structure
 
-```text
+```
 CodeCure/
-├── main.py            # FastAPI service & Chatbot logic
-├── database.py        # SQLite/Postgres connection manager
-├── vercel.json        # Deployment configuration
+├── main.py              # FastAPI backend with all endpoints
+├── database.py          # SQLAlchemy models and database setup
+├── schemas.py           # Pydantic schemas for request/response validation
+├── train_model.py       # ML model training script
+├── requirements.txt     # All Python dependencies
 ├── static/
-│   ├── style.css      # Premium Glassmorphism UI
-│   ├── script.js      # Core Vanilla JS (Predictions, Dashboard, AI Logic)
-│   └── codecure_kb.json # Chatbot Knowledge Base
+│   ├── style.css        # Glassmorphism UI styling
+│   ├── script.js        # Core application logic (predictions, dashboard, chatbot)
+│   ├── codecure_kb.json # ChemiBot knowledge base
+│   └── favicon.png      # App icon
 ├── templates/
-│   └── index.html     # Single Page Application Shell
-└── model/             # Trained AI Models
+│   └── index.html       # Single Page Application (SPA) shell
+├── model/               # Pre-trained ML models
+│   ├── diabetes_model.pkl      # Classification model
+│   ├── scaler.pkl              # Feature scaling
+│   └── feature_names.pkl       # Feature column names
+├── render.yaml          # Render.com deployment config (Python 3.11)
+├── vercel.json          # Vercel deployment config
+├── DEPLOYMENT.md        # Complete deployment guide (3 options)
+└── .env.example         # Environment variable template
 ```
 
 ---
