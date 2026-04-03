@@ -2,8 +2,8 @@
 
 > Advanced AI-powered chemical informatics platform for predicting drug toxicity, analyzing molecular properties, and assessing chemical safety using cutting-edge machine learning models.
 
-![Python](https://img.shields.io/badge/Python-3.14+-blue?style=for-the-badge&logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.135+-green?style=for-the-badge&logo=fastapi&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.11+-blue?style=for-the-badge&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green?style=for-the-badge&logo=fastapi&logoColor=white)
 ![RDKit](https://img.shields.io/badge/RDKit-Cheminformatics-purple?style=for-the-badge&logo=molecule&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=for-the-badge&logo=vercel&logoColor=white)
 
@@ -61,17 +61,7 @@ Deploy on Vercel. Optionally add Vercel Postgres for shared cloud storage.
 - ✅ Automatic scaling
 - 💰 Postgres is paid tier
 
-### Option 3: Render + Vercel (Production | Recommended)
-
-Split architecture: Backend on Render, Frontend on Vercel for maximum control.
-
-- ✅ Full separation of concerns
-- ✅ Production-ready
-- ✅ Dynamic API URL configuration
-- ✅ Optional PostgreSQL database
-- 📖 See [DEPLOYMENT.md](DEPLOYMENT.md) for step-by-step guide
-
-**👉 Quick Start**: Copy `.env.example` to `.env`, add your `GROQ_API_KEY`, and deploy to Vercel!
+**👉 Quick Start**: Copy `.env.example` to `.env`, add your `GROQ_API_KEY`, and run locally or deploy to Vercel!
 
 ---
 
@@ -88,6 +78,7 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # 3. Install Dependencies
 pip install -r requirements.txt
+# Note: Pre-trained models are included, so app works even if scikit-learn installation takes time
 
 # 4. Set Environment Variables
 cp .env.example .env
@@ -128,7 +119,6 @@ CodeCure/
 │   └── feature_names.pkl       # Feature column names
 ├── render.yaml          # Render.com deployment config (Python 3.11)
 ├── vercel.json          # Vercel deployment config
-├── DEPLOYMENT.md        # Complete deployment guide (3 options)
 └── .env.example         # Environment variable template
 ```
 
