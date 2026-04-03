@@ -27,40 +27,45 @@ Quick setup guide for running CodeCure locally. **For deployment, see [DEPLOYMEN
 ### Installation
 
 1. **Clone the repository**:
+
    ```bash
    git clone https://github.com/KGFCH2/CodeCure.git
    cd CodeCure
    ```
 
 2. **Create virtual environment**:
+
    ```bash
    python -m venv venv
    source venv/bin/activate  # Windows: venv\Scripts\activate
    ```
 
 3. **Install dependencies**:
+
    ```bash
    pip install -r requirements.txt
    ```
 
 4. **Configure environment**:
+
    ```bash
    cp .env.example .env
    # Edit .env and add GROQ_API_KEY from https://console.groq.com/keys
    ```
 
 5. **Start the server**:
+
    ```bash
    python main.py
    ```
-   
-   Server starts at **http://localhost:8000** ✅
+
+   Server starts at **<http://localhost:8000>** ✅
 
 ---
 
 ## 🧪 Testing Checklist
 
-- [ ] Open http://localhost:8000 in browser
+- [ ] Open <http://localhost:8000> in browser
 - [ ] Submit a test SMILES string (example: `CCO` for ethanol)
 - [ ] View toxicity prediction result
 - [ ] Open DevTools (F12) → Application → LocalStorage → See predictions stored
@@ -71,7 +76,7 @@ Quick setup guide for running CodeCure locally. **For deployment, see [DEPLOYMEN
 ## 📡 API Endpoints
 
 | Method | Endpoint | Purpose |
-|--------|----------|---------|
+| -------- | ---------- | --------- |
 | GET | `/` | Main web app |
 | GET | `/api/health` | Health check & diagnostics |
 | POST | `/api/predict` | Toxicity prediction |
@@ -84,7 +89,7 @@ Quick setup guide for running CodeCure locally. **For deployment, see [DEPLOYMEN
 
 Create `.env` file:
 
-```
+```bash
 GROQ_API_KEY=your_api_key_here
 DATABASE_URL=             # Optional - leave blank for LocalStorage
 ALLOWED_ORIGINS=http://localhost:3000,http://localhost:8000
@@ -107,7 +112,7 @@ For production deployment on Vercel, Render, or both:
 ## 🆘 Troubleshooting
 
 | Issue | Solution |
-|-------|----------|
+| ------- | ---------- |
 | `ModuleNotFoundError: fastapi` | Run `pip install -r requirements.txt` |
 | `GROQ_API_KEY not set` | Copy `.env.example` → `.env` and add your API key |
 | `Model failed to load` | Check `/model/` directory exists with model files |
@@ -135,4 +140,4 @@ For production deployment on Vercel, Render, or both:
 
 ---
 
-**Happy coding! 🚀**
+**Happy Analyzing!**🧪

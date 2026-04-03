@@ -44,21 +44,27 @@ CodeCure is an intelligent chemical informatics platform designed to predict and
 ## 🚀 Deployment Options
 
 ### Option 1: LocalStorage Only (Simplest | No Database)
+
 Data persists **only in your browser**. Perfect for personal use, testing, or demos.
+
 - ✅ Zero database setup
 - ✅ Deploy to Vercel in 5 minutes
 - ❌ Data only on this device
 - ❌ Single browser (data won't sync)
 
 ### Option 2: Vercel Only (Simple | Optional Database)
+
 Deploy on Vercel. Optionally add Vercel Postgres for shared cloud storage.
+
 - ✅ Easy deployment
 - ✅ Single-click Postgres integration
 - ✅ Automatic scaling
 - 💰 Postgres is paid tier
 
 ### Option 3: Render + Vercel (Production | Recommended)
+
 Split architecture: Backend on Render, Frontend on Vercel for maximum control.
+
 - ✅ Full separation of concerns
 - ✅ Production-ready
 - ✅ Dynamic API URL configuration
@@ -102,7 +108,7 @@ python main.py
 
 ### 📁 Project Structure
 
-```
+```text
 CodeCure/
 ├── main.py              # FastAPI backend with all endpoints
 ├── database.py          # SQLAlchemy models and database setup
