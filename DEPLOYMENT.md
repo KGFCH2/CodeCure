@@ -223,6 +223,7 @@ git push origin main
 4. In settings, use these values:
    - **Name**: `codecure-api`
    - **Environment**: `Python 3`
+   - **Python Version**: `3.11` (required for scikit-learn compatibility)
    - **Build Command**: `pip install -r requirements.txt && python train_toxicity_model.py`
    - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port 8080`
    - **Plan**: Free (or paid for production)
