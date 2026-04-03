@@ -128,7 +128,7 @@ services:
         sync: false  # Must be set manually in dashboard
 ```
 
-2. **Update `main.py`** to use `PORT` environment variable:  
+1. **Update `main.py`** to use `PORT` environment variable:  
 
 In your main.py, ensure the app runs on the Render-provided port:
 
@@ -342,14 +342,16 @@ async function submitPrediction() {
 
 ## 10. Deployment Checklist ✅
 
-### For Render Backend:
+### For Render Backend
+
 - [ ] Create `render.yaml` in project root
 - [ ] Add `GROQ_API_KEY` environment variable
 - [ ] Set `ALLOWED_ORIGINS` to allow Vercel domain
 - [ ] Enable CORS in `main.py`
 - [ ] Deploy and get Render URL
 
-### For Vercel Frontend:
+### For Vercel Frontend
+
 - [ ] Add `GROQ_API_KEY` environment variable
 - [ ] Add `RENDER_API_URL` environment variable
 - [ ] Update `script.js` to use `API_BASE_URL`
@@ -357,7 +359,8 @@ async function submitPrediction() {
 - [ ] Update `templates/index.html` to inject API URL
 - [ ] Deploy and verify connectivity
 
-### Connection Testing:
+### Connection Testing
+
 - [ ] Frontend loads without errors
 - [ ] Health check API responds: `https://your-vercel-app.vercel.app/api/health`
 - [ ] Predictions work with Render backend
@@ -397,31 +400,37 @@ ChemiBot uses `static/codecure_kb.json` as its knowledge base. To add more chemi
 ### Deployment Issues
 
 #### Render Backend Deployment
+
 - **Build fails**: Check logs in Render dashboard. Ensure `train_toxicity_model.py` runs successfully
 - **Service keeps spinning down**: Upgrade to paid tier to prevent idle spindown
 - **API timeout**: Increase timeout in Render settings or optimize model prediction time
 
 #### Vercel Frontend Deployment
+
 - **Dashboard Resetting**: If compound data disappears on refresh, ensure your browser allows `LocalStorage`. For permanent storage, connect PostgreSQL
-- **Can't reach Render backend**: 
+- **Can't reach Render backend**:
   - Check `RENDER_API_URL` environment variable in Vercel
   - Verify CORS is enabled in Render's `main.py`
   - Check browser console for CORS errors
 
 #### Render + Vercel Connection
+
 - **CORS errors**: Add your Vercel URL to `ALLOWED_ORIGINS` in Render's `main.py`
+
   ```python
   allow_origins=[
       "https://your-vercel-app.vercel.app",
       "https://your-domain.com",  # if using custom domain
   ]
   ```
+
 - **API calls fail from Vercel**: Ensure `RENDER_API_URL` is set correctly in Vercel environment variables
 - **Network errors**: Check if Render service is awake (might be spinning down on free tier)
 
 #### Database Issues
+
 - **Database connection fails on Render**: Verify `DATABASE_URL` is set correctly
-- **Data not persisting**: 
+- **Data not persisting**:
   - Check if using `/tmp/` database (ephemeral on Vercel)
   - Switch to PostgreSQL for production
 - **Cross-service database access**: Ensure both Render and Vercel have same `DATABASE_URL` if sharing
