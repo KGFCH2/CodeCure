@@ -913,7 +913,9 @@ function initSlideshows() {
 // ────────────────────────────────────────
 // Chatbot Logic with GROQ API Integration
 // ────────────────────────────────────────
-const GROQ_API_KEY = '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'; // Consider moving to .env in production
+// API key is injected from backend via HTML template environment variable
+// window.ENV.GROQ_API_KEY is set in templates/index.html
+const GROQ_API_KEY = window.ENV?.GROQ_API_KEY || '';  // Safely access from window.ENV
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 async function loadKnowledgeBase() {
