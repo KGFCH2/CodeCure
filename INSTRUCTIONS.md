@@ -1,4 +1,4 @@
-﻿# 🧪 CodeCure Local Development Guide
+﻿# 🏥 CodeCure Local Development Guide
 
 Quick setup guide for running CodeCure locally. **For deployment, see [DEPLOYMENT.md](DEPLOYMENT.md).**
 
@@ -6,11 +6,11 @@ Quick setup guide for running CodeCure locally. **For deployment, see [DEPLOYMEN
 
 ## ⚡ Features
 
-- ✅ **AI Chemical Toxicity Prediction** - Real-time analysis using SMILES strings
-- ✅ **Risk Scoring System** - 0-100 toxicity risk metric  
-- ✅ **Explainable AI** - View which molecular features influence risk
+- ✅ **AI Diabetes Risk Prediction** - Real-time analysis using patient health metrics
+- ✅ **Risk Scoring System** - 0-100 diabetes risk metric  
+- ✅ **Explainable AI** - View which health factors influence risk
 - ✅ **Dashboard Analytics** - Track prediction history with LocalStorage
-- ✅ **ChemiBot Assistant** - AI chatbot for toxicology questions
+- ✅ **Health Assistant** - AI chatbot for diabetes prevention and health questions
 - ✅ **PDF Reports** - Export detailed analysis reports
 - ✅ **Zero Database Required** - Data stored in browser LocalStorage by default
 
@@ -74,8 +74,8 @@ Quick setup guide for running CodeCure locally. **For deployment, see [DEPLOYMEN
 ## 🧪 Testing Checklist
 
 - [ ] Open <http://localhost:8000> in browser
-- [ ] Submit a test SMILES string (example: `CCO` for ethanol)
-- [ ] View toxicity prediction result
+- [ ] Input health metrics (Glucose: 120, BMI: 28, Age: 45, etc.)
+- [ ] View diabetes risk prediction result
 - [ ] Open DevTools (F12) → Application → LocalStorage → See predictions stored
 - [ ] Refresh page → Predictions still visible ✅ (LocalStorage working)
 
@@ -87,9 +87,9 @@ Quick setup guide for running CodeCure locally. **For deployment, see [DEPLOYMEN
 | -------- | ---------- | --------- |
 | GET | `/` | Main web app |
 | GET | `/api/health` | Health check & diagnostics |
-| POST | `/api/predict` | Toxicity prediction |
+| POST | `/api/predict` | Diabetes risk prediction |
 | GET | `/api/dashboard` | Analytics dashboard |
-| GET | `/api/patients` | Patient/compound history |
+| GET | `/api/patients` | Patient health records history |
 
 ---
 
@@ -133,10 +133,10 @@ For production deployment on Vercel, Render, or both:
 
 - **Backend**: FastAPI + SQLAlchemy
 - **ML**: Scikit-Learn + NumPy + Pandas  
-- **Cheminformatics**: RDKit (SMILES parsing)
+- **Health Analytics**: Pre-trained Diabetes Risk Classification Model
 - **Frontend**: HTML5 + CSS3 + Vanilla JavaScript
 - **Data Storage**: LocalStorage (browser) + Optional PostgreSQL
-- **API Key**: Groq (ChemiBot integration)
+- **API Key**: Groq (Health Assistant chatbot integration)
 
 ---
 
@@ -148,4 +148,4 @@ For production deployment on Vercel, Render, or both:
 
 ---
 
-**Happy Analyzing!**🧪
+**Happy Predicting!** 🏥
