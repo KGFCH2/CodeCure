@@ -7,13 +7,27 @@ const BACKEND_URL = typeof window !== 'undefined' && window.BACKEND_URL_CONFIG
     ? window.BACKEND_URL_CONFIG
     : (window.ENV?.BACKEND_URL || 'http://localhost:8000');
 
-// Initialize Lucide Icons & UI Effects
-document.addEventListener('DOMContentLoaded', () => {
-    if (typeof lucide !== 'undefined') lucide.createIcons();
+// ────────────────────────────────────────
+// Accordion Functionality
+// ────────────────────────────────────────
+function toggleAccordion(button) {
+    const item = button.closest('.accordion-item');
+    const container = button.closest('.accordion-container');
+    
+    if (!item) return;
 
-    // Page Loader logic
-    const hideLoader = () => {
-        const loader = document.getElementById('page-loader');
+    // Close other items in the same container
+    if (container) {
+        container.querySelectorAll('.accordion-item').forEach(otherItem => {
+            if (otherItem !== item && otherItem.classList.contains('active')) {
+                otherItem.classList.remove('active');
+            }
+        });
+    }
+
+    // Toggle current item
+    item.classList.toggle('active');
+}
         const statusEl = loader ? loader.querySelector('.loader-status') : null;
 
         if (loader) {
@@ -720,180 +734,150 @@ function downloadPDF() {
 function generatePDFReport(data) {
     const score = parseInt(data.score) || 0;
     const scoreColor = getScoreColor(score);
-    const timestamp = new Date();
+    const timestamp = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     const reportID = '#CC' + Date.now().toString().slice(-10);
-
-    // Create container element for PDF generation
-    const pdfContainer = document.createElement('div');
-    pdfContainer.id = 'pdf-holder-' + Date.now();
-    pdfContainer.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:210mm;height:297mm;background:white;padding:20mm;';
-
-    // Build HTML content
-    let htmlContent = `
-<table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
-    <tr>
-        <td style="vertical-align:top;width:70%;">
-            <h1 style="color:#10b981;margin:0;font-size:32px;font-weight:900;">CodeCure</h1>
-            <p style="color:#64748b;margin:3px 0 0 0;font-size:12px;">AI Diabetes Risk Assessment Platform</p>
-        </td>
-        <td style="text-align:right;vertical-align:top;">
-            <div style="background:#f0fdf4;padding:10px 15px;border-radius:6px;border:1px solid #10b981;text-align:center;">
-                <p style="margin:0;font-size:10px;color:#64748b;">Report ID</p>
-                <p style="margin:3px 0 0 0;font-size:12px;font-weight:bold;color:#10b981;font-family:monospace;">${reportID}</p>
-            </div>
-        </td>
-    </tr>
-</table>
-
-<div style="background:linear-gradient(135deg, ${scoreColor}20, ${scoreColor}05);border:2px solid ${scoreColor};border-radius:8px;padding:20px;margin-bottom:20px;">
-    <table style="width:100%;border-collapse:collapse;">
-        <tr>
-            <td style="width:80px;text-align:center;vertical-align:middle;">
-                <div style="background:${scoreColor};color:white;width:75px;height:75px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:bold;margin:0 auto;">
-                    <span style="font-size:32px;">${score}</span>
-                    <span style="font-size:12px;margin-top:3px;">/100</span>
-                </div>
-            </td>
-            <td style="padding-left:20px;vertical-align:middle;">
-                <h2 style="margin:0 0 5px 0;font-size:20px;color:#111827;font-weight:700;">${data.risk} Risk</h2>
-                <p style="margin:0 0 8px 0;color:#64748b;font-size:13px;">Diabetes Probability: <strong style="color:${scoreColor};font-size:14px;">${data.probability}</strong></p>
-                <p style="margin:0;padding:8px 12px;background:white;border-left:3px solid ${scoreColor};border-radius:4px;font-size:11px;color:#374151;">${data.summary}</p>
-            </td>
-        </tr>
-    </table>
-</div>
-
-<h3 style="margin:0 0 12px 0;font-size:13px;color:#111827;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e2e8f0;padding-bottom:6px;">Patient Information</h3>
-<table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:11px;">
-    <tr>
-        <td style="width:25%;padding:6px;border-bottom:1px solid #e2e8f0;">
-            <p style="margin:0;color:#64748b;font-weight:600;font-size:10px;">Name</p>
-            <p style="margin:3px 0 0 0;color:#111827;font-weight:500;">${data.name}</p>
-        </td>
-        <td style="width:25%;padding:6px;border-bottom:1px solid #e2e8f0;">
-            <p style="margin:0;color:#64748b;font-weight:600;font-size:10px;">Email</p>
-            <p style="margin:3px 0 0 0;color:#111827;font-weight:500;">${data.email}</p>
-        </td>
-        <td style="width:25%;padding:6px;border-bottom:1px solid #e2e8f0;">
-            <p style="margin:0;color:#64748b;font-weight:600;font-size:10px;">Age</p>
-            <p style="margin:3px 0 0 0;color:#111827;font-weight:500;">${data.age}</p>
-        </td>
-        <td style="width:25%;padding:6px;border-bottom:1px solid #e2e8f0;">
-            <p style="margin:0;color:#64748b;font-weight:600;font-size:10px;">Gender</p>
-            <p style="margin:3px 0 0 0;color:#111827;font-weight:500;">${data.gender}</p>
-        </td>
-    </tr>
-</table>
-
-<h3 style="margin:0 0 12px 0;font-size:13px;color:#111827;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e2e8f0;padding-bottom:6px;">Health Metrics</h3>
-<table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:10px;">
-    <tr style="background:#f8fafc;">
-        <td style="padding:8px;border:1px solid #e2e8f0;font-weight:600;color:#111827;">Metric</td>
-        <td style="padding:8px;border:1px solid #e2e8f0;font-weight:600;color:#111827;text-align:right;">Value</td>
-    </tr>`;
-
-    if (data.metrics) {
-        Object.entries(data.metrics).forEach(([key, val]) => {
-            htmlContent += `<tr>
-                <td style="padding:6px 8px;border:1px solid #e2e8f0;color:#374151;">${key}</td>
-                <td style="padding:6px 8px;border:1px solid #e2e8f0;color:#111827;font-weight:500;text-align:right;">${val}</td>
-            </tr>`;
-        });
-    }
-
-    htmlContent += `</table>`;
-
-    // Add Risk Factors
-    if (data.factors && data.factors.length > 0) {
-        htmlContent += `<h3 style="margin:20px 0 12px 0;font-size:13px;color:#111827;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e2e8f0;padding-bottom:6px;">Risk Factor Analysis</h3>`;
-        data.factors.slice(0, 6).forEach(f => {
-            const bgColor = f.status === 'danger' ? '#fef2f2' : f.status === 'warning' ? '#fffbeb' : '#f0fdf4';
-            const borderColor = f.status === 'danger' ? '#ef4444' : f.status === 'warning' ? '#f59e0b' : '#10b981';
-            htmlContent += `<div style="border-left:4px solid ${borderColor};background:${bgColor};padding:10px 12px;margin-bottom:8px;border-radius:4px;">
-                <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-                    <strong style="font-size:11px;color:#111827;">${f.name}</strong>
-                    <span style="font-size:9px;font-weight:600;text-transform:uppercase;padding:2px 6px;background:${borderColor};color:white;border-radius:3px;">${f.status}</span>
-                </div>
-                <p style="margin:0;font-size:10px;color:#374151;line-height:1.4;">${f.message}</p>
-            </div>`;
-        });
-    }
-
-    // Add Recommendations
-    if (data.recommendations && data.recommendations.length > 0) {
-        htmlContent += `<h3 style="margin:20px 0 12px 0;font-size:13px;color:#111827;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e2e8f0;padding-bottom:6px;">Recommendations</h3>
-        <ul style="margin:0;padding:0 0 0 18px;font-size:10px;color:#1e40af;line-height:1.6;">`;
-        data.recommendations.slice(0, 8).forEach(rec => {
-            htmlContent += `<li style="margin:4px 0;">${rec}</li>`;
-        });
-        htmlContent += `</ul>`;
-    }
-
-    htmlContent += `
-<div style="border-top:2px solid #e2e8f0;padding-top:15px;margin-top:25px;">
-    <div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:10px 12px;border-radius:4px;margin-bottom:12px;">
-        <p style="margin:0;font-size:9px;color:#92400e;line-height:1.5;"><strong>[DISCLAIMER]</strong> This is an AI assessment for informational purposes only. NOT a medical diagnosis. Consult a healthcare professional.</p>
-    </div>
-    <table style="width:100%;font-size:9px;color:#64748b;border-collapse:collapse;">
-        <tr>
-            <td>&copy; 2026 CodeCure AI Platform</td>
-            <td style="text-align:right;">Confidential - Medical Use Only</td>
-        </tr>
-    </table>
-</div>
-    `;
-
-    pdfContainer.innerHTML = htmlContent;
-    document.body.appendChild(pdfContainer);
 
     showToast('Generating PDF Report...', 'info');
 
-    const options = {
-        margin: [12, 12, 12, 12],
-        filename: `CodeCure_Report_${data.name || 'Patient'}_${Date.now()}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: {
-            scale: 2,
-            backgroundColor: '#ffffff',
-            logging: false,
-            useCORS: true,
-            allowTaint: true
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true }
-    };
+    // Create HTML canvas for rendering
+    const htmlContent = document.createElement('div');
+    htmlContent.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:800px;background:white;padding:40px;font-family:Arial,sans-serif;';
 
-    // Wait for DOM rendering before converting to PDF
-    setTimeout(() => {
+    htmlContent.innerHTML = `
+        <div style="text-align:center;margin-bottom:30px;border-bottom:3px solid ${scoreColor};padding-bottom:20px;">
+            <h1 style="color:${scoreColor};margin:0;font-size:40px;font-weight:bold;">CodeCure</h1>
+            <p style="color:#666;margin:5px 0 0 0;font-size:14px;">AI Diabetes Risk Assessment Platform</p>
+        </div>
+
+        <div style="background:${scoreColor}15;border:2px solid ${scoreColor};border-radius:8px;padding:20px;margin-bottom:25px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:15px;">
+                <div>
+                    <h2 style="margin:0 0 10px 0;font-size:28px;color:#333;font-weight:bold;">${data.risk} Risk</h2>
+                    <p style="margin:0;font-size:14px;color:#666;">Diabetes Probability: <strong style="color:${scoreColor};font-size:16px;">${data.probability}</strong></p>
+                </div>
+                <div style="text-align:center;">
+                    <div style="background:${scoreColor};color:white;width:100px;height:100px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:bold;">
+                        <span style="font-size:40px;">${score}</span>
+                        <span style="font-size:14px;margin-top:5px;">/100</span>
+                    </div>
+                </div>
+            </div>
+            <p style="margin:0;padding:10px;background:white;border-left:3px solid ${scoreColor};border-radius:4px;font-size:12px;color:#333;">${data.summary}</p>
+        </div>
+
+        <h3 style="margin:20px 0 15px 0;font-size:14px;color:#333;font-weight:bold;border-bottom:2px solid #ddd;padding-bottom:8px;text-transform:uppercase;">Patient Information</h3>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:25px;font-size:11px;">
+            <tr style="background:#f8f8f8;">
+                <td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Name</td>
+                <td style="padding:8px;border:1px solid #ddd;">${data.name}</td>
+                <td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Email</td>
+                <td style="padding:8px;border:1px solid #ddd;">${data.email}</td>
+            </tr>
+            <tr>
+                <td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Age</td>
+                <td style="padding:8px;border:1px solid #ddd;">${data.age}</td>
+                <td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Gender</td>
+                <td style="padding:8px;border:1px solid #ddd;">${data.gender}</td>
+            </tr>
+        </table>
+
+        <h3 style="margin:20px 0 15px 0;font-size:14px;color:#333;font-weight:bold;border-bottom:2px solid #ddd;padding-bottom:8px;text-transform:uppercase;">Health Metrics</h3>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:25px;font-size:11px;">
+            <tr style="background:#f8f8f8;">
+                <td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Metric</td>
+                <td style="padding:8px;border:1px solid #ddd;font-weight:bold;">Value</td>
+            </tr>
+            ${Object.entries(data.metrics || {}).map(([key, val]) => `
+                <tr>
+                    <td style="padding:8px;border:1px solid #ddd;">${key}</td>
+                    <td style="padding:8px;border:1px solid #ddd;">${val}</td>
+                </tr>
+            `).join('')}
+        </table>
+
+        ${data.factors && data.factors.length > 0 ? `
+            <h3 style="margin:20px 0 15px 0;font-size:14px;color:#333;font-weight:bold;border-bottom:2px solid #ddd;padding-bottom:8px;text-transform:uppercase;">Risk Factor Analysis</h3>
+            ${data.factors.slice(0, 6).map(f => {
+                const statusColor = f.status === 'danger' ? '#ff4444' : f.status === 'warning' ? '#ffaa00' : '#00aa00';
+                const bgColor = f.status === 'danger' ? '#ffeeee' : f.status === 'warning' ? '#fffaee' : '#eeffee';
+                return `
+                    <div style="border-left:4px solid ${statusColor};background:${bgColor};padding:10px;margin-bottom:8px;border-radius:4px;font-size:11px;">
+                        <div style="font-weight:bold;color:#333;margin-bottom:4px;display:flex;justify-content:space-between;">
+                            <span>${f.name}</span>
+                            <span style="color:${statusColor};text-transform:uppercase;">${f.status}</span>
+                        </div>
+                        <p style="margin:0;color:#666;">${f.message}</p>
+                    </div>
+                `;
+            }).join('')}
+        ` : ''}
+
+        ${data.recommendations && data.recommendations.length > 0 ? `
+            <h3 style="margin:20px 0 15px 0;font-size:14px;color:#333;font-weight:bold;border-bottom:2px solid #ddd;padding-bottom:8px;text-transform:uppercase;">Recommendations</h3>
+            <ul style="margin:0;padding:0 0 0 20px;font-size:11px;color:#333;line-height:1.6;">
+                ${data.recommendations.slice(0, 8).map(rec => `<li style="margin:4px 0;">${rec}</li>`).join('')}
+            </ul>
+        ` : ''}
+
+        <div style="border-top:2px solid #ddd;padding-top:15px;margin-top:25px;font-size:10px;">
+            <div style="background:#fff3cd;border-left:4px solid #{f59e0b};padding:10px;border-radius:4px;margin-bottom:12px;">
+                <strong style="color:#856404;">[DISCLAIMER]</strong> <span style="color:#856404;">This is an AI assessment for informational purposes only. NOT a medical diagnosis. Always consult a healthcare professional.</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;color:#999;">
+                <span>&copy; 2026 CodeCure AI Platform</span>
+                <span>Report ID: ${reportID}</span>
+                <span>Generated: ${timestamp}</span>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(htmlContent);
+
+    // Use html2canvas and jsPDF for better rendering
+    setTimeout(async () => {
         try {
-            // Ensure all content is loaded and rendered
-            const element = pdfContainer;
+            const canvas = await html2canvas(htmlContent, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                logging: false,
+                useCORS: true,
+                allowTaint: true
+            });
 
-            // Use html2pdf with proper error handling
-            html2pdf()
-                .set(options)
-                .from(element)
-                .save()
-                .then(() => {
-                    showToast('Report downloaded successfully!', 'success');
-                    if (document.body.contains(pdfContainer)) {
-                        document.body.removeChild(pdfContainer);
-                    }
-                })
-                .catch(err => {
-                    console.error('PDF Generation Error:', err);
-                    showToast('PDF generation failed. Please try again.', 'error');
-                    if (document.body.contains(pdfContainer)) {
-                        document.body.removeChild(pdfContainer);
-                    }
-                });
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new (window.jsPDF || window.jspdf.jsPDF)({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            const imgWidth = 210; // A4 width in mm
+            const pageHeight = 295; // A4 height in mm
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            pdf.save(`CodeCure_Report_${data.name || 'Patient'}_${Date.now()}.pdf`);
+            showToast('Report downloaded successfully!', 'success');
         } catch (error) {
-            console.error('PDF Error:', error);
-            showToast('Error generating PDF. Please try again.', 'error');
-            if (document.body.contains(pdfContainer)) {
-                document.body.removeChild(pdfContainer);
+            console.error('PDF Generation Error:', error);
+            showToast('PDF generation failed. Please try again.', 'error');
+        } finally {
+            if (document.body.contains(htmlContent)) {
+                document.body.removeChild(htmlContent);
             }
         }
-    }, 500);
+    }, 300);
 }
 
 function getScoreColor(score) {
