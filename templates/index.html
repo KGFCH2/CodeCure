@@ -183,6 +183,20 @@
                 </div>
 
                 <div class="card">
+                    <!-- Information Banner -->
+                    <div class="info-banner">
+                        <div class="info-banner-icon">
+                            <i data-lucide="info"></i>
+                        </div>
+                        <div class="info-banner-text">
+                            <strong>💡 How to Get These Values:</strong>
+                            <span>Most metrics require a doctor's visit. Common sources: Annual checkup, home glucose
+                                meter, pharmacy BP machine, BMI calculator online. If you don't have exact values, ask
+                                your doctor or use estimated defaults. The more accurate, the better the
+                                prediction!</span>
+                        </div>
+                    </div>
+
                     <form id="prediction-form" onsubmit="handlePrediction(event)">
                         <!-- Personal Info -->
                         <p class="form-section-header">
@@ -219,94 +233,106 @@
                                     *</label>
                                 <input type="number" class="form-input" id="input-age" placeholder="e.g. 35" required
                                     min="1" max="120">
-                                <div class="form-hint">Patient age in years</div>
+                                <div class="form-hint">👤 Your current age in whole years. Higher age increases diabetes
+                                    risk.</div>
                             </div>
                             <div class="form-group">
                                 <label class="form-label"><i data-lucide="droplet" class="label-icon"></i> Glucose Level
                                     *</label>
                                 <input type="number" class="form-input" id="input-glucose" placeholder="e.g. 110"
                                     required min="0" max="300" step="0.1">
-                                <div class="form-hint">Fasting plasma glucose (mg/dL). Normal: 70-100</div>
+                                <div class="form-hint">💧 Blood sugar level after 8-hour fast (mg/dL). Get from doctor
+                                    or home glucose meter. Normal: 70-100, Prediabetes: 100-125, Diabetes: 126+</div>
                             </div>
                             <div class="form-group">
                                 <label class="form-label"><i data-lucide="weight" class="label-icon"></i> BMI *</label>
                                 <input type="number" class="form-input" id="input-bmi" placeholder="e.g. 26.5" required
                                     min="10" max="70" step="0.1">
-                                <div class="form-hint">Body Mass Index. Normal: 18.5-24.9</div>
+                                <div class="form-hint">⚖️ BMI = Weight(kg) ÷ Height(m)². Calculate online or ask doctor.
+                                    Normal: 18.5-24.9, Overweight: 25-29.9, Obese: 30+</div>
                             </div>
                             <div class="form-group">
                                 <label class="form-label"><i data-lucide="heart-pulse" class="label-icon"></i> Blood
                                     Pressure</label>
                                 <input type="number" class="form-input" id="input-bp" placeholder="e.g. 72" value="72"
                                     min="0" max="200" step="0.1">
-                                <div class="form-hint">Diastolic BP (mm Hg). Normal: &lt;80</div>
+                                <div class="form-hint">❤️ Diastolic blood pressure (lower number, mm Hg). Measure at
+                                    doctor's office or pharmacy. Normal: <80, Elevated: 80-89, High: 90+</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label"><i data-lucide="baby" class="label-icon"></i>
+                                        Pregnancies</label>
+                                    <input type="number" class="form-input" id="input-pregnancies" placeholder="0"
+                                        value="0" min="0" max="20">
+                                    <div class="form-hint">👶 Total number of pregnancies (for females). Leave as 0 if
+                                        not applicable. Used to identify gestational diabetes risk.</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label"><i data-lucide="layers" class="label-icon"></i> Skin
+                                        Thickness</label>
+                                    <input type="number" class="form-input" id="input-skin" placeholder="20" value="20"
+                                        min="0" max="100" step="0.1">
+                                    <div class="form-hint">📏 Triceps skin fold thickness (mm). Measured at doctor's
+                                        office using calipers. Reflects body fat percentage. Leave as 20 if unknown.
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label"><i data-lucide="syringe" class="label-icon"></i> Insulin
+                                        Level</label>
+                                    <input type="number" class="form-input" id="input-insulin" placeholder="80"
+                                        value="80" min="0" max="900" step="0.1">
+                                    <div class="form-hint">💉 2-hour serum insulin after glucose test (mu U/ml). Get
+                                        from doctor after glucose tolerance test. Indicates insulin resistance. Normal:
+                                        12-150.</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label"><i data-lucide="dna" class="label-icon"></i> Diabetes
+                                        Pedigree</label>
+                                    <input type="number" class="form-input" id="input-dpf" placeholder="0.47"
+                                        value="0.47" min="0" max="3" step="0.001">
+                                    <div class="form-hint">🧬 Family history of diabetes scoring (genetic risk factor).
+                                        Higher = more relatives with diabetes. Get from doctor or assess family history.
+                                        Use 0.47 if unsure.</div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label"><i data-lucide="baby" class="label-icon"></i>
-                                    Pregnancies</label>
-                                <input type="number" class="form-input" id="input-pregnancies" placeholder="0" value="0"
-                                    min="0" max="20">
-                                <div class="form-hint">Number of times pregnant (females)</div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label"><i data-lucide="layers" class="label-icon"></i> Skin
-                                    Thickness</label>
-                                <input type="number" class="form-input" id="input-skin" placeholder="20" value="20"
-                                    min="0" max="100" step="0.1">
-                                <div class="form-hint">Triceps skin fold thickness (mm)</div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label"><i data-lucide="syringe" class="label-icon"></i> Insulin
-                                    Level</label>
-                                <input type="number" class="form-input" id="input-insulin" placeholder="80" value="80"
-                                    min="0" max="900" step="0.1">
-                                <div class="form-hint">2-Hour serum insulin (mu U/ml)</div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label"><i data-lucide="dna" class="label-icon"></i> Diabetes
-                                    Pedigree</label>
-                                <input type="number" class="form-input" id="input-dpf" placeholder="0.47" value="0.47"
-                                    min="0" max="3" step="0.001">
-                                <div class="form-hint">Diabetes pedigree function (genetic factor)</div>
-                            </div>
-                        </div>
 
-                        <!-- Lifestyle -->
-                        <p class="lifestyle-header">
-                            <i data-lucide="person-standing"></i> Lifestyle Factors
-                        </p>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label class="form-label"><i data-lucide="dumbbell" class="label-icon"></i> Exercise
-                                    (hrs/week)</label>
-                                <input type="number" class="form-input" id="input-exercise" placeholder="3" value="3"
-                                    min="0" max="40" step="0.5">
+                            <!-- Lifestyle -->
+                            <p class="lifestyle-header">
+                                <i data-lucide="person-standing"></i> Lifestyle Factors
+                            </p>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label"><i data-lucide="dumbbell" class="label-icon"></i> Exercise
+                                        (hrs/week)</label>
+                                    <input type="number" class="form-input" id="input-exercise" placeholder="3"
+                                        value="3" min="0" max="40" step="0.5">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label"><i data-lucide="moon" class="label-icon"></i> Sleep
+                                        (hrs/night)</label>
+                                    <input type="number" class="form-input" id="input-sleep" placeholder="7" value="7"
+                                        min="0" max="16" step="0.5">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label"><i data-lucide="cigarette-off" class="label-icon"></i>
+                                        Smoking
+                                        Status</label>
+                                    <label class="form-toggle">
+                                        <input type="checkbox" id="input-smoking">
+                                        <span class="toggle-switch"></span>
+                                        <span class="toggle-label">Currently smoking</span>
+                                    </label>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label"><i data-lucide="moon" class="label-icon"></i> Sleep
-                                    (hrs/night)</label>
-                                <input type="number" class="form-input" id="input-sleep" placeholder="7" value="7"
-                                    min="0" max="16" step="0.5">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label"><i data-lucide="cigarette-off" class="label-icon"></i> Smoking
-                                    Status</label>
-                                <label class="form-toggle">
-                                    <input type="checkbox" id="input-smoking">
-                                    <span class="toggle-switch"></span>
-                                    <span class="toggle-label">Currently smoking</span>
-                                </label>
-                            </div>
-                        </div>
 
-                        <div class="btn-group">
-                            <button type="submit" class="btn btn-primary" id="predict-btn">
-                                <span class="btn-text"><i data-lucide="sparkles"></i> Run AI Analysis</span>
-                            </button>
-                            <button type="button" class="btn btn-secondary" onclick="resetForm()">
-                                <i data-lucide="rotate-ccw"></i> Reset Form
-                            </button>
-                        </div>
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary" id="predict-btn">
+                                    <span class="btn-text"><i data-lucide="sparkles"></i> Run AI Analysis</span>
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                                    <i data-lucide="rotate-ccw"></i> Reset Form
+                                </button>
+                            </div>
                     </form>
                 </div>
             </section>
