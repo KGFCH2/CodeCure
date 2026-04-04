@@ -907,7 +907,6 @@ function initSlideshows() {
         }, 5000);
     });
 }
-}
 
 // ────────────────────────────────────────
 // Chatbot Logic with GROQ API Integration
