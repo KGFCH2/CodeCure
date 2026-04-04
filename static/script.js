@@ -458,7 +458,24 @@ function updateDashboardStats() {
 
 async function loadDashboard() {
     try {
-        const response = await fetch(`${BACKEND_URL}/api/dashboard?device_id=${encodeURIComponent(getDeviceId())}`);
+        const url = `${BACKEND_URL}/api/dashboard?device_id=${encodeURIComponent(getDeviceId())}`;
+        console.log('[CodeCure] Fetching dashboard from:', url);
+        
+        const response = await fetch(url);
+        
+        // Check if response is OK and is JSON
+        if (!response.ok) {
+            console.error(`[CodeCure] Dashboard API returned status ${response.status}`);
+            throw new Error(`API returned status ${response.status}`);
+        }
+        
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            console.error('[CodeCure] Dashboard API returned non-JSON content:', contentType);
+            console.error('[CodeCure] Possible causes: BACKEND_URL not set correctly, backend not running, or serving HTML instead of JSON');
+            throw new Error('Dashboard API returned non-JSON response. Backend URL may be incorrect.');
+        }
+        
         const data = await response.json();
 
         // Merge with Local History for Serverless Persistence
@@ -470,13 +487,17 @@ async function loadDashboard() {
             new Date(b.created_at) - new Date(a.created_at)
         );
 
+        console.log('[CodeCure] Dashboard loaded successfully:', dashboardDataStore.length, 'records');
+
         updateDashboardStats();
 
         const container = document.getElementById('patients-table-container');
         if (container) renderDashboardTable(container);
 
     } catch (error) {
-        console.error('Dashboard error:', error);
+        console.error('[CodeCure] Dashboard error:', error.message);
+        console.warn('[CodeCure] Using local history as fallback');
+        
         const localHistory = getLocalHistory();
         dashboardDataStore = localHistory.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
@@ -598,14 +619,20 @@ function closeModal() {
 // ────────────────────────────────────────
 async function updateHomeStats() {
     try {
-        const response = await fetch(`${BACKEND_URL}/api/dashboard?device_id=${encodeURIComponent(getDeviceId())}`);
+        const url = `${BACKEND_URL}/api/dashboard?device_id=${encodeURIComponent(getDeviceId())}`;
+        const response = await fetch(url);
         let serverTotal = 0;
         let serverPredictions = [];
 
         if (response.ok) {
-            const data = await response.json();
-            serverTotal = data.total_patients || 0;
-            serverPredictions = data.recent_predictions || [];
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const data = await response.json();
+                serverTotal = data.total_patients || 0;
+                serverPredictions = data.recent_predictions || [];
+            } else {
+                console.warn('[CodeCure] Dashboard API returned non-JSON response');
+            }
         }
 
         const localHistory = getLocalHistory();
@@ -617,6 +644,7 @@ async function updateHomeStats() {
         const statEl = document.getElementById('stat-total');
         if (statEl) statEl.textContent = total;
     } catch (e) {
+        console.error('[CodeCure] Home stats error:', e.message);
         const localHistory = getLocalHistory();
         const statEl = document.getElementById('stat-total');
         if (statEl) statEl.textContent = localHistory.length;
