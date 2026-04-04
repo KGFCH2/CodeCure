@@ -972,6 +972,87 @@ function toggleChat() {
     }
 }
 
+function getChatTranscript() {
+    const messages = document.querySelectorAll('#chat-messages .message');
+    const lines = [];
+
+    messages.forEach(message => {
+        if (message.classList.contains('typing')) return;
+
+        const role = message.dataset.role || (message.classList.contains('user-message') ? 'User' : 'Assistant');
+        const text = (message.dataset.rawText || message.innerText || '').trim();
+
+        if (text) {
+            lines.push(`${role}: ${text}`);
+        }
+    });
+
+    return lines.join('\n\n');
+}
+
+async function copyChat() {
+    const transcript = getChatTranscript();
+    if (!transcript) {
+        showToast('Nothing to copy yet.', 'info');
+        return;
+    }
+
+    try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(transcript);
+        } else {
+            const fallback = document.createElement('textarea');
+            fallback.value = transcript;
+            fallback.style.position = 'fixed';
+            fallback.style.left = '-9999px';
+            document.body.appendChild(fallback);
+            fallback.select();
+            document.execCommand('copy');
+            document.body.removeChild(fallback);
+        }
+
+        showToast('Chat copied to clipboard.', 'success');
+    } catch (error) {
+        console.error('Copy chat failed:', error);
+        showToast('Could not copy chat.', 'error');
+    }
+}
+
+function exportChatTxt() {
+    const transcript = getChatTranscript();
+    if (!transcript) {
+        showToast('Nothing to export yet.', 'info');
+        return;
+    }
+
+    const content = [
+        'CodeCure Chat Transcript',
+        `Generated: ${new Date().toLocaleString()}`,
+        '',
+        transcript
+    ].join('\n');
+
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `CodeCure_Chat_${Date.now()}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    showToast('Chat exported as txt.', 'success');
+}
+
+function deleteChat() {
+    const messages = document.getElementById('chat-messages');
+    if (!messages) return;
+
+    messages.innerHTML = '';
+    showToast('Chat deleted.', 'success');
+}
+
 // Close chatbot when clicking outside
 document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('click', function (event) {
@@ -988,7 +1069,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-function handleChatKey(event) { if (event.key === 'Enter') sendChatMessage(); }
+function handleChatKey(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendChatMessage();
+    }
+}
 
 async function sendChatMessage() {
     const input = document.getElementById('chat-input');
@@ -1098,6 +1184,8 @@ function addMessage(text, type) {
     if (!messages) return;
     const div = document.createElement('div');
     div.className = `message ${type}-message`;
+    div.dataset.role = type === 'user' ? 'User' : 'Assistant';
+    div.dataset.rawText = text;
 
     // Render markdown for AI/bot responses, plain text for user messages
     if (type === 'bot' || type === 'ai') {
