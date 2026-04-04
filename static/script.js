@@ -460,22 +460,22 @@ async function loadDashboard() {
     try {
         const url = `${BACKEND_URL}/api/dashboard?device_id=${encodeURIComponent(getDeviceId())}`;
         console.log('[CodeCure] Fetching dashboard from:', url);
-        
+
         const response = await fetch(url);
-        
+
         // Check if response is OK and is JSON
         if (!response.ok) {
             console.error(`[CodeCure] Dashboard API returned status ${response.status}`);
             throw new Error(`API returned status ${response.status}`);
         }
-        
+
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
             console.error('[CodeCure] Dashboard API returned non-JSON content:', contentType);
             console.error('[CodeCure] Possible causes: BACKEND_URL not set correctly, backend not running, or serving HTML instead of JSON');
             throw new Error('Dashboard API returned non-JSON response. Backend URL may be incorrect.');
         }
-        
+
         const data = await response.json();
 
         // Merge with Local History for Serverless Persistence
@@ -497,7 +497,7 @@ async function loadDashboard() {
     } catch (error) {
         console.error('[CodeCure] Dashboard error:', error.message);
         console.warn('[CodeCure] Using local history as fallback');
-        
+
         const localHistory = getLocalHistory();
         dashboardDataStore = localHistory.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
