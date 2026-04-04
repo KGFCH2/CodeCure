@@ -13,7 +13,7 @@ const BACKEND_URL = typeof window !== 'undefined' && window.BACKEND_URL_CONFIG
 function toggleAccordion(button) {
     const item = button.closest('.accordion-item');
     const container = button.closest('.accordion-container');
-    
+
     if (!item) return;
 
     // Close other items in the same container
@@ -69,7 +69,7 @@ function hideLoader() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     if (document.readyState === 'complete') {
         hideLoader();
     } else {
@@ -136,6 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+});
 
 // ────────────────────────────────────────
 // State Management
@@ -805,9 +806,9 @@ function generatePDFReport(data) {
         ${data.factors && data.factors.length > 0 ? `
             <h3 style="margin:20px 0 15px 0;font-size:14px;color:#333;font-weight:bold;border-bottom:2px solid #ddd;padding-bottom:8px;text-transform:uppercase;">Risk Factor Analysis</h3>
             ${data.factors.slice(0, 6).map(f => {
-                const statusColor = f.status === 'danger' ? '#ff4444' : f.status === 'warning' ? '#ffaa00' : '#00aa00';
-                const bgColor = f.status === 'danger' ? '#ffeeee' : f.status === 'warning' ? '#fffaee' : '#eeffee';
-                return `
+        const statusColor = f.status === 'danger' ? '#ff4444' : f.status === 'warning' ? '#ffaa00' : '#00aa00';
+        const bgColor = f.status === 'danger' ? '#ffeeee' : f.status === 'warning' ? '#fffaee' : '#eeffee';
+        return `
                     <div style="border-left:4px solid ${statusColor};background:${bgColor};padding:10px;margin-bottom:8px;border-radius:4px;font-size:11px;">
                         <div style="font-weight:bold;color:#333;margin-bottom:4px;display:flex;justify-content:space-between;">
                             <span>${f.name}</span>
@@ -816,7 +817,7 @@ function generatePDFReport(data) {
                         <p style="margin:0;color:#666;">${f.message}</p>
                     </div>
                 `;
-            }).join('')}
+    }).join('')}
         ` : ''}
 
         ${data.recommendations && data.recommendations.length > 0 ? `
