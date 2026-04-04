@@ -1097,6 +1097,17 @@
                 <i data-lucide="bot-message-square"></i>
                 <span>CodeCure AI Assistant</span>
             </div>
+            <div class="chatbot-actions">
+                <button class="chatbot-action-btn" onclick="copyChat()" title="Copy chat">
+                    <i data-lucide="copy"></i>
+                </button>
+                <button class="chatbot-action-btn" onclick="exportChatTxt()" title="Export chat as txt">
+                    <i data-lucide="download"></i>
+                </button>
+                <button class="chatbot-action-btn danger" onclick="deleteChat()" title="Delete chat">
+                    <i data-lucide="trash-2"></i>
+                </button>
+            </div>
             <button class="chatbot-minimize" onclick="toggleChat()" title="Minimize chat">
                 <i data-lucide="minus"></i>
             </button>
@@ -1107,7 +1118,8 @@
             </div>
         </div>
         <div class="chatbot-input-area">
-            <input type="text" id="chat-input" placeholder="Ask about CodeCure..." onkeypress="handleChatKey(event)">
+            <textarea id="chat-input" placeholder="Ask about CodeCure..." rows="2"
+                onkeydown="handleChatKey(event)"></textarea>
             <button class="chat-send-btn" onclick="sendChatMessage()" title="Send message">
                 <i data-lucide="send"></i>
             </button>
