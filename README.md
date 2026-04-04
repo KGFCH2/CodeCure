@@ -132,6 +132,6 @@ CodeCure/
 
 ## 📜 License & Support
 
-MIT License. Created for intelligent healthcare and preventive medicine.
+[MIT License](LICENSE). Created for intelligent healthcare and preventive medicine.
 
 *Built with ❤️ by the CodeCure Team.*
