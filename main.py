@@ -669,6 +669,35 @@ async def groq_test():
 class ChatRequest(BaseModel):
     query: str
 
+
+def build_precise_chat_response(query: str):
+    normalized_query = query.lower().strip()
+
+    if any(phrase in normalized_query for phrase in ["current year", "what year is it", "year now"]):
+        return f"**The current year is {datetime.now().year}.**"
+
+    if any(phrase in normalized_query for phrase in ["current date", "today's date", "what is the date", "date today"]):
+        current_date = datetime.now().strftime("%B %d, %Y").replace(" 0", " ")
+        return f"**The current date is {current_date}.**"
+
+    if any(phrase in normalized_query for phrase in ["current temperature", "current temparature", "temperature now", "weather"]) and "codecure" not in normalized_query:
+        return "*I do not have real-time weather or temperature access.* Please check a weather app or website for the current temperature."
+
+    if any(phrase in normalized_query for phrase in ["how to calculate all the metrics", "calculate all the metrics", "metrics used here", "how do i calculate the metrics"]):
+        return (
+            "**CodeCure uses these 8 metrics:**\n"
+            "1. **Glucose Level** - measure blood sugar with a glucometer or blood test.\n"
+            "2. **Blood Pressure** - measure with a blood pressure monitor.\n"
+            "3. **BMI** - calculate as weight in kg divided by height in meters squared.\n"
+            "4. **Insulin Level** - measure with a blood test.\n"
+            "5. **Skin Thickness** - measure with a skin caliper or clinic test.\n"
+            "6. **Diabetes Pedigree Function** - use family history of diabetes.\n"
+            "7. **Age** - record your age in years.\n"
+            "8. **Pregnancy History** - record the number of pregnancies."
+        )
+
+    return None
+
 @app.post("/api/chat")
 async def chat(chat_data: ChatRequest):
     """
@@ -680,6 +709,14 @@ async def chat(chat_data: ChatRequest):
         
         if not query:
             return JSONResponse({"error": "Query cannot be empty"}, status_code=400)
+
+        precise_response = build_precise_chat_response(query)
+        if precise_response:
+            return JSONResponse({
+                "success": True,
+                "response": precise_response,
+                "source": "rules"
+            })
         
         groq_api_key = os.getenv("GROQ_API_KEY", "")
         
@@ -690,25 +727,27 @@ async def chat(chat_data: ChatRequest):
             )
         
         # System prompt for CodeCure assistant with formatting instructions
-        system_prompt = """You are CodeCure's AI Assistant, integrated into the CodeCure platform - an AI-powered Diabetes Risk Prediction Platform created by Babin Bid and Debasmita Bose.
+        system_prompt = """You are CodeCure's AI Assistant.
 
-About CodeCure:
-- Predicts diabetes risk using 8 clinical metrics: Glucose Level, Blood Pressure, BMI, Insulin Level, Skin Thickness, Diabetes Pedigree Function, Age, and Pregnancy History
-- Provides an AI Health Score (0-100) and diabetes probability
-- Deployed on Vercel at https://code-cure.vercel.app/
-- Features: AI predictions, professional PDF reports, health analytics dashboard, AI chatbot assistant
-- Platform: https://code-cure.vercel.app/
-- Creators: Babin Bid and Debasmita Bose
+    Answer rules:
+    - Give the direct answer first in one short sentence.
+    - Keep responses precise, clear, and easy to understand.
+    - Use short bullet points only when they improve clarity.
+    - Avoid long introductions, repeated wording, and filler.
+    - Never cut off mid-thought; finish the full answer.
+    - If a question is about CodeCure, mention the platform and the creators Babin Bid and Debasmita Bose when relevant.
+    - If the user asks for steps or a list, use a numbered list with brief items.
+    - If the user asks about health, include a short safety note that this is informational and not a diagnosis.
+    - Format answers in markdown when helpful.
+    - Use **bold** for important terms, *italics* for emphasis, and [links](https://example.com) for URLs.
+    - Keep markdown simple and readable.
 
-IMPORTANT FORMATTING INSTRUCTIONS:
-1. Use **bold text** for important terms, features, and key points
-2. Use *italic text* for emphasis or technical terms
-3. Include direct URLs with [link text](https://example.com) format
-4. Always provide full URLs for relevant links (CodeCure platform, documentation, etc.)
-5. Format lists with clear bullet points or numbered items
-6. Keep responses concise but informative
+    CodeCure facts:
+    - CodeCure predicts diabetes risk using 8 metrics: Glucose Level, Blood Pressure, BMI, Insulin Level, Skin Thickness, Diabetes Pedigree Function, Age, and Pregnancy History.
+    - It provides a diabetes risk probability and an AI Health Score from 0 to 100.
+    - The platform is deployed at https://code-cure.vercel.app/.
 
-You are a helpful, intelligent AI assistant with broad knowledge. You can answer any kind of question, including CodeCure-related queries, health and diabetes information, general knowledge, technical questions, and more. When questions relate to CodeCure, provide relevant platform information and always include links to resources. Always mention the creators (Babin Bid and Debasmita Bose) when discussing CodeCure."""
+    Use plain language and make every answer complete, but no longer than needed."""
 
         # Call GROQ API
         # Call GROQ API using Groq SDK
@@ -723,8 +762,8 @@ You are a helpful, intelligent AI assistant with broad knowledge. You can answer
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": query}
                 ],
-                max_tokens=512,
-                temperature=0.7
+                max_tokens=768,
+                temperature=0.3
             )
             
             message = completion.choices[0].message.content
