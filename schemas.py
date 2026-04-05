@@ -42,6 +42,19 @@ class RiskFactor(BaseModel):
 
 class PredictionResponse(BaseModel):
     """Response model for diabetes prediction."""
+    # Patient info
+    name: Optional[str] = None
+    email: Optional[str] = None
+    gender: Optional[str] = None
+    age: Optional[int] = None
+    
+    # Metrics (echo back to frontend for immediate display)
+    glucose: Optional[float] = None
+    blood_pressure: Optional[float] = None
+    insulin: Optional[float] = None
+    bmi: Optional[float] = None
+    
+    # Prediction results
     diabetes_risk: int  # 0 or 1
     risk_probability: float  # 0.0 - 1.0
     risk_level: str  # Low, Medium, High, Critical

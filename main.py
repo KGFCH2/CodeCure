@@ -491,6 +491,14 @@ async def predict_diabetes(data: PredictionRequest, db: Session = Depends(get_db
     db.commit()
 
     return PredictionResponse(
+        name=data.name,
+        email=data.email,
+        gender=data.gender,
+        age=data.age,
+        glucose=data.glucose,
+        blood_pressure=data.blood_pressure,
+        insulin=data.insulin,
+        bmi=data.bmi,
         diabetes_risk=int(prediction),
         risk_probability=round(probability, 4),
         risk_level=risk_level,
