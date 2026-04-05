@@ -704,45 +704,51 @@ async function downloadDashboardPDF(id) {
         'Sleep Hours/Night': (result.sleep_hours || '7') + ' hrs'
     };
 
+    // Use the stored summary (explanation) if available
+    const summary = result.summary || `AI Diabetes Risk Assessment Report for Patient #${result.id}.`;
+    const risk = result.risk_level || (result.diabetes_risk === 1 ? 'High' : 'Low');
+    const score = result.health_score || 0;
+    const probability = (result.risk_probability ? (result.risk_probability * 100).toFixed(1) : '—') + '%';
+
     const data = {
         name: result.name || 'Anonymous',
         email: result.email || 'Patient Record #' + result.id,
         age: result.age || 'N/A',
         gender: result.gender || 'Not specified',
-        score: result.health_score || 0,
-        risk: result.risk_level || 'Unknown',
-        summary: result.summary || `AI Diabetes Risk Assessment Report for Patient #${result.id}.`,
-        probability: (result.risk_probability ? (result.risk_probability * 100).toFixed(1) : '—') + '%',
+        score: score,
+        risk: risk,
+        summary: summary,
+        probability: probability,
         metrics: metrics,
         factors: [
             {
                 name: 'Glucose Level',
-                value: result.glucose || '—',
-                message: `Blood glucose: ${result.glucose} mg/dL. ${result.glucose > 126 ? '[ELEVATED]' : 'Normal'}`,
+                value: (result.glucose || '—') + ' mg/dL',
+                message: `Blood glucose: ${result.glucose || '—'} mg/dL. ${result.glucose > 126 ? '[ELEVATED]' : 'Normal'}`,
                 status: result.glucose > 140 ? 'danger' : result.glucose > 126 ? 'warning' : 'normal'
             },
             {
                 name: 'BMI',
-                value: result.bmi || '—',
-                message: `Body Mass Index: ${result.bmi} kg/m². ${result.bmi > 30 ? 'Indicates obesity' : 'Within acceptable range'}`,
+                value: (result.bmi || '—') + ' kg/m²',
+                message: `Body Mass Index: ${result.bmi || '—'} kg/m². ${result.bmi > 30 ? 'Indicates obesity' : 'Within acceptable range'}`,
                 status: result.bmi > 30 ? 'danger' : result.bmi > 25 ? 'warning' : 'normal'
             },
             {
                 name: 'Blood Pressure',
-                value: result.blood_pressure || '—',
-                message: `Diastolic: ${result.blood_pressure} mmHg. ${result.blood_pressure > 90 ? '[ELEVATED]' : 'Normal'}`,
+                value: (result.blood_pressure || '—') + ' mmHg',
+                message: `Diastolic: ${result.blood_pressure || '—'} mmHg. ${result.blood_pressure > 90 ? '[ELEVATED]' : 'Normal'}`,
                 status: result.blood_pressure > 90 ? 'danger' : result.blood_pressure > 80 ? 'warning' : 'normal'
             },
             {
                 name: 'Insulin Level',
-                value: result.insulin || '—',
-                message: `Insulin: ${result.insulin} mIU/L. Reference: 2.6-24.9 mIU/L`,
+                value: (result.insulin || '—') + ' mIU/L',
+                message: `Insulin: ${result.insulin || '—'} mIU/L. Reference: 2.6-24.9 mIU/L`,
                 status: result.insulin > 24.9 ? 'warning' : 'normal'
             },
             {
                 name: 'Diabetes Pedigree',
                 value: result.diabetes_pedigree || '—',
-                message: 'Family history factor in genetic risk assessment',
+                message: 'Family history score: ' + (result.diabetes_pedigree || '—'),
                 status: result.diabetes_pedigree > 0.5 ? 'warning' : 'normal'
             }
         ],
@@ -758,6 +764,7 @@ async function downloadDashboardPDF(id) {
         ]
     };
     generatePDFReport(data);
+}
 }
 
 function downloadPDF() {
