@@ -280,18 +280,43 @@ async function handlePrediction(event) {
     }
 
     try {
-        const response = await fetch(`${BACKEND_URL}/api/predict`, {
+        const url = `${BACKEND_URL}/api/predict`;
+        console.log('[CodeCure] Submitting prediction to:', url);
+        
+        const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
 
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.detail || 'Prediction failed');
+            console.error(`[CodeCure] Prediction API returned status ${response.status}`);
+            
+            // Try to parse error response
+            let errorMsg = `Server error: ${response.status}`;
+            try {
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    const error = await response.json();
+                    errorMsg = error.detail || error.message || errorMsg;
+                } else {
+                    console.error('[CodeCure] Prediction API returned non-JSON error response');
+                }
+            } catch (e) {
+                console.error('[CodeCure] Could not parse error response:', e);
+            }
+            
+            throw new Error(errorMsg);
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            console.error('[CodeCure] Prediction API returned non-JSON content');
+            throw new Error('Backend API returned invalid response. Check if BACKEND_URL is correct.');
         }
 
         const result = await response.json();
+        console.log('[CodeCure] Prediction successful:', result);
 
         savePredictionLocally(data, result);
         displayResults(result);
@@ -300,8 +325,8 @@ async function handlePrediction(event) {
         loadDashboard();
 
     } catch (error) {
+        console.error('[CodeCure] Prediction error:', error.message);
         showToast(`Error: ${error.message}`, 'error');
-        console.error('Prediction error:', error);
     } finally {
         btn.classList.remove('loading');
     }
