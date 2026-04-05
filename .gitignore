@@ -13,12 +13,6 @@ env/
 *.db
 diabetes.csv
 
-# Model files (Must be tracked for deployment)
-!model/*.pkl
-
-# Assets (Must be tracked for deployment)
-!static/codecure_kb.json
-
 # IDE and OS
 .vscode/
 .idea/

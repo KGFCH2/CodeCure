@@ -1,48 +1,79 @@
 // ═══════════════ CODECURE CORE JAVASCRIPT ═══════════════
 // Handles: AI Predictions, Dashboard Analytics, Chatbot, and PDF Generation
 
-// Initialize Lucide Icons & UI Effects
-document.addEventListener('DOMContentLoaded', () => {
-    if (typeof lucide !== 'undefined') lucide.createIcons();
+// Get backend URL from configuration helper or template injection
+// Supports: Local backend, Vercel frontend, hybrid deployments
+const BACKEND_URL = typeof window !== 'undefined' && window.BACKEND_URL_CONFIG
+    ? window.BACKEND_URL_CONFIG
+    : ((window.ENV && window.ENV.BACKEND_URL) ? window.ENV.BACKEND_URL : 'http://localhost:8000');
 
-    // Page Loader logic
-    const hideLoader = () => {
-        const loader = document.getElementById('page-loader');
-        const statusEl = loader ? loader.querySelector('.loader-status') : null;
+console.log('[CodeCure] Initialized with BACKEND_URL:', BACKEND_URL);
+console.log('[CodeCure] window.BACKEND_URL_CONFIG:', typeof window !== 'undefined' ? window.BACKEND_URL_CONFIG : 'undefined');
+console.log('[CodeCure] window.ENV.BACKEND_URL:', typeof window !== 'undefined' && window.ENV ? window.ENV.BACKEND_URL : 'undefined');
 
-        if (loader) {
-            // Cycle status messages for a more "AI" feel during the 2.5s wait
-            if (statusEl) {
-                const messages = [
-                    "Initializing AI Diagnostics...",
-                    "Connecting to Neural Core...",
-                    "Analyzing Clinical Patterns...",
-                    "Optimizing Secure Data Stream..."
-                ];
-                let i = 0;
-                const msgInterval = setInterval(() => {
-                    if (i < messages.length - 1) {
-                        i++;
-                        statusEl.style.opacity = '0';
-                        setTimeout(() => {
-                            statusEl.textContent = messages[i];
-                            statusEl.style.opacity = '1';
-                        }, 200);
-                    } else {
-                        clearInterval(msgInterval);
-                    }
-                }, 600);
+// ────────────────────────────────────────
+// Accordion Functionality
+// ────────────────────────────────────────
+function toggleAccordion(button) {
+    const item = button.closest('.accordion-item');
+    const container = button.closest('.accordion-container');
+
+    if (!item) return;
+
+    // Close other items in the same container
+    if (container) {
+        container.querySelectorAll('.accordion-item').forEach(otherItem => {
+            if (otherItem !== item && otherItem.classList.contains('active')) {
+                otherItem.classList.remove('active');
             }
+        });
+    }
 
-            setTimeout(() => {
-                loader.classList.add('fade-out');
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                }, 600);
-            }, 2500);
+    // Toggle current item
+    item.classList.toggle('active');
+}
+
+// ────────────────────────────────────────
+// Page Loader & Initialization
+// ────────────────────────────────────────
+function hideLoader() {
+    const loader = document.getElementById('page-loader');
+    const statusEl = loader ? loader.querySelector('.loader-status') : null;
+
+    if (loader) {
+        // Cycle status messages for a more "AI" feel during the 2.5s wait
+        if (statusEl) {
+            const messages = [
+                "Initializing AI Diagnostics...",
+                "Connecting to Neural Core...",
+                "Analyzing Clinical Patterns...",
+                "Optimizing Secure Data Stream..."
+            ];
+            let i = 0;
+            const msgInterval = setInterval(() => {
+                if (i < messages.length - 1) {
+                    i++;
+                    statusEl.style.opacity = '0';
+                    setTimeout(() => {
+                        statusEl.textContent = messages[i];
+                        statusEl.style.opacity = '1';
+                    }, 200);
+                } else {
+                    clearInterval(msgInterval);
+                }
+            }, 600);
         }
-    };
 
+        setTimeout(() => {
+            loader.classList.add('fade-out');
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 600);
+        }, 2500);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
     if (document.readyState === 'complete') {
         hideLoader();
     } else {
@@ -65,9 +96,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Initialize specific components
-    updateHomeStats();
     initSlideshows();
     loadKnowledgeBase();
+    updateHomeStats();
+
+    // Initialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
 
     // Mobile Menu Toggle logic
     const mobileToggle = document.getElementById('mobile-toggle');
@@ -125,7 +161,9 @@ function getDeviceId() {
     const storageKey = 'codecure_device_id';
     let id = localStorage.getItem(storageKey);
     if (!id) {
-        id = (crypto?.randomUUID ? crypto.randomUUID() : `dev-${Date.now()}-${Math.random().toString(16).slice(2)}`);
+        id = ((typeof crypto !== 'undefined' && crypto.randomUUID)
+            ? crypto.randomUUID()
+            : `dev-${Date.now()}-${Math.random().toString(16).slice(2)}`);
         localStorage.setItem(storageKey, id);
     }
     return id;
@@ -246,18 +284,43 @@ async function handlePrediction(event) {
     }
 
     try {
-        const response = await fetch('/api/predict', {
+        const url = `${BACKEND_URL}/api/predict`;
+        console.log('[CodeCure] Submitting prediction to:', url);
+
+        const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
 
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.detail || 'Prediction failed');
+            console.error(`[CodeCure] Prediction API returned status ${response.status}`);
+
+            // Try to parse error response
+            let errorMsg = `Server error: ${response.status}`;
+            try {
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    const error = await response.json();
+                    errorMsg = error.detail || error.message || errorMsg;
+                } else {
+                    console.error('[CodeCure] Prediction API returned non-JSON error response');
+                }
+            } catch (e) {
+                console.error('[CodeCure] Could not parse error response:', e);
+            }
+
+            throw new Error(errorMsg);
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            console.error('[CodeCure] Prediction API returned non-JSON content');
+            throw new Error('Backend API returned invalid response. Check if BACKEND_URL is correct.');
         }
 
         const result = await response.json();
+        console.log('[CodeCure] Prediction successful:', result);
 
         savePredictionLocally(data, result);
         displayResults(result);
@@ -266,8 +329,8 @@ async function handlePrediction(event) {
         loadDashboard();
 
     } catch (error) {
+        console.error('[CodeCure] Prediction error:', error.message);
         showToast(`Error: ${error.message}`, 'error');
-        console.error('Prediction error:', error);
     } finally {
         btn.classList.remove('loading');
     }
@@ -424,7 +487,24 @@ function updateDashboardStats() {
 
 async function loadDashboard() {
     try {
-        const response = await fetch(`/api/dashboard?device_id=${encodeURIComponent(getDeviceId())}`);
+        const url = `${BACKEND_URL}/api/dashboard?device_id=${encodeURIComponent(getDeviceId())}`;
+        console.log('[CodeCure] Fetching dashboard from:', url);
+
+        const response = await fetch(url);
+
+        // Check if response is OK and is JSON
+        if (!response.ok) {
+            console.error(`[CodeCure] Dashboard API returned status ${response.status}`);
+            throw new Error(`API returned status ${response.status}`);
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            console.error('[CodeCure] Dashboard API returned non-JSON content:', contentType);
+            console.error('[CodeCure] Possible causes: BACKEND_URL not set correctly, backend not running, or serving HTML instead of JSON');
+            throw new Error('Dashboard API returned non-JSON response. Backend URL may be incorrect.');
+        }
+
         const data = await response.json();
 
         // Merge with Local History for Serverless Persistence
@@ -436,13 +516,17 @@ async function loadDashboard() {
             new Date(b.created_at) - new Date(a.created_at)
         );
 
+        console.log('[CodeCure] Dashboard loaded successfully:', dashboardDataStore.length, 'records');
+
         updateDashboardStats();
 
         const container = document.getElementById('patients-table-container');
         if (container) renderDashboardTable(container);
 
     } catch (error) {
-        console.error('Dashboard error:', error);
+        console.error('[CodeCure] Dashboard error:', error.message);
+        console.warn('[CodeCure] Using local history as fallback');
+
         const localHistory = getLocalHistory();
         dashboardDataStore = localHistory.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
@@ -564,14 +648,20 @@ function closeModal() {
 // ────────────────────────────────────────
 async function updateHomeStats() {
     try {
-        const response = await fetch(`/api/dashboard?device_id=${encodeURIComponent(getDeviceId())}`);
+        const url = `${BACKEND_URL}/api/dashboard?device_id=${encodeURIComponent(getDeviceId())}`;
+        const response = await fetch(url);
         let serverTotal = 0;
         let serverPredictions = [];
 
         if (response.ok) {
-            const data = await response.json();
-            serverTotal = data.total_patients || 0;
-            serverPredictions = data.recent_predictions || [];
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const data = await response.json();
+                serverTotal = data.total_patients || 0;
+                serverPredictions = data.recent_predictions || [];
+            } else {
+                console.warn('[CodeCure] Dashboard API returned non-JSON response');
+            }
         }
 
         const localHistory = getLocalHistory();
@@ -583,6 +673,7 @@ async function updateHomeStats() {
         const statEl = document.getElementById('stat-total');
         if (statEl) statEl.textContent = total;
     } catch (e) {
+        console.error('[CodeCure] Home stats error:', e.message);
         const localHistory = getLocalHistory();
         const statEl = document.getElementById('stat-total');
         if (statEl) statEl.textContent = localHistory.length;
@@ -613,45 +704,51 @@ async function downloadDashboardPDF(id) {
         'Sleep Hours/Night': (result.sleep_hours || '7') + ' hrs'
     };
 
+    // Use the stored summary (explanation) if available
+    const summary = result.summary || `AI Diabetes Risk Assessment Report for Patient #${result.id}.`;
+    const risk = result.risk_level || (result.diabetes_risk === 1 ? 'High' : 'Low');
+    const score = result.health_score || 0;
+    const probability = (result.risk_probability ? (result.risk_probability * 100).toFixed(1) : '—') + '%';
+
     const data = {
         name: result.name || 'Anonymous',
         email: result.email || 'Patient Record #' + result.id,
         age: result.age || 'N/A',
         gender: result.gender || 'Not specified',
-        score: result.health_score || 0,
-        risk: result.risk_level || 'Unknown',
-        summary: result.summary || `AI Diabetes Risk Assessment Report for Patient #${result.id}.`,
-        probability: (result.risk_probability ? (result.risk_probability * 100).toFixed(1) : '—') + '%',
+        score: score,
+        risk: risk,
+        summary: summary,
+        probability: probability,
         metrics: metrics,
         factors: [
             {
                 name: 'Glucose Level',
-                value: result.glucose || '—',
-                message: `Blood glucose: ${result.glucose} mg/dL. ${result.glucose > 126 ? '[ELEVATED]' : 'Normal'}`,
+                value: (result.glucose || '—') + ' mg/dL',
+                message: `Blood glucose: ${result.glucose || '—'} mg/dL. ${result.glucose > 126 ? '[ELEVATED]' : 'Normal'}`,
                 status: result.glucose > 140 ? 'danger' : result.glucose > 126 ? 'warning' : 'normal'
             },
             {
                 name: 'BMI',
-                value: result.bmi || '—',
-                message: `Body Mass Index: ${result.bmi} kg/m². ${result.bmi > 30 ? 'Indicates obesity' : 'Within acceptable range'}`,
+                value: (result.bmi || '—') + ' kg/m²',
+                message: `Body Mass Index: ${result.bmi || '—'} kg/m². ${result.bmi > 30 ? 'Indicates obesity' : 'Within acceptable range'}`,
                 status: result.bmi > 30 ? 'danger' : result.bmi > 25 ? 'warning' : 'normal'
             },
             {
                 name: 'Blood Pressure',
-                value: result.blood_pressure || '—',
-                message: `Diastolic: ${result.blood_pressure} mmHg. ${result.blood_pressure > 90 ? '[ELEVATED]' : 'Normal'}`,
+                value: (result.blood_pressure || '—') + ' mmHg',
+                message: `Diastolic: ${result.blood_pressure || '—'} mmHg. ${result.blood_pressure > 90 ? '[ELEVATED]' : 'Normal'}`,
                 status: result.blood_pressure > 90 ? 'danger' : result.blood_pressure > 80 ? 'warning' : 'normal'
             },
             {
                 name: 'Insulin Level',
-                value: result.insulin || '—',
-                message: `Insulin: ${result.insulin} mIU/L. Reference: 2.6-24.9 mIU/L`,
+                value: (result.insulin || '—') + ' mIU/L',
+                message: `Insulin: ${result.insulin || '—'} mIU/L. Reference: 2.6-24.9 mIU/L`,
                 status: result.insulin > 24.9 ? 'warning' : 'normal'
             },
             {
                 name: 'Diabetes Pedigree',
                 value: result.diabetes_pedigree || '—',
-                message: 'Family history factor in genetic risk assessment',
+                message: 'Family history score: ' + (result.diabetes_pedigree || '—'),
                 status: result.diabetes_pedigree > 0.5 ? 'warning' : 'normal'
             }
         ],
@@ -676,36 +773,47 @@ function downloadPDF() {
         return;
     }
 
-    // Collect health metrics from form
+    // Collect ALL metrics from the form including lifestyle
+    const getVal = (id) => {
+        const el = document.getElementById(id);
+        return el ? el.value : '—';
+    };
+
     const metrics = {
-        'Glucose Level': (document.getElementById('input-glucose')?.value || '—') + ' mg/dL',
-        'Blood Pressure': (document.getElementById('input-blood-pressure')?.value || '—') + ' mmHg',
-        'BMI': (document.getElementById('input-bmi')?.value || '—') + ' kg/m²',
-        'Insulin Level': (document.getElementById('input-insulin')?.value || '—') + ' mIU/L',
-        'Skin Thickness': (document.getElementById('input-skin-thickness')?.value || '—') + ' mm',
-        'Diabetes Pedigree': (document.getElementById('input-diabetes-pedigree')?.value || '—'),
-        'Age': (document.getElementById('input-age')?.value || '—') + ' years',
-        'Pregnancies': (document.getElementById('input-pregnancies')?.value || '0'),
-        'Exercise Hours/Week': (document.getElementById('input-exercise-hours')?.value || '0') + ' hrs',
-        'Sleep Hours/Night': (document.getElementById('input-sleep-hours')?.value || '7') + ' hrs'
+        'Glucose Level': getVal('input-glucose') + ' mg/dL',
+        'Blood Pressure': getVal('input-bp') + ' mmHg',
+        'BMI': getVal('input-bmi') + ' kg/m²',
+        'Insulin Level': getVal('input-insulin') + ' mIU/L',
+        'Skin Thickness': getVal('input-skin') + ' mm',
+        'Diabetes Pedigree': getVal('input-dpf'),
+        'Age': getVal('input-age') + ' years',
+        'Pregnancies': getVal('input-pregnancies') || '0',
+        'Exercise Hours/Week': getVal('input-exercise') + ' hrs',
+        'Sleep Hours/Night': getVal('input-sleep') + ' hrs'
     };
 
     const data = {
-        name: document.getElementById('input-name').value || 'Patient',
-        email: document.getElementById('input-email').value || 'Not provided',
-        age: document.getElementById('input-age')?.value || 'N/A',
-        gender: document.getElementById('input-gender')?.value || 'Not specified',
+        name: getVal('input-name') || 'Patient',
+        email: getVal('input-email') || 'Not provided',
+        age: getVal('input-age') || 'N/A',
+        gender: getVal('input-gender') || 'Not specified',
         score: scoreEl.innerText,
-        risk: document.getElementById('risk-text').innerText,
-        summary: document.getElementById('result-summary').innerText,
-        probability: document.getElementById('probability-value').innerText,
+        risk: (document.getElementById('risk-text') && document.getElementById('risk-text').innerText) || 'Unknown',
+        summary: (document.getElementById('result-summary') && document.getElementById('result-summary').innerText) || 'No summary available.',
+        probability: (document.getElementById('probability-value') && document.getElementById('probability-value').innerText) || '—%',
         metrics: metrics,
-        factors: Array.from(document.querySelectorAll('.risk-factor-card')).map(card => ({
-            name: card.querySelector('.risk-factor-name').innerText,
-            value: card.querySelector('.risk-factor-value').innerText,
-            message: card.querySelector('.risk-factor-message')?.innerText || card.querySelector('.risk-factor-name').innerText,
-            status: card.querySelector('.risk-factor-status').innerText.toLowerCase().replace('risk ', '')
-        })),
+        factors: Array.from(document.querySelectorAll('.risk-factor-card')).map(card => {
+            const name = card.querySelector('.risk-factor-name')?.innerText || 'Factor';
+            const value = card.querySelector('.risk-factor-value')?.innerText || '—';
+            const message = card.querySelector('.risk-factor-message')?.innerText || name;
+            const statusText = card.querySelector('.risk-factor-status')?.innerText || 'normal';
+            return {
+                name,
+                value,
+                message,
+                status: statusText.toLowerCase().replace('risk ', '').trim()
+            };
+        }),
         recommendations: Array.from(document.querySelectorAll('.recommendation-item span:last-child')).map(rec => rec.innerText)
     };
     generatePDFReport(data);
@@ -714,180 +822,175 @@ function downloadPDF() {
 function generatePDFReport(data) {
     const score = parseInt(data.score) || 0;
     const scoreColor = getScoreColor(score);
-    const timestamp = new Date();
+    const timestamp = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     const reportID = '#CC' + Date.now().toString().slice(-10);
-
-    // Create container element for PDF generation
-    const pdfContainer = document.createElement('div');
-    pdfContainer.id = 'pdf-holder-' + Date.now();
-    pdfContainer.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:210mm;height:297mm;background:white;padding:20mm;';
-
-    // Build HTML content
-    let htmlContent = `
-<table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
-    <tr>
-        <td style="vertical-align:top;width:70%;">
-            <h1 style="color:#10b981;margin:0;font-size:32px;font-weight:900;">CodeCure</h1>
-            <p style="color:#64748b;margin:3px 0 0 0;font-size:12px;">AI Diabetes Risk Assessment Platform</p>
-        </td>
-        <td style="text-align:right;vertical-align:top;">
-            <div style="background:#f0fdf4;padding:10px 15px;border-radius:6px;border:1px solid #10b981;text-align:center;">
-                <p style="margin:0;font-size:10px;color:#64748b;">Report ID</p>
-                <p style="margin:3px 0 0 0;font-size:12px;font-weight:bold;color:#10b981;font-family:monospace;">${reportID}</p>
-            </div>
-        </td>
-    </tr>
-</table>
-
-<div style="background:linear-gradient(135deg, ${scoreColor}20, ${scoreColor}05);border:2px solid ${scoreColor};border-radius:8px;padding:20px;margin-bottom:20px;">
-    <table style="width:100%;border-collapse:collapse;">
-        <tr>
-            <td style="width:80px;text-align:center;vertical-align:middle;">
-                <div style="background:${scoreColor};color:white;width:75px;height:75px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:bold;margin:0 auto;">
-                    <span style="font-size:32px;">${score}</span>
-                    <span style="font-size:12px;margin-top:3px;">/100</span>
-                </div>
-            </td>
-            <td style="padding-left:20px;vertical-align:middle;">
-                <h2 style="margin:0 0 5px 0;font-size:20px;color:#111827;font-weight:700;">${data.risk} Risk</h2>
-                <p style="margin:0 0 8px 0;color:#64748b;font-size:13px;">Diabetes Probability: <strong style="color:${scoreColor};font-size:14px;">${data.probability}</strong></p>
-                <p style="margin:0;padding:8px 12px;background:white;border-left:3px solid ${scoreColor};border-radius:4px;font-size:11px;color:#374151;">${data.summary}</p>
-            </td>
-        </tr>
-    </table>
-</div>
-
-<h3 style="margin:0 0 12px 0;font-size:13px;color:#111827;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e2e8f0;padding-bottom:6px;">Patient Information</h3>
-<table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:11px;">
-    <tr>
-        <td style="width:25%;padding:6px;border-bottom:1px solid #e2e8f0;">
-            <p style="margin:0;color:#64748b;font-weight:600;font-size:10px;">Name</p>
-            <p style="margin:3px 0 0 0;color:#111827;font-weight:500;">${data.name}</p>
-        </td>
-        <td style="width:25%;padding:6px;border-bottom:1px solid #e2e8f0;">
-            <p style="margin:0;color:#64748b;font-weight:600;font-size:10px;">Email</p>
-            <p style="margin:3px 0 0 0;color:#111827;font-weight:500;">${data.email}</p>
-        </td>
-        <td style="width:25%;padding:6px;border-bottom:1px solid #e2e8f0;">
-            <p style="margin:0;color:#64748b;font-weight:600;font-size:10px;">Age</p>
-            <p style="margin:3px 0 0 0;color:#111827;font-weight:500;">${data.age}</p>
-        </td>
-        <td style="width:25%;padding:6px;border-bottom:1px solid #e2e8f0;">
-            <p style="margin:0;color:#64748b;font-weight:600;font-size:10px;">Gender</p>
-            <p style="margin:3px 0 0 0;color:#111827;font-weight:500;">${data.gender}</p>
-        </td>
-    </tr>
-</table>
-
-<h3 style="margin:0 0 12px 0;font-size:13px;color:#111827;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e2e8f0;padding-bottom:6px;">Health Metrics</h3>
-<table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:10px;">
-    <tr style="background:#f8fafc;">
-        <td style="padding:8px;border:1px solid #e2e8f0;font-weight:600;color:#111827;">Metric</td>
-        <td style="padding:8px;border:1px solid #e2e8f0;font-weight:600;color:#111827;text-align:right;">Value</td>
-    </tr>`;
-
-    if (data.metrics) {
-        Object.entries(data.metrics).forEach(([key, val]) => {
-            htmlContent += `<tr>
-                <td style="padding:6px 8px;border:1px solid #e2e8f0;color:#374151;">${key}</td>
-                <td style="padding:6px 8px;border:1px solid #e2e8f0;color:#111827;font-weight:500;text-align:right;">${val}</td>
-            </tr>`;
-        });
-    }
-
-    htmlContent += `</table>`;
-
-    // Add Risk Factors
-    if (data.factors && data.factors.length > 0) {
-        htmlContent += `<h3 style="margin:20px 0 12px 0;font-size:13px;color:#111827;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e2e8f0;padding-bottom:6px;">Risk Factor Analysis</h3>`;
-        data.factors.slice(0, 6).forEach(f => {
-            const bgColor = f.status === 'danger' ? '#fef2f2' : f.status === 'warning' ? '#fffbeb' : '#f0fdf4';
-            const borderColor = f.status === 'danger' ? '#ef4444' : f.status === 'warning' ? '#f59e0b' : '#10b981';
-            htmlContent += `<div style="border-left:4px solid ${borderColor};background:${bgColor};padding:10px 12px;margin-bottom:8px;border-radius:4px;">
-                <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-                    <strong style="font-size:11px;color:#111827;">${f.name}</strong>
-                    <span style="font-size:9px;font-weight:600;text-transform:uppercase;padding:2px 6px;background:${borderColor};color:white;border-radius:3px;">${f.status}</span>
-                </div>
-                <p style="margin:0;font-size:10px;color:#374151;line-height:1.4;">${f.message}</p>
-            </div>`;
-        });
-    }
-
-    // Add Recommendations
-    if (data.recommendations && data.recommendations.length > 0) {
-        htmlContent += `<h3 style="margin:20px 0 12px 0;font-size:13px;color:#111827;font-weight:700;text-transform:uppercase;border-bottom:2px solid #e2e8f0;padding-bottom:6px;">Recommendations</h3>
-        <ul style="margin:0;padding:0 0 0 18px;font-size:10px;color:#1e40af;line-height:1.6;">`;
-        data.recommendations.slice(0, 8).forEach(rec => {
-            htmlContent += `<li style="margin:4px 0;">${rec}</li>`;
-        });
-        htmlContent += `</ul>`;
-    }
-
-    htmlContent += `
-<div style="border-top:2px solid #e2e8f0;padding-top:15px;margin-top:25px;">
-    <div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:10px 12px;border-radius:4px;margin-bottom:12px;">
-        <p style="margin:0;font-size:9px;color:#92400e;line-height:1.5;"><strong>[DISCLAIMER]</strong> This is an AI assessment for informational purposes only. NOT a medical diagnosis. Consult a healthcare professional.</p>
-    </div>
-    <table style="width:100%;font-size:9px;color:#64748b;border-collapse:collapse;">
-        <tr>
-            <td>&copy; 2026 CodeCure AI Platform</td>
-            <td style="text-align:right;">Confidential - Medical Use Only</td>
-        </tr>
-    </table>
-</div>
-    `;
-
-    pdfContainer.innerHTML = htmlContent;
-    document.body.appendChild(pdfContainer);
 
     showToast('Generating PDF Report...', 'info');
 
-    const options = {
-        margin: [12, 12, 12, 12],
-        filename: `CodeCure_Report_${data.name || 'Patient'}_${Date.now()}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: {
-            scale: 2,
-            backgroundColor: '#ffffff',
-            logging: false,
-            useCORS: true,
-            allowTaint: true
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true }
-    };
+    // PAGE 1: Patient Info + Health Metrics + Risk Factors
+    const page1Content = document.createElement('div');
+    page1Content.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:800px;background:white;padding:40px;font-family:Arial,sans-serif;';
 
-    // Wait for DOM rendering before converting to PDF
-    setTimeout(() => {
+    page1Content.innerHTML = `
+        <div style="text-align:center;margin-bottom:25px;border-bottom:3px solid ${scoreColor};padding-bottom:15px;">
+            <h1 style="color:${scoreColor};margin:0;font-size:36px;font-weight:bold;">CodeCure</h1>
+            <p style="color:#666;margin:3px 0 0 0;font-size:12px;">AI Diabetes Risk Assessment Report</p>
+        </div>
+
+        <div style="background:${scoreColor}15;border:2px solid ${scoreColor};border-radius:8px;padding:15px;margin-bottom:20px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                <div style="flex:1;">
+                    <h2 style="margin:0 0 8px 0;font-size:24px;color:#333;font-weight:bold;">${data.risk} Risk</h2>
+                    <p style="margin:0;font-size:13px;color:#666;">Probability: <strong style="color:${scoreColor};">${data.probability}</strong></p>
+                </div>
+                <div style="background:${scoreColor};color:white;width:80px;height:80px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:bold;flex-shrink:0;">
+                    <span style="font-size:32px;">${score}</span>
+                    <span style="font-size:12px;">/100</span>
+                </div>
+            </div>
+            <p style="margin:0;padding:8px;background:white;border-left:3px solid ${scoreColor};border-radius:4px;font-size:11px;color:#333;line-height:1.5;">${data.summary}</p>
+        </div>
+
+        <h3 style="margin:15px 0 12px 0;font-size:13px;color:#333;font-weight:bold;border-bottom:2px solid #ddd;padding-bottom:6px;text-transform:uppercase;">Patient Information</h3>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:10px;">
+            <tr style="background:#f8f8f8;">
+                <td style="padding:6px;border:1px solid #ddd;font-weight:bold;width:25%;">Name</td>
+                <td style="padding:6px;border:1px solid #ddd;width:25%;">${data.name}</td>
+                <td style="padding:6px;border:1px solid #ddd;font-weight:bold;width:25%;">Email</td>
+                <td style="padding:6px;border:1px solid #ddd;width:25%;">${data.email || 'N/A'}</td>
+            </tr>
+            <tr>
+                <td style="padding:6px;border:1px solid #ddd;font-weight:bold;">Age</td>
+                <td style="padding:6px;border:1px solid #ddd;">${data.age}</td>
+                <td style="padding:6px;border:1px solid #ddd;font-weight:bold;">Gender</td>
+                <td style="padding:6px;border:1px solid #ddd;">${data.gender}</td>
+            </tr>
+        </table>
+
+        <h3 style="margin:15px 0 12px 0;font-size:13px;color:#333;font-weight:bold;border-bottom:2px solid #ddd;padding-bottom:6px;text-transform:uppercase;">Health Metrics</h3>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:10px;">
+            <tr style="background:#f8f8f8;">
+                <td style="padding:6px;border:1px solid #ddd;font-weight:bold;width:50%;">Metric</td>
+                <td style="padding:6px;border:1px solid #ddd;font-weight:bold;width:50%;">Value</td>
+            </tr>
+            ${Object.entries(data.metrics || {}).map(([key, val]) => `
+                <tr>
+                    <td style="padding:6px;border:1px solid #ddd;">${key}</td>
+                    <td style="padding:6px;border:1px solid #ddd;font-weight:bold;">${val}</td>
+                </tr>
+            `).join('')}
+        </table>
+
+        ${data.factors && data.factors.length > 0 ? `
+            <h3 style="margin:15px 0 12px 0;font-size:13px;color:#333;font-weight:bold;border-bottom:2px solid #ddd;padding-bottom:6px;text-transform:uppercase;">Risk Factors</h3>
+            ${data.factors.slice(0, 5).map(f => {
+        const statusColor = f.status === 'danger' ? '#ef4444' : f.status === 'warning' ? '#f59e0b' : '#10b981';
+        const bgColor = f.status === 'danger' ? '#fef2f2' : f.status === 'warning' ? '#fffbeb' : '#f0fdf4';
+        return `
+                    <div style="border-left:3px solid ${statusColor};background:${bgColor};padding:8px;margin-bottom:6px;border-radius:3px;font-size:10px;">
+                        <div style="font-weight:bold;color:#333;margin-bottom:2px;display:flex;justify-content:space-between;">
+                            <span>${f.name}</span>
+                            <span style="color:${statusColor};text-transform:uppercase;font-size:9px;">${f.status}</span>
+                        </div>
+                        <p style="margin:0;color:#555;line-height:1.4;">${f.message}</p>
+                    </div>
+                `;
+    }).join('')}
+        ` : ''}
+    `;
+
+    document.body.appendChild(page1Content);
+
+    // PAGE 2: Recommendations + Disclaimer
+    const page2Content = document.createElement('div');
+    page2Content.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:800px;height:1050px;background:white;padding:40px;font-family:Arial,sans-serif;display:flex;flex-direction:column;box-sizing:border-box;';
+
+    page2Content.innerHTML = `
+        <div style="text-align:center;margin-bottom:25px;border-bottom:3px solid ${scoreColor};padding-bottom:15px;flex-shrink:0;">
+            <h1 style="color:${scoreColor};margin:0;font-size:36px;font-weight:bold;">CodeCure</h1>
+            <p style="color:#666;margin:3px 0 0 0;font-size:12px;">Personalized Health Recommendations</p>
+        </div>
+
+        <h2 style="margin:0 0 15px 0;font-size:16px;color:#333;font-weight:bold;flex-shrink:0;">Health Recommendations</h2>
+
+        <div style="flex:1;overflow:hidden;">
+            ${data.recommendations && data.recommendations.length > 0 ? `
+                <ul style="margin:0 0 20px 0;padding:0 0 0 18px;font-size:11px;color:#333;line-height:1.7;">
+                    ${data.recommendations.slice(0, 15).map(rec => `<li style="margin:6px 0;">${rec}</li>`).join('')}
+                </ul>
+            ` : '<p style="font-size:11px;color:#666;">No specific recommendations available.</p>'}
+        </div>
+
+        <div style="flex-shrink:0;border-top:2px solid #ddd;padding-top:12px;margin-top:auto;font-size:9px;">
+            <div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:8px;border-radius:4px;margin-bottom:12px;color:#78350f;line-height:1.6;">
+                <strong>[DISCLAIMER]</strong> This is an AI assessment for informational purposes only and is NOT a medical diagnosis. Always consult with a qualified healthcare professional before making any medical decisions.
+            </div>
+            <div style="display:flex;justify-content:space-between;color:#999;">
+                <span>&copy; 2026 CodeCure AI</span>
+                <span>${reportID}</span>
+                <span>${timestamp}</span>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(page2Content);
+
+    // Render and save PDF with proper page management
+    setTimeout(async () => {
         try {
-            // Ensure all content is loaded and rendered
-            const element = pdfContainer;
+            const canvas1 = await html2canvas(page1Content, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                logging: false,
+                useCORS: true,
+                allowTaint: true
+            });
 
-            // Use html2pdf with proper error handling
-            html2pdf()
-                .set(options)
-                .from(element)
-                .save()
-                .then(() => {
-                    showToast('Report downloaded successfully!', 'success');
-                    if (document.body.contains(pdfContainer)) {
-                        document.body.removeChild(pdfContainer);
-                    }
-                })
-                .catch(err => {
-                    console.error('PDF Generation Error:', err);
-                    showToast('PDF generation failed. Please try again.', 'error');
-                    if (document.body.contains(pdfContainer)) {
-                        document.body.removeChild(pdfContainer);
-                    }
-                });
+            const canvas2 = await html2canvas(page2Content, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                logging: false,
+                useCORS: true,
+                allowTaint: true
+            });
+
+            const imgData1 = canvas1.toDataURL('image/jpeg', 0.95);
+            const imgData2 = canvas2.toDataURL('image/jpeg', 0.95);
+
+            const pdf = new (window.jsPDF || window.jspdf.jsPDF)({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4',
+                compress: true
+            });
+
+            const pageWidth = 210;
+            const pageHeight = 297;
+            const margin = 0;
+
+            // Add Page 1
+            const imgHeight1 = (canvas1.height * pageWidth) / canvas1.width;
+            pdf.addImage(imgData1, 'JPEG', margin, margin, pageWidth, Math.min(imgHeight1, pageHeight));
+
+            // Add Page 2
+            pdf.addPage();
+            const imgHeight2 = (canvas2.height * pageWidth) / canvas2.width;
+            pdf.addImage(imgData2, 'JPEG', margin, margin, pageWidth, Math.min(imgHeight2, pageHeight));
+
+            pdf.save(`CodeCure_Report_${data.name || 'Patient'}_${Date.now()}.pdf`);
+            showToast('Report downloaded successfully!', 'success');
         } catch (error) {
-            console.error('PDF Error:', error);
-            showToast('Error generating PDF. Please try again.', 'error');
-            if (document.body.contains(pdfContainer)) {
-                document.body.removeChild(pdfContainer);
+            console.error('PDF Generation Error:', error);
+            showToast('PDF generation failed. Please try again.', 'error');
+        } finally {
+            if (document.body.contains(page1Content)) {
+                document.body.removeChild(page1Content);
+            }
+            if (document.body.contains(page2Content)) {
+                document.body.removeChild(page2Content);
             }
         }
-    }, 500);
+    }, 300);
 }
 
 function getScoreColor(score) {
@@ -915,8 +1018,18 @@ function initSlideshows() {
 // ────────────────────────────────────────
 // API key is injected from backend via HTML template environment variable
 // window.ENV.GROQ_API_KEY is set in templates/index.html
-const GROQ_API_KEY = window.ENV?.GROQ_API_KEY || '';  // Safely access from window.ENV
+const GROQ_API_KEY = (window.ENV && window.ENV.GROQ_API_KEY) || '';  // Safely access from window.ENV
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+
+// Log API key status for debugging
+if (typeof window !== 'undefined') {
+    console.log('[CodeCure] Chatbot initialized. GROQ API Key available:', !!GROQ_API_KEY);
+    if (GROQ_API_KEY) {
+        console.log('[CodeCure] Using GROQ API for intelligent responses');
+    } else {
+        console.log('[CodeCure] GROQ_API_KEY not set. Using local knowledge base only.');
+    }
+}
 
 async function loadKnowledgeBase() {
     try {
@@ -933,7 +1046,109 @@ function toggleChat() {
     }
 }
 
-function handleChatKey(event) { if (event.key === 'Enter') sendChatMessage(); }
+function getChatTranscript() {
+    const messages = document.querySelectorAll('#chat-messages .message');
+    const lines = [];
+
+    messages.forEach(message => {
+        if (message.classList.contains('typing')) return;
+
+        const role = message.dataset.role || (message.classList.contains('user-message') ? 'User' : 'Assistant');
+        const text = (message.dataset.rawText || message.innerText || '').trim();
+
+        if (text) {
+            lines.push(`${role}: ${text}`);
+        }
+    });
+
+    return lines.join('\n\n');
+}
+
+async function copyChat() {
+    const transcript = getChatTranscript();
+    if (!transcript) {
+        showToast('Nothing to copy yet.', 'info');
+        return;
+    }
+
+    try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(transcript);
+        } else {
+            const fallback = document.createElement('textarea');
+            fallback.value = transcript;
+            fallback.style.position = 'fixed';
+            fallback.style.left = '-9999px';
+            document.body.appendChild(fallback);
+            fallback.select();
+            document.execCommand('copy');
+            document.body.removeChild(fallback);
+        }
+
+        showToast('Chat copied to clipboard.', 'success');
+    } catch (error) {
+        console.error('Copy chat failed:', error);
+        showToast('Could not copy chat.', 'error');
+    }
+}
+
+function exportChatTxt() {
+    const transcript = getChatTranscript();
+    if (!transcript) {
+        showToast('Nothing to export yet.', 'info');
+        return;
+    }
+
+    const content = [
+        'CodeCure Chat Transcript',
+        `Generated: ${new Date().toLocaleString()}`,
+        '',
+        transcript
+    ].join('\n');
+
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `CodeCure_Chat_${Date.now()}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    showToast('Chat exported as txt.', 'success');
+}
+
+function deleteChat() {
+    const messages = document.getElementById('chat-messages');
+    if (!messages) return;
+
+    messages.innerHTML = '';
+    showToast('Chat deleted.', 'success');
+}
+
+// Close chatbot when clicking outside
+document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('click', function (event) {
+        const chatbotContainer = document.getElementById('chatbot-container');
+        const chatFab = document.querySelector('.chat-fab');
+        const minimizeBtn = document.querySelector('.chatbot-minimize');
+
+        if (chatbotContainer && chatbotContainer.classList.contains('active') &&
+            !chatbotContainer.contains(event.target) &&
+            (!chatFab || !chatFab.contains(event.target)) &&
+            (!minimizeBtn || !minimizeBtn.contains(event.target))) {
+            chatbotContainer.classList.remove('active');
+        }
+    });
+});
+
+function handleChatKey(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendChatMessage();
+    }
+}
 
 async function sendChatMessage() {
     const input = document.getElementById('chat-input');
@@ -965,59 +1180,44 @@ async function sendChatMessage() {
 async function getAIResponse(query) {
     const q = query.toLowerCase().trim();
 
-    // Greeting responses
+    // Greeting responses - short, non-specific
     if (['hello', 'hi', 'hey'].some(g => q.includes(g)) || q.length < 3)
         return "Hello! I'm your CodeCure AI assistant. I can help you with questions about CodeCure, diabetes prediction, our creators (Babin Bid and Debasmita Bose), and our platform. What would you like to know?";
 
-    // Check if question is CodeCure-related
-    const codecureKeywords = ['codecure', 'health', 'diabetes', 'predict', 'report', 'dashboard', 'ai', 'bmi', 'glucose', 'risk', 'babin', 'debasmita', 'bose', 'bid', 'creator', 'founder', 'developer', 'team', 'platform', 'medical', 'prediction', 'assessment'];
-    const isCodeCureRelated = codecureKeywords.some(k => q.includes(k));
+    // Try GROQ API for ALL questions via backend
+    try {
+        console.log('[CodeCure] Attempting to reach backend chatbot endpoint...');
+        const response = await fetch(`${BACKEND_URL}/api/chat`, {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                query: query
+            })
+        });
 
-    if (!isCodeCureRelated) {
-        return "I'm specialized only in CodeCure-related queries. I can answer questions about diabetes prediction, health metrics, our AI platform, or our creators Babin Bid and Debasmita Bose. What would you like to know?";
-    }
+        console.log(`[CodeCure] Backend response status: ${response.status}`);
 
-    // Try GROQ API for CodeCure-related questions
-    if (GROQ_API_KEY) {
-        try {
-            const systemPrompt = `You are CodeCure's AI Health Assistant. CodeCure is an AI-powered Diabetes Risk Prediction Platform created by Babin Bid and Debasmita Bose. 
-            
-Key Information:
-- CodeCure predicts diabetes risk using 8 clinical metrics: Glucose Level, Blood Pressure, BMI, Insulin Level, Skin Thickness, Diabetes Pedigree Function, Age, and Pregnancy History
-- The platform provides an AI Health Score (0-100) and diabetes probability
-- Creators: Babin Bid and Debasmita Bose
-- Deployed on Vercel at https://codecure.vercel.app
-- Features: AI predictions, professional PDF reports, health analytics dashboard, AI chatbot assistant
-
-Please answer user questions about CodeCure, diabetes prediction, health metrics, and the platform's features. Keep responses concise (2-3 sentences for brief questions, 3-4 for detailed ones). Always mention the creators when asked about them.`;
-
-            const response = await fetch(GROQ_API_URL, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${GROQ_API_KEY}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    model: 'mixtral-8x7b-32768',
-                    messages: [
-                        { role: 'system', content: systemPrompt },
-                        { role: 'user', content: query }
-                    ],
-                    max_tokens: 256,
-                    temperature: 0.7
-                })
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                if (data.choices && data.choices[0] && data.choices[0].message) {
-                    return data.choices[0].message.content.trim();
-                }
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.response) {
+                console.log('[CodeCure] ✅ Using GROQ API response (via backend)');
+                return data.response.trim();
+            } else {
+                console.warn('[CodeCure] ⚠️ Backend returned error:', data.error || data.details);
             }
-        } catch (error) {
-            console.warn('GROQ API error, falling back to knowledge base:', error);
+        } else {
+            const errorData = await response.json().catch(() => ({ error: response.statusText }));
+            console.warn(`[CodeCure] ⚠️ Backend error ${response.status}:`, errorData);
         }
+    } catch (error) {
+        console.warn('[CodeCure] ⚠️ Backend fetch failed:', error.message);
     }
+
+    console.log('[CodeCure] Falling back to local knowledge base');
 
     // Fallback to local knowledge base
     let bestMatch = null, maxScore = 0;
@@ -1031,12 +1231,43 @@ Please answer user questions about CodeCure, diabetes prediction, health metrics
     return "I'm not sure about that specific detail. Could you please rephrase your question? I'm here to help with CodeCure platform questions!";
 }
 
+function renderMarkdown(text) {
+    // Escape HTML special characters first
+    let html = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+    // Convert [link text](url) to <a> tags
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color: #10b981; text-decoration: underline; cursor: pointer;">$1</a>');
+
+    // Convert **bold text** to <strong> tags
+    html = html.replace(/\*\*([^*]+)\*\*/g, '<strong style="font-weight: 600; color: #065f46;">$1</strong>');
+
+    // Convert *italic text* to <em> tags
+    html = html.replace(/\*([^*]+)\*/g, '<em style="font-style: italic; color: #047857;">$1</em>');
+
+    // Convert line breaks to <br> tags
+    html = html.replace(/\n/g, '<br>');
+
+    return html;
+}
+
 function addMessage(text, type) {
     const messages = document.getElementById('chat-messages');
     if (!messages) return;
     const div = document.createElement('div');
     div.className = `message ${type}-message`;
-    div.innerText = text;
+    div.dataset.role = type === 'user' ? 'User' : 'Assistant';
+    div.dataset.rawText = text;
+
+    // Render markdown for AI/bot responses, plain text for user messages
+    if (type === 'bot' || type === 'ai') {
+        div.innerHTML = renderMarkdown(text);
+    } else {
+        div.innerText = text;
+    }
+
     messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
 }

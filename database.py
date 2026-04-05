@@ -4,8 +4,7 @@ SQLAlchemy ORM models for patient records and predictions.
 """
 
 from sqlalchemy import create_engine, Column, Integer, Float, String, DateTime, Text, Boolean
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 from datetime import datetime
 import os
 

@@ -10,7 +10,11 @@
     <link rel="stylesheet" href="/static/style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" href="/static/favicon.png" type="image/png">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Load configuration helper (supports both local backend and Vercel) FIRST -->
+    <script src="/static/config.js"></script>
+    <!-- PDF Generation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 
 <body>
@@ -630,35 +634,83 @@
         <div class="tab-content" id="tab-terms">
             <section class="section">
                 <div class="section-header">
-                    <div class="section-icon blue white-bg"><i data-lucide="file-text" class="icon-blue"></i></div>
+                    <div class="section-icon rose"><i data-lucide="file-text" class="icon-rose"></i></div>
                     <div>
                         <h2 class="section-title">Terms of Service</h2>
                         <p class="section-description">Legal framework for using the CodeCure platform</p>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="content-text">
-                        <h3><i data-lucide="check-circle" class="icon-inline blue"></i> 1. Acceptance of Terms</h3>
-                        <p>By accessing and using CodeCure, you agree to be bound by these Terms of Service and all
-                            applicable laws and regulations.</p>
+                <div class="accordion-container">
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="check-circle" class="icon-inline blue"></i>
+                            1. Acceptance of Terms
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>By accessing and using CodeCure, you agree to be bound by these Terms of Service and all
+                                applicable laws and regulations. If you do not agree to these terms, please do not use
+                                this platform.</p>
+                        </div>
+                    </div>
 
-                        <h3><i data-lucide="alert-triangle" class="icon-inline amber"></i> 2. Medical Disclaimer</h3>
-                        <p><strong>IMPORTANT:</strong> CodeCure is an AI-driven informational tool. It is NOT a
-                            substitute for professional medical advice, diagnosis, or treatment. Always seek the advice
-                            of your physician or other qualified health provider with any questions you may have
-                            regarding a medical condition.</p>
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="alert-triangle" class="icon-inline amber"></i>
+                            2. Medical Disclaimer
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p><strong>IMPORTANT:</strong> CodeCure is an AI-driven informational tool. It is NOT a
+                                substitute for professional medical advice, diagnosis, or treatment. Always seek the
+                                advice of your physician or other qualified health provider with any questions regarding
+                                a medical condition.</p>
+                        </div>
+                    </div>
 
-                        <h3><i data-lucide="file-key" class="icon-inline blue"></i> 3. Use License</h3>
-                        <p>Permission is granted to use CodeCure for personal, non-commercial transitory viewing only.
-                            This is the grant of a license, not a transfer of title.</p>
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="lock" class="icon-inline emerald"></i>
+                            3. Use License
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>Permission is granted to use CodeCure for personal, non-commercial transitory viewing
+                                only. This is the grant of a license, not a transfer of title. Under this license, you
+                                may not: modify or copy materials, use materials for commercial purposes, or remove any
+                                copyright notices.</p>
+                        </div>
+                    </div>
 
-                        <h3><i data-lucide="shield-alert" class="icon-inline rose"></i> 4. Limitations</h3>
-                        <p>In no event shall CodeCure or its developers be liable for any damages (including, without
-                            limitation, damages for loss of data or profit) arising out of the use or inability to use
-                            the platform.</p>
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="shield-alert" class="icon-inline rose"></i>
+                            4. Limitations of Liability
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>In no event shall CodeCure or its developers be liable for any damages (including damages
+                                for loss of data or profit) arising out of the use or inability to use the platform,
+                                even if we have been notified of the possibility of such damages.</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="scale" class="icon-inline blue"></i>
+                            5. Governing Law
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>These Terms and Conditions are governed by and construed in accordance with applicable
+                                laws. Your use of CodeCure is at your own risk. The platform is provided on an "as is"
+                                and "as available" basis without any representations or warranties.</p>
+                        </div>
                     </div>
                 </div>
             </section>
+        </div>
+        </section>
         </div>
 
         <!-- ═══════════════ PRIVACY TAB ═══════════════ -->
@@ -671,24 +723,70 @@
                         <p class="section-description">How we handle and protect your data</p>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="content-text">
-                        <h3><i data-lucide="database" class="icon-inline blue"></i> 1. Data Collection</h3>
-                        <p>We collect information you provide directly through the AI diagnostic forms, including age,
-                            glucose levels, and other health metrics. We also use a device-specific identifier to track
-                            your prediction history.</p>
+                <div class="accordion-container">
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="database" class="icon-inline blue"></i>
+                            1. Data Collection
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>We collect information you provide directly through the AI diagnostic forms, including
+                                age, glucose levels, and other health metrics. We also use a device-specific identifier
+                                to track your prediction history and improve our services.</p>
+                        </div>
+                    </div>
 
-                        <h3><i data-lucide="activity" class="icon-inline emerald"></i> 2. Data Usage</h3>
-                        <p>The collected data is used specifically to provide AI-driven health risk predictions and to
-                            improve our machine learning models. We do not sell your personal data to third parties.</p>
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="activity" class="icon-inline emerald"></i>
+                            2. Data Usage
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>The collected data is used specifically to provide AI-driven health risk predictions and
+                                to improve our machine learning models. We do not sell your personal data to third
+                                parties. Your data helps us make CodeCure smarter and more accurate.</p>
+                        </div>
+                    </div>
 
-                        <h3><i data-lucide="server" class="icon-inline cyan"></i> 3. Data Storage</h3>
-                        <p>Some data is stored locally on your device for quick access, while clinical metrics may be
-                            processed on our secure servers to generate analysis results.</p>
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="server" class="icon-inline cyan"></i>
+                            3. Data Storage
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>Some data is stored locally on your device for quick access, while clinical metrics may
+                                be processed on our secure servers to generate analysis results. We employ encryption
+                                and security protocols to protect your data at rest and in transit.</p>
+                        </div>
+                    </div>
 
-                        <h3><i data-lucide="lock" class="icon-inline blue"></i> 4. Security</h3>
-                        <p>We implement industry-standard security measures to protect your information from
-                            unauthorized access or disclosure.</p>
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="lock" class="icon-inline blue"></i>
+                            4. Security Measures
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>We implement industry-standard security measures to protect your information from
+                                unauthorized access or disclosure. This includes encryption, secure connections, and
+                                regular security audits. However, no system is 100% secure.</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="user" class="icon-inline amber"></i>
+                            5. Your Rights
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>You have the right to access, modify, or delete your personal data. You can also opt out
+                                of data collection for analytics purposes. Contact us for data requests or privacy
+                                concerns. We will respond within 30 days of receiving your request.</p>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -704,43 +802,161 @@
                         <p class="section-description">Common queries about CodeCure</p>
                     </div>
                 </div>
-                <div class="dashboard-grid grid-single">
-                    <div class="card">
-                        <h3><i data-lucide="help-circle" class="icon-inline blue"></i> What is CodeCure?</h3>
-                        <p>CodeCure is an advanced AI health-tech platform that uses Machine Learning to provide
-                            predictive insights into chronic conditions like diabetes.</p>
+                <div class="accordion-container">
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="help-circle" class="icon-inline amber"></i>
+                            What is CodeCure?
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>CodeCure is an advanced AI-powered Diabetes Risk Prediction Platform designed to help
+                                individuals and healthcare providers assess diabetes risk early using machine learning
+                                algorithms and clinical health metrics.</p>
+                        </div>
                     </div>
-                    <div class="card">
-                        <h3>How accurate are the predictions?
-                        </h3>
-                        <p>Our models work well on medical data. But AI predictions are just estimates and should only
-                            be used as first screening, not final diagnosis.</p>
+
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="help-circle" class="icon-inline amber"></i>
+                            How accurate are the predictions?
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>Our models work well on medical data with high accuracy rates. However, AI predictions
+                                are just estimates and should only be used as first screening, not final diagnosis.
+                                Always consult healthcare professionals.</p>
+                        </div>
                     </div>
-                    <div class="card">
-                        <h3><i data-lucide="lock" class="icon-inline cyan"></i> Is my health data secure?</h3>
-                        <p>Yes, we use secure transmission and storage protocols. Most of your browsing history stays
-                            locally on your device.</p>
+
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="help-circle" class="icon-inline amber"></i>
+                            What metrics does CodeCure analyze?
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>CodeCure analyzes 8 key health metrics: Glucose Level, Blood Pressure, BMI, Insulin
+                                Level, Skin Thickness, Diabetes Pedigree Function, Age, and Pregnancy History to
+                                calculate comprehensive diabetes risk assessment.</p>
+                        </div>
                     </div>
-                    <div class="card">
-                        <h3><i data-lucide="user-minus" class="icon-inline rose"></i> Can I use this for clinical
-                            decisions?</h3>
-                        <p>No. You must consult a certified medical professional for any clinical decisions or
-                            treatments.</p>
+
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="help-circle" class="icon-inline amber"></i>
+                            What is the AI Health Score?
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>The AI Health Score (0-100, higher is better) shows your overall body health status.
+                                Score above 70 means lower diabetes risk; 50-70 is moderate; below 50 means higher risk
+                                needing doctor attention.</p>
+                        </div>
                     </div>
-                    <div class="card">
-                        <h3><i data-lucide="download" class="icon-inline blue"></i> How can I get my report?</h3>
-                        <p>After running an AI analysis, a "Download Report" button will appear. You can download a
-                            high-quality PDF containing your scores and recommendations.</p>
+
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="help-circle" class="icon-inline amber"></i>
+                            Is my health data secure?
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>Yes, we use secure transmission and storage protocols. Most of your browsing history
+                                stays locally on your device. We implement industry-standard security measures to
+                                protect your information.</p>
+                        </div>
                     </div>
-                    <div class="card">
-                        <h3><i data-lucide="refresh-cw" class="icon-inline emerald"></i> Why does my score change?</h3>
-                        <p>Your Health Score is dynamic. It reflects the latest data you provide. Changes in glucose
-                            levels, BMI, or blood pressure will directly influence your calculated index.</p>
+
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="help-circle" class="icon-inline amber"></i>
+                            Can I use this for clinical decisions?
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>No. CodeCure is an informational tool only. You must consult a certified medical
+                                professional for any clinical decisions or treatments. AI assessments are not substitute
+                                for professional medical advice.</p>
+                        </div>
                     </div>
-                    <div class="card">
-                        <h3><i data-lucide="message-square" class="icon-inline blue"></i> How do I talk to the AI?</h3>
-                        <p>Use the chat bubble icon in the bottom right corner to open the CodeCure AI Assistant for
-                            instant help with platform queries.</p>
+
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="help-circle" class="icon-inline amber"></i>
+                            How can I get my report?
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>After running an AI analysis, a "Download Report" button will appear. Click it to
+                                download a high-quality PDF containing your AI Health Score, risk assessment, health
+                                metrics, and personalized recommendations.</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="help-circle" class="icon-inline amber"></i>
+                            Why does my health score change?
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>Your Health Score is dynamic and reflects the latest data you provide. Changes in glucose
+                                levels, BMI, blood pressure, or other health metrics will directly influence your
+                                calculated index.</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="help-circle" class="icon-inline amber"></i>
+                            How do I talk to the AI assistant?
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>Use the chat bubble icon in the bottom right corner to open the CodeCure AI Assistant for
+                                instant help with platform queries, diabetes predictions, health metrics, and general
+                                health information.</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="help-circle" class="icon-inline amber"></i>
+                            What if my predictions are incorrect?
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>AI predictions are based on provided metrics and historical data. Accuracy depends on
+                                data quality. Always verify results with healthcare professionals. If you believe
+                                results are inaccurate, consult your doctor.</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="help-circle" class="icon-inline amber"></i>
+                            Is CodeCure free to use?
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>Yes, CodeCure is completely free to use. You can run unlimited AI analyses, download PDF
+                                reports, access our AI chatbot, and view your health analytics dashboard without any
+                                subscription fees.</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="help-circle" class="icon-inline amber"></i>
+                            Who created CodeCure?
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>CodeCure was created by Babin Bid and Debasmita Bose, passionate developers and AI
+                                researchers focused on making advanced health diagnostics accessible to everyone through
+                                cutting-edge machine learning technology.</p>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -750,35 +966,109 @@
         <div class="tab-content" id="tab-docs">
             <section class="section">
                 <div class="section-header">
-                    <div class="section-icon blue white-bg"><i data-lucide="book-open" class="icon-primary"></i></div>
+                    <div class="section-icon cyan"><i data-lucide="book-open" class="icon-cyan"></i></div>
                     <div>
                         <h2 class="section-title">Documentation</h2>
                         <p class="section-description">Technical details and usage guide</p>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="content-text">
-                        <h3><i data-lucide="map" class="icon-inline blue"></i> Platform Overview</h3>
-                        <p>CodeCure is built using a modern stack (Python, FastAPI, Scikit-learn) to bridge the gap
-                            between AI research and clinical utility.</p>
+                <div class="accordion-container">
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="map" class="icon-inline blue"></i>
+                            Platform Overview
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>CodeCure is built using a modern stack (Python, FastAPI, Scikit-learn, HTML5, CSS3,
+                                Vanilla JS) to bridge the gap between AI research and clinical utility. The platform
+                                combines cutting-edge machine learning with an intuitive user interface designed for
+                                ease of use.</p>
+                        </div>
+                    </div>
 
-                        <h3><i data-lucide="cog" class="icon-inline emerald"></i> How it Works</h3>
-                        <ol>
-                            <li><strong>Data Input:</strong> Users provide vitals and medical metrics.</li>
-                            <li><strong>AI Analysis:</strong> Our Random Forest and Neural models process the data.</li>
-                            <li><strong>AI Shows Results:</strong> The system shows which factors (like BMI or Glucose)
-                                impacted the score.</li>
-                            <li><strong>Reporting:</strong> Users can download a detailed PDF report of their scores.
-                            </li>
-                        </ol>
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="cog" class="icon-inline emerald"></i>
+                            How It Works
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <ol class="accordion-list">
+                                <li><strong>Data Input:</strong> Users provide vitals and
+                                    medical metrics through the simple prediction form.</li>
+                                <li><strong>AI Analysis:</strong> Our Random Forest and
+                                    Neural Network models process the data in real-time.</li>
+                                <li><strong>Results Display:</strong> The system shows which
+                                    factors (BMI, Glucose, etc.) most impacted your score.</li>
+                                <li><strong>Reporting:</strong> Users can download a detailed, professional PDF report
+                                    of their scores and recommendations.</li>
+                            </ol>
+                        </div>
+                    </div>
 
-                        <h3><i data-lucide="layers" class="icon-inline cyan"></i> Technical Architecture</h3>
-                        <ul>
-                            <li><strong>Backend:</strong> FastAPI for fast async processing.</li>
-                            <li><strong>Frontend:</strong> Vanilla JS with a custom CSS design system.</li>
-                            <li><strong>Database:</strong> SQLite for local persistence, Vercel Postgres for production.
-                            </li>
-                        </ul>
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="layers" class="icon-inline cyan"></i>
+                            Technical Architecture
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <ul class="accordion-list">
+                                <li><strong>Backend:</strong> FastAPI for fast async
+                                    processing, Render deployment, 750 hours/month free tier.</li>
+                                <li><strong>Frontend:</strong> Vanilla JS with custom CSS
+                                    design system, deployed on Vercel with unlimited free deployments.</li>
+                                <li><strong>Database:</strong> SQLite for local development,
+                                    supports Vercel Postgres for production scaling.</li>
+                                <li><strong>ML Models:</strong> Scikit-Learn Random Forest (95%+ accuracy) and Neural
+                                    Networks for robust predictions.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="zap" class="icon-inline amber"></i>
+                            API Endpoints
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p><strong>Prediction Endpoint:</strong> POST /api/predict - Submit health metrics and
+                                receive AI risk assessment</p>
+                            <p><strong>Dashboard Endpoint:</strong> GET /api/dashboard - Retrieve prediction history and
+                                analytics</p>
+                            <p><strong>Health Check:</strong> GET /api/health - Verify backend service status</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="book" class="icon-inline blue"></i>
+                            Machine Learning Models
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p><strong>Random Forest Classifier:</strong> Primary model for diabetes risk prediction.
+                                Trained on comprehensive medical datasets. Provides feature importance rankings showing
+                                which metrics most influence risk assessment.</p>
+                            <p><strong>Neural Network:</strong> Secondary model for validation and ensemble predictions.
+                                Provides probabilistic outputs and confidence intervals for predictions.</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-header" onclick="toggleAccordion(this)">
+                            <i data-lucide="shield" class="icon-inline emerald"></i>
+                            Security & Privacy
+                            <i data-lucide="chevron-down" class="accordion-icon"></i>
+                        </button>
+                        <div class="accordion-content">
+                            <p>CodeCure implements HTTPS encryption for all data transmission. Personal health
+                                information is stored securely with industry-standard encryption. Local browser storage
+                                is used wherever possible to minimize server-side data retention. CORS protection
+                                prevents unauthorized API access.</p>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -809,6 +1099,17 @@
                 <i data-lucide="bot-message-square"></i>
                 <span>CodeCure AI Assistant</span>
             </div>
+            <div class="chatbot-actions">
+                <button class="chatbot-action-btn" onclick="copyChat()" title="Copy chat">
+                    <i data-lucide="copy"></i>
+                </button>
+                <button class="chatbot-action-btn" onclick="exportChatTxt()" title="Export chat as txt">
+                    <i data-lucide="download"></i>
+                </button>
+                <button class="chatbot-action-btn danger" onclick="deleteChat()" title="Delete chat">
+                    <i data-lucide="trash-2"></i>
+                </button>
+            </div>
             <button class="chatbot-minimize" onclick="toggleChat()" title="Minimize chat">
                 <i data-lucide="minus"></i>
             </button>
@@ -819,7 +1120,8 @@
             </div>
         </div>
         <div class="chatbot-input-area">
-            <input type="text" id="chat-input" placeholder="Ask about CodeCure..." onkeypress="handleChatKey(event)">
+            <textarea id="chat-input" placeholder="Ask about CodeCure..." rows="2"
+                onkeydown="handleChatKey(event)"></textarea>
             <button class="chat-send-btn" onclick="sendChatMessage()" title="Send message">
                 <i data-lucide="send"></i>
             </button>
@@ -873,7 +1175,8 @@
     <!-- Inject environment variables for frontend -->
     <script>
         window.ENV = {
-            GROQ_API_KEY: "{{ groq_api_key }}"
+            GROQ_API_KEY: "{{ groq_api_key }}",
+            BACKEND_URL: "{{ backend_url }}"
         };
     </script>
     <script src="/static/script.js"></script>

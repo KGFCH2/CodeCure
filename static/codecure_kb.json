@@ -266,7 +266,7 @@
       "available"
     ],
     "question": "Is CodeCure deployed and ready to use right now?",
-    "answer": "Yes! CodeCure is fully deployed on Vercel (serverless cloud platform) with 99.99% uptime. You can access it immediately at: https://codecure.vercel.app. It's optimized for mobile, tablets, and desktops. No installation needed - just open in your browser and start your diabetes risk assessment."
+    "answer": "Yes! CodeCure is fully deployed on Vercel (serverless cloud platform) with 99.99% uptime. You can access it immediately at: https://code-cure.vercel.app/. It's optimized for mobile, tablets, and desktops. No installation needed - just open in your browser and start your diabetes risk assessment."
   },
   {
     "keywords": [

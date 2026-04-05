@@ -16,11 +16,14 @@ import joblib
 from datetime import datetime
 from typing import List
 from dotenv import load_dotenv
+from pydantic import BaseModel
+from groq import Groq
 
 from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import func, text
 
@@ -40,6 +43,17 @@ app = FastAPI(
     title="CodeCure - AI Health-Tech Platform",
     description="AI-driven health-tech solution for diabetes risk prediction and health management",
     version="1.0.0",
+)
+
+# Add CORS middleware for frontend access
+# Since we're deploying as a single app on Render, we only really need local access,
+# but keeping CORS for flexibility if needed.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # Allow all for simplicity in single-host deployment
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Mount static files
@@ -313,9 +327,11 @@ async def home(request: Request):
     """Serve the main application page."""
     try:
         groq_api_key = os.getenv("GROQ_API_KEY", "")
+        backend_url = os.getenv("BACKEND_URL", "http://localhost:8000")
         return templates.TemplateResponse("index.html", {
             "request": request,
-            "groq_api_key": groq_api_key
+            "groq_api_key": groq_api_key,
+            "backend_url": backend_url
         })
     except Exception as e:
         # Fallback error page
@@ -517,6 +533,19 @@ async def get_dashboard(
 
     recent = query.order_by(Patient.created_at.desc()).limit(10).all()
 
+    # Log fields to verify they are being fetched
+    if recent:
+        p = recent[0]
+        print(f"[DASHBOARD] First record: ID={p.id}, Glucose={p.glucose}, BP={p.blood_pressure}, Insulin={p.insulin}")
+
+    recent_records = []
+    for p in recent:
+        try:
+            record = PatientRecord.model_validate(p)
+            recent_records.append(record)
+        except Exception as e:
+            print(f"[DASHBOARD] Error validating patient {p.id}: {str(e)}")
+
     return DashboardStats(
         total_patients=total,
         high_risk_count=high_risk,
@@ -524,7 +553,7 @@ async def get_dashboard(
         avg_health_score=round(avg_health, 1),
         avg_glucose=round(avg_glucose, 1),
         avg_bmi=round(avg_bmi, 1),
-        recent_predictions=[PatientRecord.model_validate(p) for p in recent]
+        recent_predictions=recent_records
     )
 
 
@@ -532,7 +561,248 @@ async def get_dashboard(
 async def get_patients(db: Session = Depends(get_db)):
     """Get all patients."""
     patients = db.query(Patient).order_by(Patient.created_at.desc()).all()
-    return [PatientRecord.model_validate(p) for p in patients]
+    records = []
+    for p in patients:
+        try:
+            records.append(PatientRecord.model_validate(p))
+        except Exception as e:
+            print(f"[PATIENTS] Error validating patient {p.id}: {str(e)}")
+    return records
+
+
+# ──────────────────────────────────────────────
+# List Available GROQ Models
+# ──────────────────────────────────────────────
+@app.get("/api/groq-models")
+async def groq_list_models():
+    """
+    List all available GROQ models with your API key.
+    """
+    try:
+        groq_api_key = os.getenv("GROQ_API_KEY", "")
+        
+        if not groq_api_key:
+            return JSONResponse({
+                "status": "❌ FAILED",
+                "error": "GROQ_API_KEY is not configured"
+            }, status_code=500)
+        
+        print("[GROQ MODELS] Fetching available models...")
+        
+        import requests
+        response = requests.get(
+            "https://api.groq.com/openai/v1/models",
+            headers={
+                "Authorization": f"Bearer {groq_api_key}",
+                "Content-Type": "application/json"
+            },
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            data = response.json()
+            models = [model.get("id") for model in data.get("data", [])]
+            return JSONResponse({
+                "status": "✅ SUCCESS",
+                "available_models": models,
+                "total": len(models)
+            }, status_code=200)
+        else:
+            return JSONResponse({
+                "status": "❌ FAILED",
+                "error": f"GROQ API returned status {response.status_code}",
+                "details": response.text[:200]
+            }, status_code=response.status_code)
+    
+    except Exception as e:
+        return JSONResponse({
+            "status": "❌ ERROR",
+            "error": str(e)
+        }, status_code=500)
+
+
+# ──────────────────────────────────────────────
+# AI Chatbot Test Endpoint (GROQ API Health Check)
+# ──────────────────────────────────────────────
+@app.get("/api/groq-test")
+async def groq_test():
+    """
+    Test if GROQ API key is working and configured correctly.
+    """
+    try:
+        groq_api_key = os.getenv("GROQ_API_KEY", "")
+        
+        if not groq_api_key:
+            return JSONResponse({
+                "status": "❌ FAILED",
+                "error": "GROQ_API_KEY is not configured",
+                "details": "Set GROQ_API_KEY in .env file"
+            }, status_code=500)
+        
+        print("[GROQ TEST] Testing GROQ API connection...")
+        
+        groq_client = Groq(api_key=groq_api_key)
+        
+        try:
+            completion = groq_client.chat.completions.create(
+                model="llama-3.1-8b-instant",
+                messages=[
+                    {"role": "user", "content": "Say 'GROQ API is working!'"}
+                ],
+                max_tokens=50,
+                temperature=0.7
+            )
+            
+            message = completion.choices[0].message.content
+            print(f"[GROQ TEST] Response: {message}")
+            
+            return JSONResponse({
+                "status": "✅ SUCCESS",
+                "message": "GROQ API is working perfectly!",
+                "test_response": message,
+                "model": "llama-3.1-8b-instant"
+            }, status_code=200)
+        
+        except Exception as e:
+            print(f"[GROQ TEST] Error: {str(e)}")
+            return JSONResponse({
+                "status": "❌ FAILED",
+                "error": str(e),
+                "details": str(e)
+            }, status_code=500)
+    
+    except Exception as e:
+        return JSONResponse({
+            "status": "❌ ERROR",
+            "error": str(e)
+        }, status_code=500)
+
+
+# ──────────────────────────────────────────────
+# AI Chatbot Endpoint (GROQ API)
+# ──────────────────────────────────────────────
+class ChatRequest(BaseModel):
+    query: str
+
+
+def build_precise_chat_response(query: str):
+    normalized_query = query.lower().strip()
+
+    if any(phrase in normalized_query for phrase in ["current year", "what year is it", "year now"]):
+        return f"**The current year is {datetime.now().year}.**"
+
+    if any(phrase in normalized_query for phrase in ["current date", "today's date", "what is the date", "date today"]):
+        current_date = datetime.now().strftime("%B %d, %Y").replace(" 0", " ")
+        return f"**The current date is {current_date}.**"
+
+    if any(phrase in normalized_query for phrase in ["current temperature", "current temparature", "temperature now", "weather"]) and "codecure" not in normalized_query:
+        return "*I do not have real-time weather or temperature access.* Please check a weather app or website for the current temperature."
+
+    if any(phrase in normalized_query for phrase in ["how to calculate all the metrics", "calculate all the metrics", "metrics used here", "how do i calculate the metrics"]):
+        return (
+            "**CodeCure uses these 8 metrics:**\n"
+            "1. **Glucose Level** - measure blood sugar with a glucometer or blood test.\n"
+            "2. **Blood Pressure** - measure with a blood pressure monitor.\n"
+            "3. **BMI** - calculate as weight in kg divided by height in meters squared.\n"
+            "4. **Insulin Level** - measure with a blood test.\n"
+            "5. **Skin Thickness** - measure with a skin caliper or clinic test.\n"
+            "6. **Diabetes Pedigree Function** - use family history of diabetes.\n"
+            "7. **Age** - record your age in years.\n"
+            "8. **Pregnancy History** - record the number of pregnancies."
+        )
+
+    return None
+
+@app.post("/api/chat")
+async def chat(chat_data: ChatRequest):
+    """
+    AI Chatbot endpoint using GROQ API.
+    Proxies requests to GROQ to avoid CORS issues.
+    """
+    try:
+        query = chat_data.query.strip()
+        
+        if not query:
+            return JSONResponse({"error": "Query cannot be empty"}, status_code=400)
+
+        precise_response = build_precise_chat_response(query)
+        if precise_response:
+            return JSONResponse({
+                "success": True,
+                "response": precise_response,
+                "source": "rules"
+            })
+        
+        groq_api_key = os.getenv("GROQ_API_KEY", "")
+        
+        if not groq_api_key:
+            return JSONResponse(
+                {"error": "GROQ_API_KEY not configured on server"},
+                status_code=500
+            )
+        
+        # System prompt for CodeCure assistant with formatting instructions
+        system_prompt = """You are CodeCure's AI Assistant.
+
+    Answer rules:
+    - Give the direct answer first in one short sentence.
+    - Keep responses precise, clear, and easy to understand.
+    - Use short bullet points only when they improve clarity.
+    - Avoid long introductions, repeated wording, and filler.
+    - Never cut off mid-thought; finish the full answer.
+    - If a question is about CodeCure, mention the platform and the creators Babin Bid and Debasmita Bose when relevant.
+    - If the user asks for steps or a list, use a numbered list with brief items.
+    - If the user asks about health, include a short safety note that this is informational and not a diagnosis.
+    - Format answers in markdown when helpful.
+    - Use **bold** for important terms, *italics* for emphasis, and [links](https://example.com) for URLs.
+    - Keep markdown simple and readable.
+
+    CodeCure facts:
+    - CodeCure predicts diabetes risk using 8 metrics: Glucose Level, Blood Pressure, BMI, Insulin Level, Skin Thickness, Diabetes Pedigree Function, Age, and Pregnancy History.
+    - It provides a diabetes risk probability and an AI Health Score from 0 to 100.
+    - The platform is deployed at https://code-cure.vercel.app/.
+
+    Use plain language and make every answer complete, but no longer than needed."""
+
+        # Call GROQ API
+        # Call GROQ API using Groq SDK
+        groq_client = Groq(api_key=groq_api_key)
+        print(f"[GROQ] Calling GROQ API with model: llama-3.1-8b-instant")
+        print(f"[GROQ] Query: {query[:100]}...")
+        
+        try:
+            completion = groq_client.chat.completions.create(
+                model="llama-3.1-8b-instant",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": query}
+                ],
+                max_tokens=768,
+                temperature=0.3
+            )
+            
+            message = completion.choices[0].message.content
+            print(f"[GROQ] ✅ Success! Got response from GROQ")
+            
+            return JSONResponse({
+                "success": True,
+                "response": message.strip(),
+                "source": "groq"
+            })
+        
+        except Exception as groq_error:
+            print(f"[GROQ] ❌ Error: {str(groq_error)}")
+            return JSONResponse({
+                "success": False,
+                "error": str(groq_error),
+                "details": str(groq_error)
+            }, status_code=500)
+    
+    except Exception as e:
+        return JSONResponse(
+            {"error": str(e)},
+            status_code=500
+        )
 
 
 # ──────────────────────────────────────────────
