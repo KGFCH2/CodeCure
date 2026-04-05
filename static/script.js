@@ -262,14 +262,14 @@ async function handlePrediction(event) {
         device_id: getDeviceId(),
         name: document.getElementById('input-name').value || null,
         email: document.getElementById('input-email').value || null,
-        gender: document.getElementById('input-gender').value || null,
+        gender: document.getElementById('input-gender').value || "Not specified",
         age: parseInt(document.getElementById('input-age').value),
         glucose: parseFloat(document.getElementById('input-glucose').value),
         bmi: parseFloat(document.getElementById('input-bmi').value),
-        blood_pressure: parseFloat(document.getElementById('input-bp').value) || 72,
+        blood_pressure: parseFloat(document.getElementById('input-bp').value) !== '' ? parseFloat(document.getElementById('input-bp').value) : 72,
         pregnancies: parseInt(document.getElementById('input-pregnancies').value) || 0,
-        skin_thickness: parseFloat(document.getElementById('input-skin').value) || 20,
-        insulin: parseFloat(document.getElementById('input-insulin').value) || 80,
+        skin_thickness: parseFloat(document.getElementById('input-skin').value) !== '' ? parseFloat(document.getElementById('input-skin').value) : 20,
+        insulin: parseFloat(document.getElementById('input-insulin').value) !== '' ? parseFloat(document.getElementById('input-insulin').value) : 80,
         diabetes_pedigree: parseFloat(document.getElementById('input-dpf').value) || 0.47,
         exercise_hours: parseFloat(document.getElementById('input-exercise').value) || 0,
         sleep_hours: parseFloat(document.getElementById('input-sleep').value) || 7,
@@ -610,19 +610,19 @@ function showPatientSummary(patientId) {
     });
     document.getElementById('modal-date').textContent = `Analyzed on ${dateStr} at ${timeStr}`;
 
-    // Show actual user-provided values
-    document.getElementById('modal-age').textContent = patient.age ? patient.age + ' years' : '—';
-    document.getElementById('modal-gender').textContent = patient.gender || '—';
+    // Show actual user-provided values - use !== null/undefined to handle 0 and falsy values
+    document.getElementById('modal-age').textContent = (patient.age !== null && patient.age !== undefined) ? patient.age + ' years' : '—';
+    document.getElementById('modal-gender').textContent = (patient.gender && patient.gender !== '') ? patient.gender : '—';
 
     // Essential clinical metrics with units
-    document.getElementById('modal-glucose').textContent = patient.glucose ? patient.glucose + ' mg/dL' : '—';
-    document.getElementById('modal-bp').textContent = patient.blood_pressure ? patient.blood_pressure + ' mmHg' : '—';
-    document.getElementById('modal-bmi').textContent = patient.bmi ? patient.bmi + ' kg/m²' : '—';
-    document.getElementById('modal-insulin').textContent = patient.insulin ? patient.insulin + ' mIU/L' : '—';
+    document.getElementById('modal-glucose').textContent = (patient.glucose !== null && patient.glucose !== undefined) ? patient.glucose + ' mg/dL' : '—';
+    document.getElementById('modal-bp').textContent = (patient.blood_pressure !== null && patient.blood_pressure !== undefined) ? patient.blood_pressure + ' mmHg' : '—';
+    document.getElementById('modal-bmi').textContent = (patient.bmi !== null && patient.bmi !== undefined) ? patient.bmi + ' kg/m²' : '—';
+    document.getElementById('modal-insulin').textContent = (patient.insulin !== null && patient.insulin !== undefined) ? patient.insulin + ' mIU/L' : '—';
 
     // AI Assessment Results
-    document.getElementById('modal-score').textContent = patient.health_score ? patient.health_score + '/100' : '—';
-    document.getElementById('modal-probability').textContent = patient.risk_probability ? (patient.risk_probability * 100).toFixed(1) + '%' : '—';
+    document.getElementById('modal-score').textContent = (patient.health_score !== null && patient.health_score !== undefined) ? patient.health_score + '/100' : '—';
+    document.getElementById('modal-probability').textContent = (patient.risk_probability !== null && patient.risk_probability !== undefined) ? (patient.risk_probability * 100).toFixed(1) + '%' : '—';
 
     const riskEl = document.getElementById('modal-risk');
     riskEl.textContent = patient.risk_level || 'Unknown';
