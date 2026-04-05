@@ -752,11 +752,18 @@ async function downloadDashboardPDF(id) {
                 name: 'Diabetes Pedigree',
                 value: getMetric(result.diabetes_pedigree),
                 message: 'Genetic risk factor score: ' + getMetric(result.diabetes_pedigree),
-                'Engage in at least 150 minutes of moderate exercise per week',
-                'Maintain a balanced, low-glycemic diet',
-                'Aim for 7-9 hours of quality sleep per night',
-                'Reduce stress through meditation or relaxation techniques',
-                'Consult with a diabetes specialist or endocrinologist'
+                status: result.diabetes_pedigree > 0.5 ? 'warning' : 'normal'
+            }
+        ],
+        // Standard recommendations
+        recommendations: [
+            'Maintain regular medical check-ups',
+            'Monitor blood glucose levels regularly',
+            'Engage in at least 150 minutes of moderate exercise per week',
+            'Maintain a balanced, low-glycemic diet',
+            'Aim for 7-9 hours of quality sleep per night',
+            'Reduce stress through meditation or relaxation techniques',
+            'Consult with a diabetes specialist or endocrinologist'
         ]
     };
 
