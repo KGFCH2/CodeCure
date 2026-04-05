@@ -178,14 +178,27 @@ function savePredictionLocally(input, result) {
         const record = {
             id: Math.floor(Math.random() * 9000) + 1000,
             name: input.name || 'Anonymous',
+            email: input.email || null,
+            gender: input.gender || null,
             age: input.age,
             glucose: input.glucose,
+            blood_pressure: input.blood_pressure || 72,
+            insulin: input.insulin || 80,
+            skin_thickness: input.skin_thickness || 20,
             bmi: input.bmi,
+            diabetes_pedigree: input.diabetes_pedigree || 0.47,
+            pregnancies: input.pregnancies || 0,
+            exercise_hours: input.exercise_hours || 0,
+            sleep_hours: input.sleep_hours || 7,
+            smoking: input.smoking || false,
             health_score: result.health_score,
+            risk_probability: result.risk_probability,
             risk_level: result.risk_level,
+            summary: result.summary,
             created_at: new Date().toISOString()
         };
 
+        console.log('[CodeCure] Saving to local storage:', record);
         history.unshift(record);
         localStorage.setItem(storageKey, JSON.stringify(history.slice(0, 50)));
     } catch (e) { console.error("Local save failed:", e); }
@@ -258,23 +271,30 @@ async function handlePrediction(event) {
     if (!btn) return;
     btn.classList.add('loading');
 
+    // Collect and parse form data carefully
+    const bpVal = parseFloat(document.getElementById('input-bp').value);
+    const insulinVal = parseFloat(document.getElementById('input-insulin').value);
+    const skinVal = parseFloat(document.getElementById('input-skin').value);
+
     const data = {
         device_id: getDeviceId(),
         name: document.getElementById('input-name').value || null,
         email: document.getElementById('input-email').value || null,
-        gender: document.getElementById('input-gender').value || null,
+        gender: document.getElementById('input-gender').value || "Not specified",
         age: parseInt(document.getElementById('input-age').value),
         glucose: parseFloat(document.getElementById('input-glucose').value),
         bmi: parseFloat(document.getElementById('input-bmi').value),
-        blood_pressure: parseFloat(document.getElementById('input-bp').value) || 72,
+        blood_pressure: !isNaN(bpVal) ? bpVal : 72,
         pregnancies: parseInt(document.getElementById('input-pregnancies').value) || 0,
-        skin_thickness: parseFloat(document.getElementById('input-skin').value) || 20,
-        insulin: parseFloat(document.getElementById('input-insulin').value) || 80,
+        skin_thickness: !isNaN(skinVal) ? skinVal : 20,
+        insulin: !isNaN(insulinVal) ? insulinVal : 80,
         diabetes_pedigree: parseFloat(document.getElementById('input-dpf').value) || 0.47,
         exercise_hours: parseFloat(document.getElementById('input-exercise').value) || 0,
         sleep_hours: parseFloat(document.getElementById('input-sleep').value) || 7,
         smoking: document.getElementById('input-smoking').checked
     };
+
+    console.log('[CodeCure] Form Data Collected:', data);
 
     // Validate required fields
     if (!data.age || !data.glucose || !data.bmi) {
@@ -392,13 +412,14 @@ function displayResults(result) {
         result.risk_factors.forEach(factor => {
             const card = document.createElement('div');
             card.className = 'risk-factor-card';
+            card.style.display = 'none'; // Hide from UI but keep in DOM for PDF capture
             card.innerHTML = `
                 <div class="risk-factor-header">
                     <span class="risk-factor-name">${factor.factor}</span>
                     <span class="risk-factor-status ${factor.status}">${factor.status}</span>
                 </div>
-                <div class="risk-factor-value" style="color: ${getStatusColor(factor.status)}">${factor.value}</div>
-                <p class="risk-factor-message">${factor.message}</p>
+                <div class="risk-factor-value">${factor.value}</div>
+                <div class="risk-factor-message">${factor.message}</div>
             `;
             factorsGrid.appendChild(card);
         });
@@ -409,19 +430,10 @@ function displayResults(result) {
     if (recsList) {
         recsList.innerHTML = '';
         result.recommendations.forEach(rec => {
-            const text = rec.replace(/^[^\w\s]+\s*/, '');
+            const text = rec.replace(/^[^\w\s]+\s*/, '').trim();
             const li = document.createElement('li');
             li.className = 'recommendation-item';
-            li.style.cssText = 'display: flex; align-items: flex-start; gap: 12px; padding: 12px; margin-bottom: 8px; border-radius: 8px; transition: background 0.2s;';
-            li.onmouseover = () => li.style.background = 'rgba(16, 185, 129, 0.05)';
-            li.onmouseout = () => li.style.background = 'transparent';
-
-            li.innerHTML = `
-                <span class="recommendation-icon" style="color: var(--primary-500); margin-top: 2px;">
-                    <i data-lucide="lightbulb" style="width: 20px; height: 20px;"></i>
-                </span>
-                <span style="font-size: 0.95rem; color: var(--text-primary); line-height: 1.5; font-weight: 500;">${text}</span>
-            `;
+            li.innerHTML = `<span>${text}</span>`;
             recsList.appendChild(li);
         });
     }
@@ -457,8 +469,22 @@ function resetForm() {
 // ────────────────────────────────────────
 // Dashboard Logic
 // ────────────────────────────────────────
-function updateDashboardStats() {
-    const total = dashboardDataStore.length;
+function updateDashboardStats(data = null) {
+    // If data is provided from API, use it for accurate total count
+    // Otherwise, use dashboardDataStore for display counts
+    let total;
+
+    if (data && data.total_patients !== undefined) {
+        // Use server total for accurate count
+        const localHistory = getLocalHistory();
+        const serverRecordIds = new Set((data.recent_predictions || []).map(p => p.id));
+        const uniqueLocalCount = localHistory.filter(p => !serverRecordIds.has(p.id)).length;
+        total = data.total_patients + uniqueLocalCount;
+    } else {
+        // Fallback: use dashboardDataStore length
+        total = dashboardDataStore.length;
+    }
+
     const highRisk = dashboardDataStore.filter(p => ['High', 'Critical'].includes(p.risk_level)).length;
     const lowRisk = total - highRisk;
 
@@ -518,7 +544,7 @@ async function loadDashboard() {
 
         console.log('[CodeCure] Dashboard loaded successfully:', dashboardDataStore.length, 'records');
 
-        updateDashboardStats();
+        updateDashboardStats(data);
 
         const container = document.getElementById('patients-table-container');
         if (container) renderDashboardTable(container);
@@ -588,14 +614,9 @@ function renderDashboardTable(container) {
                     <div style="font-size: 0.75rem; color: var(--text-muted);">${timeStr}</div>
                 </td>
                 <td>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="action-btn" onclick="showPatientSummary(${p.id})" title="View Details" style="background: var(--bg-secondary); color: var(--primary-600);">
-                            <i data-lucide="eye"></i>
-                        </button>
-                        <button class="action-btn download" onclick="downloadDashboardPDF(${p.id})" title="Download Report">
-                            <i data-lucide="download"></i>
-                        </button>
-                    </div>
+                    <button class="action-btn" onclick="showPatientSummary(${p.id})" title="View Details" style="background: var(--bg-secondary); color: var(--primary-600);">
+                        <i data-lucide="eye"></i>
+                    </button>
                 </td>
             </tr>
         `;
@@ -613,6 +634,8 @@ function showPatientSummary(patientId) {
     const patient = dashboardDataStore.find(p => p.id === patientId);
     if (!patient) return;
 
+    console.log('[CodeCure] Displaying patient:', patient);
+
     document.getElementById('modal-name').textContent = patient.name || 'Anonymous Patient';
     const dateObj = new Date(patient.created_at);
     const dateStr = dateObj.toLocaleDateString('en-IN', {
@@ -623,15 +646,25 @@ function showPatientSummary(patientId) {
     });
     document.getElementById('modal-date').textContent = `Analyzed on ${dateStr} at ${timeStr}`;
 
-    document.getElementById('modal-glucose').textContent = patient.glucose + ' mg/dL';
-    document.getElementById('modal-bmi').textContent = patient.bmi + ' kg/m²';
-    document.getElementById('modal-score').textContent = patient.health_score + '/100';
+    // Show actual user-provided values - use !== null/undefined to handle 0 and falsy values
+    document.getElementById('modal-age').textContent = (patient.age !== null && patient.age !== undefined) ? patient.age + ' years' : '—';
+    document.getElementById('modal-gender').textContent = (patient.gender && patient.gender !== '') ? patient.gender : '—';
+
+    // Essential clinical metrics with units
+    document.getElementById('modal-glucose').textContent = (patient.glucose !== null && patient.glucose !== undefined) ? patient.glucose + ' mg/dL' : '—';
+    document.getElementById('modal-bp').textContent = (patient.blood_pressure !== null && patient.blood_pressure !== undefined) ? patient.blood_pressure + ' mmHg' : '—';
+    document.getElementById('modal-bmi').textContent = (patient.bmi !== null && patient.bmi !== undefined) ? patient.bmi + ' kg/m²' : '—';
+    document.getElementById('modal-insulin').textContent = (patient.insulin !== null && patient.insulin !== undefined) ? patient.insulin + ' mIU/L' : '—';
+
+    // AI Assessment Results
+    document.getElementById('modal-score').textContent = (patient.health_score !== null && patient.health_score !== undefined) ? patient.health_score + '/100' : '—';
+    document.getElementById('modal-probability').textContent = (patient.risk_probability !== null && patient.risk_probability !== undefined) ? (patient.risk_probability * 100).toFixed(1) + '%' : '—';
 
     const riskEl = document.getElementById('modal-risk');
     riskEl.textContent = patient.risk_level || 'Unknown';
     riskEl.className = 'table-badge ' + (patient.risk_level || 'low').toLowerCase();
 
-    const summary = patient.summary || `Based on a glucose level of ${patient.glucose} and a BMI of ${patient.bmi}, the AI has categorized this patient as ${patient.risk_level}. Further medical consultation is advised.`;
+    const summary = patient.summary || `Based on the provided health metrics, the AI has categorized this patient as ${patient.risk_level}. Further medical consultation is advised.`;
     document.getElementById('modal-summary').textContent = summary;
 
     document.getElementById('patient-modal').classList.add('active');
@@ -690,68 +723,80 @@ async function downloadDashboardPDF(id) {
         return;
     }
 
-    // Collect health metrics from stored data
-    const metrics = {
-        'Glucose Level': (result.glucose || '—') + ' mg/dL',
-        'Blood Pressure': (result.blood_pressure || '—') + ' mmHg',
-        'BMI': (result.bmi || '—') + ' kg/m²',
-        'Insulin Level': (result.insulin || '—') + ' mIU/L',
-        'Skin Thickness': (result.skin_thickness || '—') + ' mm',
-        'Diabetes Pedigree': (result.diabetes_pedigree || '—'),
-        'Age': (result.age || '—') + ' years',
-        'Pregnancies': (result.pregnancies || '0'),
-        'Exercise Hours/Week': (result.exercise_hours || '0') + ' hrs',
-        'Sleep Hours/Night': (result.sleep_hours || '7') + ' hrs'
+    // Helper to safely get numeric value or fallback
+    const getMetric = (val, unit = '') => {
+        if (val === null || val === undefined || val === 0) return '—' + (unit ? ' ' + unit : '');
+        return val + (unit ? ' ' + unit : '');
     };
 
-    // Use the stored summary (explanation) if available
-    const summary = result.summary || `AI Diabetes Risk Assessment Report for Patient #${result.id}.`;
-    const risk = result.risk_level || (result.diabetes_risk === 1 ? 'High' : 'Low');
-    const score = result.health_score || 0;
-    const probability = (result.risk_probability ? (result.risk_probability * 100).toFixed(1) : '—') + '%';
+    // Collect ALL health metrics with safe fallbacks
+    const metrics = {
+        'Glucose Level': getMetric(result.glucose, 'mg/dL'),
+        'Blood Pressure': getMetric(result.blood_pressure, 'mmHg'),
+        'BMI': getMetric(result.bmi, 'kg/m²'),
+        'Insulin Level': getMetric(result.insulin, 'mIU/L'),
+        'Skin Thickness': getMetric(result.skin_thickness, 'mm'),
+        'Diabetes Pedigree': getMetric(result.diabetes_pedigree),
+        'Age': getMetric(result.age, 'years'),
+        'Pregnancies': getMetric(result.pregnancies || 0),
+        'Exercise Hours/Week': getMetric(result.exercise_hours || 0, 'hrs'),
+        'Sleep Hours/Night': getMetric(result.sleep_hours || 7, 'hrs')
+    };
 
+    // Calculate probability if missing
+    let probability = result.risk_probability ? (result.risk_probability * 100).toFixed(1) : null;
+    if (!probability && result.risk_level) {
+        // Infer probability from risk level if missing
+        const riskMap = { 'Low': 15, 'Medium': 50, 'High': 75, 'Critical': 90 };
+        probability = riskMap[result.risk_level] || '—';
+    }
+    probability = (probability ? probability : '—') + '%';
+
+    // Construct the data object exactly like downloadPDF() does
     const data = {
-        name: result.name || 'Anonymous',
-        email: result.email || 'Patient Record #' + result.id,
+        name: result.name || 'Patient',
+        email: result.email || 'Not provided',
         age: result.age || 'N/A',
         gender: result.gender || 'Not specified',
-        score: score,
-        risk: risk,
-        summary: summary,
+        score: Math.round(result.health_score || 0),
+        risk: result.risk_level || 'Unknown',
+        summary: result.summary || result.explanation || `AI Diabetes Risk Assessment Report for Patient #${result.id}.`,
         probability: probability,
         metrics: metrics,
+        // Reconstruct factors for the PDF table
         factors: [
             {
                 name: 'Glucose Level',
-                value: (result.glucose || '—') + ' mg/dL',
-                message: `Blood glucose: ${result.glucose || '—'} mg/dL. ${result.glucose > 126 ? '[ELEVATED]' : 'Normal'}`,
+                value: getMetric(result.glucose, 'mg/dL'),
+                message: `Blood glucose: ${getMetric(result.glucose)} mg/dL. ${result.glucose > 126 ? '[ELEVATED]' : 'Normal'}`,
                 status: result.glucose > 140 ? 'danger' : result.glucose > 126 ? 'warning' : 'normal'
             },
             {
                 name: 'BMI',
-                value: (result.bmi || '—') + ' kg/m²',
-                message: `Body Mass Index: ${result.bmi || '—'} kg/m². ${result.bmi > 30 ? 'Indicates obesity' : 'Within acceptable range'}`,
+                value: getMetric(result.bmi, 'kg/m²'),
+                message: `Body Mass Index: ${getMetric(result.bmi)} kg/m². ${result.bmi > 30 ? 'Indicates obesity' : 'Within acceptable range'}`,
                 status: result.bmi > 30 ? 'danger' : result.bmi > 25 ? 'warning' : 'normal'
             },
             {
                 name: 'Blood Pressure',
-                value: (result.blood_pressure || '—') + ' mmHg',
-                message: `Diastolic: ${result.blood_pressure || '—'} mmHg. ${result.blood_pressure > 90 ? '[ELEVATED]' : 'Normal'}`,
+                value: getMetric(result.blood_pressure, 'mmHg'),
+                message: `Diastolic: ${getMetric(result.blood_pressure)} mmHg. ${result.blood_pressure > 90 ? '[ELEVATED]' : 'Normal'}`,
                 status: result.blood_pressure > 90 ? 'danger' : result.blood_pressure > 80 ? 'warning' : 'normal'
             },
             {
                 name: 'Insulin Level',
-                value: (result.insulin || '—') + ' mIU/L',
-                message: `Insulin: ${result.insulin || '—'} mIU/L. Reference: 2.6-24.9 mIU/L`,
+                value: getMetric(result.insulin, 'mIU/L'),
+                message: `Insulin: ${getMetric(result.insulin)} mIU/L. Reference: 2.6-24.9 mIU/L`,
                 status: result.insulin > 24.9 ? 'warning' : 'normal'
             },
             {
                 name: 'Diabetes Pedigree',
-                value: result.diabetes_pedigree || '—',
-                message: 'Family history score: ' + (result.diabetes_pedigree || '—'),
+                value: getMetric(result.diabetes_pedigree),
+                message: 'Genetic risk factor score: ' + getMetric(result.diabetes_pedigree),
                 status: result.diabetes_pedigree > 0.5 ? 'warning' : 'normal'
             }
         ],
+        // Standard recommendations
         recommendations: [
             'Maintain regular medical check-ups',
             'Monitor blood glucose levels regularly',
@@ -759,10 +804,11 @@ async function downloadDashboardPDF(id) {
             'Maintain a balanced, low-glycemic diet',
             'Aim for 7-9 hours of quality sleep per night',
             'Reduce stress through meditation or relaxation techniques',
-            'Consult with a diabetes specialist or endocrinologist',
-            'Consider lifestyle modification programs if at high risk'
+            'Consult with a diabetes specialist or endocrinologist'
         ]
     };
+
+    // Call the same PDF generation engine
     generatePDFReport(data);
 }
 
@@ -792,15 +838,19 @@ function downloadPDF() {
         'Sleep Hours/Night': getVal('input-sleep') + ' hrs'
     };
 
+    const summaryEl = document.getElementById('result-summary');
+    const riskTextEl = document.getElementById('risk-text');
+    const probValEl = document.getElementById('probability-value');
+
     const data = {
         name: getVal('input-name') || 'Patient',
         email: getVal('input-email') || 'Not provided',
         age: getVal('input-age') || 'N/A',
         gender: getVal('input-gender') || 'Not specified',
         score: scoreEl.innerText,
-        risk: (document.getElementById('risk-text') && document.getElementById('risk-text').innerText) || 'Unknown',
-        summary: (document.getElementById('result-summary') && document.getElementById('result-summary').innerText) || 'No summary available.',
-        probability: (document.getElementById('probability-value') && document.getElementById('probability-value').innerText) || '—%',
+        risk: riskTextEl ? riskTextEl.innerText.replace(' Risk', '') : 'Unknown',
+        summary: summaryEl ? summaryEl.innerText : 'No summary available.',
+        probability: probValEl ? probValEl.innerText : '—%',
         metrics: metrics,
         factors: Array.from(document.querySelectorAll('.risk-factor-card')).map(card => {
             const name = card.querySelector('.risk-factor-name')?.innerText || 'Factor';
@@ -814,7 +864,7 @@ function downloadPDF() {
                 status: statusText.toLowerCase().replace('risk ', '').trim()
             };
         }),
-        recommendations: Array.from(document.querySelectorAll('.recommendation-item span:last-child')).map(rec => rec.innerText)
+        recommendations: Array.from(document.querySelectorAll('.recommendation-item span')).map(rec => rec.innerText)
     };
     generatePDFReport(data);
 }
