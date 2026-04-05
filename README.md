@@ -5,7 +5,7 @@
 ![Python](https://img.shields.io/badge/Python-3.11+-blue?style=for-the-badge&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green?style=for-the-badge&logo=fastapi&logoColor=white)
 ![Scikit-Learn](https://img.shields.io/badge/ScikitLearn-ML-orange?style=for-the-badge&logo=scikit-learn&logoColor=white)
-![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=for-the-badge&logo=vercel&logoColor=white)
+![Render](https://img.shields.io/badge/Render-Deployed-00d1b2?style=for-the-badge&logo=render&logoColor=white)
 
 ---
 
@@ -25,7 +25,7 @@ CodeCure is an intelligent health-tech platform designed to predict diabetes ris
 | **Database & ORM** | [SQLite](https://sqlite.org/) / [PostgreSQL](https://www.postgresql.org/) + [SQLAlchemy](https://www.sqlalchemy.org/) |
 | **Frontend Utilities** | HTML5, CSS3, Vanilla JavaScript, Lucide Icons |
 | **Persistence** | Hybrid: Server-side DB + Client-side `LocalStorage` |
-| **Deployment** | [Vercel](https://vercel.com/) (Serverless) |
+| **Deployment** | [Render](https://render.com/) (Single-host Web Service) |
 
 ---
 
@@ -43,25 +43,16 @@ CodeCure is an intelligent health-tech platform designed to predict diabetes ris
 
 ## 🚀 Deployment Options
 
-### Option 1: LocalStorage Only (Simplest | No Database)
+### Option 1: Render Web Service (Recommended)
 
-Data persists **only in your browser**. Perfect for personal use, testing, or demos.
+Deploy the entire application (Frontend + Backend) as a single service on Render.
 
-- ✅ Zero database setup
-- ✅ Deploy to Vercel in 5 minutes
-- ❌ Data only on this device
-- ❌ Single browser (data won't sync)
+- ✅ Easy deployment with single URL
+- ✅ Automatic model training on build
+- ✅ Integrated health check and logs
+- ✅ SSL/HTTPS enabled by default
 
-### Option 2: Vercel + Optional Database (Recommended)
-
-Deploy on Vercel. Optionally add Vercel Postgres or any PostgreSQL provider for shared cloud storage.
-
-- ✅ Easy deployment
-- ✅ Optional Postgres integration
-- ✅ Automatic scaling
-- 💰 Database is optional (free without)
-
-**👉 Quick Start**: Copy `.env.example` to `.env`, add your `GROQ_API_KEY`, and run locally or deploy to Vercel! See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for production deployment.
+**👉 Quick Start**: Copy `.env.example` to `.env`, add your `GROQ_API_KEY`, and push to GitHub. See [RENDER_DEPLOY_STEPS.md](RENDER_DEPLOY_STEPS.md) for step-by-step production deployment instructions.
 
 ---
 

@@ -1,6 +1,6 @@
 ﻿# 🏥 CodeCure Local Development Guide
 
-Quick setup guide for running CodeCure locally. **For deployment, see [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md).**
+Quick setup guide for running CodeCure locally. **For deployment, see [RENDER_DEPLOY_STEPS.md](RENDER_DEPLOY_STEPS.md).**
 
 ---
 
@@ -9,10 +9,11 @@ Quick setup guide for running CodeCure locally. **For deployment, see [DEPLOYMEN
 - ✅ **AI Diabetes Risk Prediction** - Real-time analysis using patient health metrics
 - ✅ **Risk Scoring System** - 0-100 diabetes risk metric  
 - ✅ **Explainable AI** - View which health factors influence risk
-- ✅ **Dashboard Analytics** - Track prediction history with LocalStorage
+- ✅ **Dashboard Analytics** - Track prediction history with LocalStorage/DB
 - ✅ **Health Assistant** - AI chatbot for diabetes prevention and health questions
 - ✅ **PDF Reports** - Export detailed analysis reports
-- ✅ **Zero Database Required** - Data stored in browser LocalStorage by default
+- ✅ **FastAPI Backend** - Unified server for application and API
+- ✅ **Render-Ready** - Configured for single-service deployment
 
 ---
 
@@ -46,14 +47,20 @@ Quick setup guide for running CodeCure locally. **For deployment, see [DEPLOYMEN
    pip install -r requirements.txt
    ```
 
-4. **Configure environment**:
+4. **Train the AI model**:
+
+   ```bash
+   python train_model.py
+   ```
+
+5. **Configure environment**:
 
    ```bash
    cp .env.example .env
    # Edit .env and add GROQ_API_KEY from https://console.groq.com/keys
    ```
 
-5. **Start the server**:
+6. **Start the server**:
 
    **Option A:** Using Python directly
 
@@ -76,8 +83,8 @@ Quick setup guide for running CodeCure locally. **For deployment, see [DEPLOYMEN
 - [ ] Open <http://localhost:8000> in browser
 - [ ] Input health metrics (Glucose: 120, BMI: 28, Age: 45, etc.)
 - [ ] View diabetes risk prediction result
-- [ ] Open DevTools (F12) → Application → LocalStorage → See predictions stored
-- [ ] Refresh page → Predictions still visible ✅ (LocalStorage working)
+- [ ] Clear browser data → See how items persist if DATABASE_URL is set
+- [ ] Consult AI Health Assistant for personalized tips
 
 ---
 
@@ -85,7 +92,7 @@ Quick setup guide for running CodeCure locally. **For deployment, see [DEPLOYMEN
 
 | Method | Endpoint | Purpose |
 | -------- | ---------- | --------- |
-| GET | `/` | Main web app |
+| GET | `/` | Main web app (Unified) |
 | GET | `/api/health` | Health check & diagnostics |
 | POST | `/api/predict` | Diabetes risk prediction |
 | GET | `/api/dashboard` | Analytics dashboard |
