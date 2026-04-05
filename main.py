@@ -533,6 +533,19 @@ async def get_dashboard(
 
     recent = query.order_by(Patient.created_at.desc()).limit(10).all()
 
+    # Log fields to verify they are being fetched
+    if recent:
+        p = recent[0]
+        print(f"[DASHBOARD] First record: ID={p.id}, Glucose={p.glucose}, BP={p.blood_pressure}, Insulin={p.insulin}")
+
+    recent_records = []
+    for p in recent:
+        try:
+            record = PatientRecord.model_validate(p)
+            recent_records.append(record)
+        except Exception as e:
+            print(f"[DASHBOARD] Error validating patient {p.id}: {str(e)}")
+
     return DashboardStats(
         total_patients=total,
         high_risk_count=high_risk,
@@ -540,7 +553,7 @@ async def get_dashboard(
         avg_health_score=round(avg_health, 1),
         avg_glucose=round(avg_glucose, 1),
         avg_bmi=round(avg_bmi, 1),
-        recent_predictions=[PatientRecord.model_validate(p) for p in recent]
+        recent_predictions=recent_records
     )
 
 
@@ -548,7 +561,13 @@ async def get_dashboard(
 async def get_patients(db: Session = Depends(get_db)):
     """Get all patients."""
     patients = db.query(Patient).order_by(Patient.created_at.desc()).all()
-    return [PatientRecord.model_validate(p) for p in patients]
+    records = []
+    for p in patients:
+        try:
+            records.append(PatientRecord.model_validate(p))
+        except Exception as e:
+            print(f"[PATIENTS] Error validating patient {p.id}: {str(e)}")
+    return records
 
 
 # ──────────────────────────────────────────────
