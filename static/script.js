@@ -456,8 +456,22 @@ function resetForm() {
 // ────────────────────────────────────────
 // Dashboard Logic
 // ────────────────────────────────────────
-function updateDashboardStats() {
-    const total = dashboardDataStore.length;
+function updateDashboardStats(data = null) {
+    // If data is provided from API, use it for accurate total count
+    // Otherwise, use dashboardDataStore for display counts
+    let total;
+    
+    if (data && data.total_patients !== undefined) {
+        // Use server total for accurate count
+        const localHistory = getLocalHistory();
+        const serverRecordIds = new Set((data.recent_predictions || []).map(p => p.id));
+        const uniqueLocalCount = localHistory.filter(p => !serverRecordIds.has(p.id)).length;
+        total = data.total_patients + uniqueLocalCount;
+    } else {
+        // Fallback: use dashboardDataStore length
+        total = dashboardDataStore.length;
+    }
+
     const highRisk = dashboardDataStore.filter(p => ['High', 'Critical'].includes(p.risk_level)).length;
     const lowRisk = total - highRisk;
 
@@ -517,7 +531,7 @@ async function loadDashboard() {
 
         console.log('[CodeCure] Dashboard loaded successfully:', dashboardDataStore.length, 'records');
 
-        updateDashboardStats();
+        updateDashboardStats(data);
 
         const container = document.getElementById('patients-table-container');
         if (container) renderDashboardTable(container);
