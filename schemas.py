@@ -57,13 +57,30 @@ class PatientRecord(BaseModel):
     
     id: int
     name: Optional[str]
+    email: Optional[str] = None
     age: int
+    gender: Optional[str] = None
+    
+    # Health metrics
+    pregnancies: int = 0
     glucose: float
+    blood_pressure: float
+    skin_thickness: float
+    insulin: float
     bmi: float
+    diabetes_pedigree: float
+    
+    # Lifestyle
+    exercise_hours: Optional[float] = 0
+    sleep_hours: Optional[float] = 7
+    smoking: Optional[bool] = False
+    
+    # Prediction results
     diabetes_risk: Optional[int]
     risk_probability: Optional[float]
     health_score: Optional[float]
     risk_level: Optional[str]
+    summary: Optional[str] = Field(None, alias="explanation")
     created_at: datetime
 
 
