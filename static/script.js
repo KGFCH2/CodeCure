@@ -7,6 +7,10 @@ const BACKEND_URL = typeof window !== 'undefined' && window.BACKEND_URL_CONFIG
     ? window.BACKEND_URL_CONFIG
     : ((window.ENV && window.ENV.BACKEND_URL) ? window.ENV.BACKEND_URL : 'http://localhost:8000');
 
+console.log('[CodeCure] Initialized with BACKEND_URL:', BACKEND_URL);
+console.log('[CodeCure] window.BACKEND_URL_CONFIG:', typeof window !== 'undefined' ? window.BACKEND_URL_CONFIG : 'undefined');
+console.log('[CodeCure] window.ENV.BACKEND_URL:', typeof window !== 'undefined' && window.ENV ? window.ENV.BACKEND_URL : 'undefined');
+
 // ────────────────────────────────────────
 // Accordion Functionality
 // ────────────────────────────────────────
@@ -282,7 +286,7 @@ async function handlePrediction(event) {
     try {
         const url = `${BACKEND_URL}/api/predict`;
         console.log('[CodeCure] Submitting prediction to:', url);
-        
+
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -291,7 +295,7 @@ async function handlePrediction(event) {
 
         if (!response.ok) {
             console.error(`[CodeCure] Prediction API returned status ${response.status}`);
-            
+
             // Try to parse error response
             let errorMsg = `Server error: ${response.status}`;
             try {
@@ -305,7 +309,7 @@ async function handlePrediction(event) {
             } catch (e) {
                 console.error('[CodeCure] Could not parse error response:', e);
             }
-            
+
             throw new Error(errorMsg);
         }
 
