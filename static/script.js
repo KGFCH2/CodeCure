@@ -767,36 +767,47 @@ function downloadPDF() {
         return;
     }
 
-    // Collect health metrics from form
+    // Collect ALL metrics from the form including lifestyle
+    const getVal = (id) => {
+        const el = document.getElementById(id);
+        return el ? el.value : '—';
+    };
+
     const metrics = {
-        'Glucose Level': ((document.getElementById('input-glucose') && document.getElementById('input-glucose').value) || '—') + ' mg/dL',
-        'Blood Pressure': ((document.getElementById('input-bp') && document.getElementById('input-bp').value) || '—') + ' mmHg',
-        'BMI': ((document.getElementById('input-bmi') && document.getElementById('input-bmi').value) || '—') + ' kg/m²',
-        'Insulin Level': ((document.getElementById('input-insulin') && document.getElementById('input-insulin').value) || '—') + ' mIU/L',
-        'Skin Thickness': ((document.getElementById('input-skin') && document.getElementById('input-skin').value) || '—') + ' mm',
-        'Diabetes Pedigree': ((document.getElementById('input-dpf') && document.getElementById('input-dpf').value) || '—'),
-        'Age': ((document.getElementById('input-age') && document.getElementById('input-age').value) || '—') + ' years',
-        'Pregnancies': ((document.getElementById('input-pregnancies') && document.getElementById('input-pregnancies').value) || '0'),
-        'Exercise Hours/Week': ((document.getElementById('input-exercise') && document.getElementById('input-exercise').value) || '0') + ' hrs',
-        'Sleep Hours/Night': ((document.getElementById('input-sleep') && document.getElementById('input-sleep').value) || '7') + ' hrs'
+        'Glucose Level': getVal('input-glucose') + ' mg/dL',
+        'Blood Pressure': getVal('input-bp') + ' mmHg',
+        'BMI': getVal('input-bmi') + ' kg/m²',
+        'Insulin Level': getVal('input-insulin') + ' mIU/L',
+        'Skin Thickness': getVal('input-skin') + ' mm',
+        'Diabetes Pedigree': getVal('input-dpf'),
+        'Age': getVal('input-age') + ' years',
+        'Pregnancies': getVal('input-pregnancies') || '0',
+        'Exercise Hours/Week': getVal('input-exercise') + ' hrs',
+        'Sleep Hours/Night': getVal('input-sleep') + ' hrs'
     };
 
     const data = {
-        name: document.getElementById('input-name').value || 'Patient',
-        email: document.getElementById('input-email').value || 'Not provided',
-        age: (document.getElementById('input-age') && document.getElementById('input-age').value) || 'N/A',
-        gender: (document.getElementById('input-gender') && document.getElementById('input-gender').value) || 'Not specified',
+        name: getVal('input-name') || 'Patient',
+        email: getVal('input-email') || 'Not provided',
+        age: getVal('input-age') || 'N/A',
+        gender: getVal('input-gender') || 'Not specified',
         score: scoreEl.innerText,
-        risk: document.getElementById('risk-text').innerText,
-        summary: document.getElementById('result-summary').innerText,
-        probability: document.getElementById('probability-value').innerText,
+        risk: (document.getElementById('risk-text') && document.getElementById('risk-text').innerText) || 'Unknown',
+        summary: (document.getElementById('result-summary') && document.getElementById('result-summary').innerText) || 'No summary available.',
+        probability: (document.getElementById('probability-value') && document.getElementById('probability-value').innerText) || '—%',
         metrics: metrics,
-        factors: Array.from(document.querySelectorAll('.risk-factor-card')).map(card => ({
-            name: card.querySelector('.risk-factor-name').innerText,
-            value: card.querySelector('.risk-factor-value').innerText,
-            message: (card.querySelector('.risk-factor-message') && card.querySelector('.risk-factor-message').innerText) || card.querySelector('.risk-factor-name').innerText,
-            status: card.querySelector('.risk-factor-status').innerText.toLowerCase().replace('risk ', '')
-        })),
+        factors: Array.from(document.querySelectorAll('.risk-factor-card')).map(card => {
+            const name = card.querySelector('.risk-factor-name')?.innerText || 'Factor';
+            const value = card.querySelector('.risk-factor-value')?.innerText || '—';
+            const message = card.querySelector('.risk-factor-message')?.innerText || name;
+            const statusText = card.querySelector('.risk-factor-status')?.innerText || 'normal';
+            return {
+                name,
+                value,
+                message,
+                status: statusText.toLowerCase().replace('risk ', '').trim()
+            };
+        }),
         recommendations: Array.from(document.querySelectorAll('.recommendation-item span:last-child')).map(rec => rec.innerText)
     };
     generatePDFReport(data);
