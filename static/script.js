@@ -580,14 +580,9 @@ function renderDashboardTable(container) {
                     <div style="font-size: 0.75rem; color: var(--text-muted);">${timeStr}</div>
                 </td>
                 <td>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="action-btn" onclick="showPatientSummary(${p.id})" title="View Details" style="background: var(--bg-secondary); color: var(--primary-600);">
-                            <i data-lucide="eye"></i>
-                        </button>
-                        <button class="action-btn download" onclick="downloadDashboardPDF(${p.id})" title="Download Report">
-                            <i data-lucide="download"></i>
-                        </button>
-                    </div>
+                    <button class="action-btn" onclick="showPatientSummary(${p.id})" title="View Details" style="background: var(--bg-secondary); color: var(--primary-600);">
+                        <i data-lucide="eye"></i>
+                    </button>
                 </td>
             </tr>
         `;
@@ -615,9 +610,30 @@ function showPatientSummary(patientId) {
     });
     document.getElementById('modal-date').textContent = `Analyzed on ${dateStr} at ${timeStr}`;
 
-    document.getElementById('modal-glucose').textContent = patient.glucose + ' mg/dL';
-    document.getElementById('modal-bmi').textContent = patient.bmi + ' kg/m²';
-    document.getElementById('modal-score').textContent = patient.health_score + '/100';
+    // Personal Information
+    document.getElementById('modal-age').textContent = (patient.age || '—') + ' years';
+    document.getElementById('modal-gender').textContent = patient.gender || '—';
+    document.getElementById('modal-email').textContent = patient.email || '—';
+
+    // Clinical Metrics
+    document.getElementById('modal-glucose').textContent = (patient.glucose || '—') + ' mg/dL';
+    document.getElementById('modal-bp').textContent = (patient.blood_pressure || '—') + ' mmHg';
+    document.getElementById('modal-bmi').textContent = (patient.bmi || '—') + ' kg/m²';
+    document.getElementById('modal-insulin').textContent = (patient.insulin || '—') + ' mIU/L';
+
+    // Metabolic Factors
+    document.getElementById('modal-skin').textContent = (patient.skin_thickness || '—') + ' mm';
+    document.getElementById('modal-pedigree').textContent = patient.diabetes_pedigree || '—';
+    document.getElementById('modal-pregnancies').textContent = patient.pregnancies || '0';
+
+    // Lifestyle Factors
+    document.getElementById('modal-exercise').textContent = (patient.exercise_hours || '0') + ' hrs/week';
+    document.getElementById('modal-sleep').textContent = (patient.sleep_hours || '7') + ' hrs/night';
+    document.getElementById('modal-smoking').textContent = patient.smoking ? 'Yes' : 'No';
+
+    // Health Score & Risk
+    document.getElementById('modal-score').textContent = (patient.health_score || '—') + '/100';
+    document.getElementById('modal-probability').textContent = patient.risk_probability ? (patient.risk_probability * 100).toFixed(1) + '%' : '—';
 
     const riskEl = document.getElementById('modal-risk');
     riskEl.textContent = patient.risk_level || 'Unknown';
